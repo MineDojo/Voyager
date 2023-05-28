@@ -4,9 +4,10 @@
 [[Website]](https://voyager.minedojo.org/)
 [[Arxiv]](https://arxiv.org/abs/2305.16291)
 [[PDF]](https://arxiv.org/pdf/2305.16291.pdf)
+[[Tweet]](https://twitter.com/DrJimFan/status/1662115266933972993?s=20)
 
 [![Python Version](https://img.shields.io/badge/Python-3.9-blue.svg)](https://github.com/MineDojo/Voyager)
-[![GitHub license](https://img.shields.io/github/license/MineDojo/MineDojo)](https://github.com/MineDojo/Voyager/blob/main/LICENSE)
+[![GitHub license](https://img.shields.io/github/license/MineDojo/Voyager)](https://github.com/MineDojo/Voyager/blob/main/LICENSE)
 ______________________________________________________________________
 
 
@@ -102,6 +103,8 @@ voyager.learn()
   3. After the world is created, press `Esc` key and press `Open to LAN`.
   4. Select `Allow cheats: ON` and press `Start LAN World`. You will see the bot join the world soon. 
 
+# FAQ
+If you have any questions, please check our [FAQ](FAQ.md) first before opening an issue.
 
 # Paper and Citation
 
