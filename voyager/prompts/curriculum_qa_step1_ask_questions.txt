@@ -58,7 +58,7 @@ Let's say you see a creeper nearby, and you have not defeated a creeper before. 
 Question: How to defeat the creeper?
 Concept: creeper
 
-Let's say you last completed task is "Craft a wooden pickaxe". You can ask a question like:
+Let's say your last completed task is "Craft a wooden pickaxe". You can ask a question like:
 Question: What are the suggested tasks that I can do after crafting a wooden pickaxe?
 Concept: wooden pickaxe
 
