@@ -3,7 +3,7 @@
 
 [[Website]](https://voyager.minedojo.org/)
 [[Arxiv]](https://arxiv.org/abs/2305.16291)
-[[PDF]](https://arxiv.org/pdf/2305.16291.pdf)
+[[PDF]](https://voyager.minedojo.org/assets/documents/voyager.pdf)
 [[Tweet]](https://twitter.com/DrJimFan/status/1662115266933972993?s=20)
 
 [![Python Version](https://img.shields.io/badge/Python-3.9-blue.svg)](https://github.com/MineDojo/Voyager)
@@ -102,6 +102,20 @@ voyager.learn()
   2. Set Game Mode to `Creative` and Difficulty to `Peaceful`.
   3. After the world is created, press `Esc` key and press `Open to LAN`.
   4. Select `Allow cheats: ON` and press `Start LAN World`. You will see the bot join the world soon. 
+
+# Resume from a checkpoint during learning
+
+If you stop the learning process and want to resume from a checkpoint later, you can initialize Voyager by:
+```python
+from voyager import Voyager
+
+voyager = Voyager(
+    azure_login=azure_login,
+    openai_api_key=openai_api_key,
+    ckpt_dir="YOUR_CHECKPOINT_DIR",
+    resume=True,
+)
+```
 
 # FAQ
 If you have any questions, please check our [FAQ](FAQ.md) first before opening an issue.

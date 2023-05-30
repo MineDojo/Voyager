@@ -1,5 +1,6 @@
 # Frequently Asked Questions
 * [I got connection error after I click on the Azure login link and login to Microsoft account.](#i-get-a-connection-error-after-i-click-on-the-azure-login-link-and-login-to-my-microsoft-account)
+* [I get `KeyError: 'access_token'` after I copied the link](#i-get-keyerror-accesstoken-after-i-copied-the-link)
 * [I got `Subprocess Mineflayer failed to start` error.](#i-get-subprocess-mineflayer-failed-to-start-error)
 * [I see the bot left and rejoin the game after each task.](#i-see-the-bot-left-and-rejoin-the-game-after-each-task)
 * [How to show the bot's first-person perspective?](#how-to-show-the-bots-first-person-view)
@@ -9,6 +10,10 @@
 ## I get a connection error after I click on the Azure login link and login to my Microsoft account.
 
 It's normal that you get a connection refused or 404 error after you log in. You will still see the new URL in your browser. You just need to copy and paste that link. It should contain things like `code=M.C....` in that link.
+
+## I get `KeyError: 'access_token'` after I copied the link
+
+While testing Voyager, we use Redirect URI Type: `Public client/native (mobile & desktop)` in the app registration for Azure Login. However, according to the report in issue [#34](https://github.com/MineDojo/Voyager/issues/34#issuecomment-1567007133), the URI Type was changed to "Web" and it resolved the problem. Feel free to attempt both URI Types to determine which one works for you.
 
 ## I get `Subprocess Mineflayer failed to start` error.
 
