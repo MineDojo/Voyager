@@ -128,7 +128,7 @@ class CriticAgent:
             human_message,
         ]
 
-        if self.mode == "human":
+        if self.mode == "manual":
             return self.human_check_task_success()
         elif self.mode == "auto":
             return self.ai_check_task_success(
