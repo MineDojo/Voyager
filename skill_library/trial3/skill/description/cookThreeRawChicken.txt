@@ -1,0 +1,3 @@
+async function cookThreeRawChicken(bot) {
+    // The function is about cooking 3 raw chicken using a furnace and coal as fuel. First, it finds a suitable location to place the furnace. Then, it places the furnace at that location. Finally, it smelts 3 raw chicken using coal as fuel and sends a chat message indicating that the chicken has been cooked.
+}

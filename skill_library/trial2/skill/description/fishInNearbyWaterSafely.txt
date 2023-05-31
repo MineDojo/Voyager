@@ -1,0 +1,3 @@
+async function fishInNearbyWaterSafely(bot) {
+    // The function is about fishing in a nearby water block safely. It first checks if the bot has a fishing rod in its inventory, and crafts one if it doesn't. Then, it finds a nearby water block and moves to a block adjacent to it. After looking at the water block, it equips the fishing rod and checks for hostile mobs nearby, killing them if necessary. Finally, it fishes in the water and retries if the fishing is cancelled.
+}

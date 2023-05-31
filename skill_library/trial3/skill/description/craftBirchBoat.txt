@@ -1,0 +1,3 @@
+async function craftBirchBoat(bot) {
+    // The function crafts a birch boat using birch logs and a crafting table. It first checks if there are enough birch logs in the inventory, and if not, mines more. Then, it crafts birch planks using the birch logs. If there is no crafting table in the inventory, it crafts one. It finds a suitable position to place the crafting table and places it there. Finally, it crafts a birch boat using the birch planks and the crafting table.
+}

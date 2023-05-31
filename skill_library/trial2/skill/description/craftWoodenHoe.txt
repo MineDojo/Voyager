@@ -1,0 +1,3 @@
+async function craftWoodenHoe(bot) {
+    // The function crafts a wooden hoe using 2 spruce planks and 2 sticks. It checks if there are enough planks and sticks in the inventory, and crafts more if necessary. If there is no crafting table nearby, it places one. Finally, it crafts a wooden hoe and logs a message.
+}

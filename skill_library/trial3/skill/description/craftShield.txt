@@ -1,0 +1,3 @@
+async function craftShield(bot) {
+    // The function crafts a shield using oak planks and iron ingots. It checks if there are enough oak planks and iron ingots in the inventory, and crafts more oak planks if necessary. If there are not enough iron ingots, it returns. It then places a crafting table near the player and crafts a shield using the crafting table. Finally, it sends a chat message indicating that the shield has been crafted.
+}

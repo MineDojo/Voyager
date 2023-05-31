@@ -1,0 +1,3 @@
+async function craftIronHelmet(bot) {
+    // The function is about crafting an iron helmet using a crafting table. First, place the crafting table near the bot. Then, craft an iron helmet using the crafting table and save it to the inventory.
+}

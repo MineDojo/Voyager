@@ -1,0 +1,3 @@
+async function craftTorches(bot) {
+    // The function crafts 8 torches using coal and sticks. It checks if there is enough coal and sticks in the inventory, and if not, it mines coal or crafts sticks. If there is no crafting table nearby, it places one. Finally, it crafts 8 torches and saves the event.
+}

@@ -1,0 +1,3 @@
+async function smeltFiveRawGold(bot) {
+    // The function is about smelting 5 raw gold into gold ingots using a furnace and coal as fuel. If there is no furnace in the inventory, the bot will craft one using cobblestone. Then, the bot will place the furnace near the player and smelt the 5 raw gold using coal as fuel. Finally, the bot will collect the smelted gold ingots and print a message in the chat.
+}

@@ -1,0 +1,3 @@
+async function killOneEnderman(bot) {
+    // The function is about killing one enderman using an iron sword. First, equip the iron sword in the hand. Next, explore the environment until finding the nearest enderman within 32 blocks. Once an enderman is found, kill it using the iron sword. After killing the enderman, collect the dropped items by moving to the enderman's position.
+}

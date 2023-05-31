@@ -1,0 +1,3 @@
+async function killFourSheep(bot) {
+    // The function is about killing four sheep and collecting their drops. It equips a wooden sword and kills the first three sheep, then kills the fourth sheep. After that, it collects the dropped items from the killed sheep, which include wool and raw mutton.
+}

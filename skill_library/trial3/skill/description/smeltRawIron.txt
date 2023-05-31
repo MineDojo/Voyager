@@ -1,0 +1,3 @@
+async function smeltRawIron(bot) {
+    // The function is about smelting 3 raw iron using coal as fuel. First, find a suitable location to place the furnace. Then, place the furnace at the found location. Finally, smelt 3 raw iron using coal as fuel and save the event of smelting 3 raw iron.
+}

@@ -1,0 +1,3 @@
+async function smeltCactusIntoGreenDye(bot) {
+    // The function is about smelting 5 cactus into green dye using a furnace and coal as fuel. It checks if there is a furnace in the inventory, and if not, it crafts one. Then it finds a suitable position to place the furnace and places it there. Finally, it smelts the cactus using coal as fuel and saves the event of smelting 5 cactus into green dye.
+}

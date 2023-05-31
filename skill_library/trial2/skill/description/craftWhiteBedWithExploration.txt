@@ -1,0 +1,3 @@
+async function craftWhiteBedWithExploration(bot) {
+    // The function crafts a white bed using 3 white wool blocks and 3 spruce planks. If there are not enough wool blocks, the bot explores the area to find and kill sheep to collect the wool. If there are not enough spruce planks, the bot crafts more. If there is no crafting table nearby, the bot places one.
+}

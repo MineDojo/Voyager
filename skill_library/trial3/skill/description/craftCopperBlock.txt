@@ -1,0 +1,3 @@
+async function craftCopperBlock(bot) {
+    // The function crafts a copper block using 9 copper ingots and a crafting table. It first checks if there are enough copper ingots in the inventory, and if not, it returns. Then, it places a crafting table near the player and crafts a copper block using the crafting table. Finally, it sends a chat message indicating that the copper block has been crafted.
+}

@@ -1,0 +1,3 @@
+async function obtainBirchLogs(bot) {
+    // The function is about obtaining 5 birch logs. It checks if there are enough birch logs in the inventory and mines the required number of birch logs if necessary. Once 5 birch logs are obtained, it sends a chat message. If there are already 5 birch logs in the inventory, it sends a different chat message.
+}

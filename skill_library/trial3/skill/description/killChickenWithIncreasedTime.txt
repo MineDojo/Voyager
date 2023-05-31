@@ -1,0 +1,3 @@
+async function killChickenWithIncreasedTime(bot) {
+    // The function is about killing a chicken with an increased exploration time limit. It explores the area to find a chicken within a certain distance. If a chicken is found, it equips a sword (if available) to kill the chicken. Otherwise, it uses bare hands. After killing the chicken, it reports the completion of the task.
+}

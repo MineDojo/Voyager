@@ -1,0 +1,3 @@
+async function mineFourCoalOre(bot) {
+    // The function is about mining 4 coal ore blocks using a stone pickaxe. The function equips the stone pickaxe in the hand and then mines 4 coal ore blocks. Once the mining is complete, the function sends a chat message indicating that 4 coal ore blocks have been mined.
+}

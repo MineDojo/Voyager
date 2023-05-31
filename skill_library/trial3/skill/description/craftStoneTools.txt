@@ -1,0 +1,3 @@
+async function craftStoneTools(bot) {
+    // The function crafts stone tools (sword, axe, and shovel) using a crafting table. It checks if there are enough cobblestones and sticks in the inventory, and mines more cobblestones or crafts more sticks if necessary. Then, it places a crafting table near the player and crafts the stone tools using the crafting table. Finally, it sends a chat message indicating that the tools have been crafted.
+}

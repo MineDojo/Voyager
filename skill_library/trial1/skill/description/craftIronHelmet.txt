@@ -1,0 +1,3 @@
+async function craftIronHelmet(bot) {
+    // The function crafts an iron helmet using a crafting table. It first checks if there are enough iron ingots in the inventory, and if not, it mines iron ores and smelts them into iron ingots. Then it places a crafting table near the bot and crafts an iron helmet using the crafting table.
+}

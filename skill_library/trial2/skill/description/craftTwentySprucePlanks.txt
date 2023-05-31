@@ -1,0 +1,3 @@
+async function craftTwentySprucePlanks(bot) {
+    // The function crafts 20 spruce planks using spruce logs. If there are not enough spruce logs in the inventory, it will mine the required amount. Once enough logs are available, it will craft 20 spruce planks and save the event.
+}

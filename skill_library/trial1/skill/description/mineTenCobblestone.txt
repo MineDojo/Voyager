@@ -1,0 +1,3 @@
+async function mineTenCobblestone(bot) {
+    // The function is about mining 10 cobblestones using a pickaxe. First, check if the bot has a pickaxe in the inventory. If not, craft a wooden pickaxe using the available resources in the inventory. If the pickaxe is available, equip the pickaxe in the hand. Next, use the exploreUntil function to find cobblestone blocks. Once 10 cobblestone blocks are found, mine them using the mineBlock function.
+}

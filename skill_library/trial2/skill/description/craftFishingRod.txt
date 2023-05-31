@@ -1,0 +1,3 @@
+async function craftFishingRod(bot) {
+    // The function crafts a fishing rod using 2 strings and 3 sticks. If there are not enough strings, the bot will find and kill spiders to obtain them. If a crafting table is not already placed, the bot will place one. Finally, the bot will craft a fishing rod and output a message.
+}

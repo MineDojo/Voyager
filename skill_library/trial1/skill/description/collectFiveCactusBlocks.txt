@@ -1,0 +1,3 @@
+async function collectFiveCactusBlocks(bot) {
+    // The function is about collecting 5 cactus blocks using an iron pickaxe. First, equip the iron pickaxe in the hand. Next, explore the environment until finding 5 cactus blocks using the `exploreUntil` function. If 5 cactus blocks are not found, return. Otherwise, mine the 5 cactus blocks using the `mineBlock` function. Finally, collect the dropped cactus items by moving to each block's location.
+}

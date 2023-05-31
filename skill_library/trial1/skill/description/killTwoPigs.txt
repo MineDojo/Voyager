@@ -1,0 +1,3 @@
+async function killTwoPigs(bot) {
+    // The function is about killing two pigs and collecting their dropped items. The function equips a wooden sword and kills two pigs using the `killMob` function. After killing each pig, the function logs a message. Then, the function searches for dropped items from the killed pigs and collects them using the `pathfinder` module. Finally, the function logs a message indicating that the items have been collected.
+}

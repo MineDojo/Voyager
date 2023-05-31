@@ -1,0 +1,3 @@
+async function smeltCopperOre(bot) {
+    // The function is about smelting one copper ore block into a copper ingot using a furnace and coal as fuel. First, check if there is a furnace in the inventory. If not, craft one using cobblestone. Then, place the furnace near the player. Next, explore the environment until finding a copper ore block. Once a copper ore block is found, mine it and smelt the raw copper using coal as fuel in the furnace. Finally, collect the smelted copper ingot.
+}

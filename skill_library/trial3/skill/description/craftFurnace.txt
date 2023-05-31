@@ -1,0 +1,3 @@
+async function craftFurnace(bot) {
+    // The function crafts a furnace using cobblestones and a crafting table. It first checks if there are enough cobblestones in the inventory. If there are, it places a crafting table near the player and crafts a furnace using the cobblestones and the crafting table. Finally, it sends a chat message indicating that the furnace has been crafted.
+}

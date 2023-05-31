@@ -1,0 +1,3 @@
+async function smeltRawCopper(bot) {
+    // The function is about smelting 7 raw copper using a furnace and coal. It first checks if a furnace is in the inventory, and if not, it returns a message to craft one. Then it places the furnace next to the bot and checks if there is coal ore nearby. If there is not enough coal in the inventory, it mines more coal ore. Finally, it smelts 7 raw copper using the furnace and coal.
+}

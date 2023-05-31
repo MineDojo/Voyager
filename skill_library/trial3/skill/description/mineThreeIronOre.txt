@@ -1,0 +1,3 @@
+async function mineThreeIronOre(bot) {
+    // The function is about mining 3 iron ore blocks using a stone pickaxe. The function equips the stone pickaxe in the hand and then mines 3 iron ore blocks. Once the mining is complete, the function sends a chat message indicating that 3 iron ore blocks have been mined.
+}

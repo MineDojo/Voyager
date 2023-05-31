@@ -1,0 +1,3 @@
+async function eatTwoCookedMutton(bot) {
+    // The function is about eating two cooked muttons. It checks if there are at least 2 cooked muttons in the inventory, and if not, it returns. If there are 2 or more cooked muttons, it equips one in the bot's hand and consumes it twice. Finally, it sends a chat message to indicate that the task is completed.
+}

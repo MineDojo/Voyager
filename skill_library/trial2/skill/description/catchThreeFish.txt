@@ -1,0 +1,3 @@
+async function catchThreeFish(bot) {
+    // The function is about catching three fish using a fishing rod. First, it checks if the bot has a fishing rod in its inventory. If not, it crafts one. Then, it finds a nearby water block and moves to a block adjacent to it. After looking at the water block, it equips the fishing rod and fishes in the water three times. If fishing is cancelled, it retries the same iteration.
+}

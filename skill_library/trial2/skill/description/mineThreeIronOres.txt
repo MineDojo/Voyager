@@ -1,0 +1,3 @@
+async function mineThreeIronOres(bot) {
+    // The function is about mining 3 iron ores using a stone pickaxe. If the stone pickaxe is not in the inventory, the bot will mine cobblestone and craft one. Once the stone pickaxe is available, it will be equipped in the hand. The bot will explore the environment until finding an iron ore block. Once an iron ore block is found, the bot will mine a total of 3 iron ores using the stone pickaxe.
+}

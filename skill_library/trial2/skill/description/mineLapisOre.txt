@@ -1,0 +1,3 @@
+async function mineLapisOre(bot) {
+    // The function is about mining a single lapis ore block using the best available pickaxe. If the bot does not have a suitable pickaxe, it will mine cobblestone and craft a stone pickaxe. Once the pickaxe is available, it will equip it and explore the environment until finding a lapis ore block. Once a lapis ore block is found, it will mine it and save the event of mining the lapis ore.
+}

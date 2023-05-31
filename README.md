@@ -105,17 +105,44 @@ voyager.learn()
 
 # Resume from a checkpoint during learning
 
-If you stop the learning process and want to resume from a checkpoint later, you can initialize Voyager by:
+If you stop the learning process and want to resume from a checkpoint later, you can instantiate Voyager by:
 ```python
 from voyager import Voyager
 
 voyager = Voyager(
     azure_login=azure_login,
     openai_api_key=openai_api_key,
-    ckpt_dir="YOUR_CHECKPOINT_DIR",
+    ckpt_dir="YOUR_CKPT_DIR",
     resume=True,
 )
 ```
+
+# Run Voyager for a specific task with a learned skill library
+
+If you want to run Voyager for a specific task with a learned skill library, you should first pass the skill library directory to Voyager:
+```python
+from voyager import Voyager
+# First instantiate Voyager with skill_library_dir.
+voyager = Voyager(
+    azure_login=azure_login,
+    openai_api_key=openai_api_key,
+    skill_library_dir="./skill_library/trial1", # Load a learned skill library.
+    ckpt_dir="YOUR_CKPT_DIR", # Feel free to use a new dir. Do not use the same dir as skill library because new events will still be recorded to ckpt_dir. 
+    resume=False, # Do not resume from a skill library because this is not learning.
+)
+```
+Then, you can run task decomposition. Notice: Occasionally, the task decomposition may not be logical. If you notice the printed sub-goals are flawed, you can rerun the decomposition.
+```python
+# Run task decomposition
+task = "YOUR TASK" # e.g. "Craft a diamond pickaxe"
+sub_goals = voyager.decompose_task(task=task)
+```
+Finally, you can run the sub-goals with the learned skill library:
+```python
+voyager.inference(sub_goals=sub_goals)
+```
+
+For all valid skill libraries, see [Learned Skill Libraries](skill_library/README.md).
 
 # FAQ
 If you have any questions, please check our [FAQ](FAQ.md) first before opening an issue.

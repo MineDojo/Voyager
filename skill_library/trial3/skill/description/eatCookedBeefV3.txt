@@ -1,0 +1,3 @@
+async function eatCookedBeef(bot) {
+    // The function is about making the bot eat a cooked beef. It equips a cooked beef in the bot's hand and then consumes it. Finally, it sends a message to the chat indicating that one cooked beef has been eaten.
+}

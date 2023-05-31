@@ -1,0 +1,3 @@
+async function killOnePig(bot) {
+    // The function is about killing a pig using a wooden sword and collecting the dropped items. First, equip the wooden sword in the hand. Next, explore the environment until finding the nearest pig within 32 blocks. Once a pig is found, kill it using the wooden sword and collect the dropped items by moving to the pig's position.
+}

@@ -1,0 +1,3 @@
+async function killOneSpider(bot) {
+    // The function is about killing a spider using an iron sword. First, equip the iron sword in the hand. Then, explore the environment until finding the nearest spider within 32 blocks. Once a spider is found, kill it using the iron sword. After killing the spider, collect the dropped items by moving to the spider's position.
+}

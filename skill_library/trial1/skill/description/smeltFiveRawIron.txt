@@ -1,0 +1,3 @@
+async function smeltFiveRawIron(bot) {
+    // The function is about smelting 5 raw iron using a furnace and coal as fuel. First, it checks if there is a furnace in the inventory, and if not, it crafts one. Then, it places the furnace near the bot. Finally, it smelts 5 raw iron using the available coal as fuel and sends a chat message when finished.
+}

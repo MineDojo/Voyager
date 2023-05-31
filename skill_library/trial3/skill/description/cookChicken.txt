@@ -1,0 +1,3 @@
+async function cookChicken(bot) {
+    // The function is about cooking a raw chicken using a furnace and coal as fuel. First, it checks if there is a furnace in the inventory. If not, it crafts one using cobblestone. Then, it places the furnace near the player. Next, it smelts the raw chicken using coal as fuel in the furnace. Finally, it collects the cooked chicken and sends a chat message.
+}

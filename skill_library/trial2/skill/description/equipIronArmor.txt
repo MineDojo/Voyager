@@ -1,0 +1,3 @@
+async function equipIronArmor(bot) {
+    // The function equips the player with iron armor if it is available in the inventory. It checks for the presence of each piece of iron armor (helmet, chestplate, leggings, and boots) and equips them one by one. If a piece of armor is not found in the inventory, it sends a message to the chat indicating that it is not available.
+}

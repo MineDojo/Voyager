@@ -1,0 +1,3 @@
+async function exploreCave(bot) {
+    // The function is about exploring a nearby cave. First, check if there are torches in the inventory. If not, craft torches. Equip the torches in the hand and explore the environment until finding a cave entrance. Once a cave entrance is found, explore the cave by placing torches and killing mobs until the time limit is reached.
+}

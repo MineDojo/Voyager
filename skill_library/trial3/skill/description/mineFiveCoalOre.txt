@@ -1,0 +1,3 @@
+async function mineFiveCoalOre(bot) {
+    // The function is about mining 5 coal ore blocks using an iron pickaxe. First, equip the iron pickaxe in the hand. Next, explore the environment until finding 5 coal ore blocks. Once 5 coal ore blocks are found, mine them using the iron pickaxe and save the event of mining 5 coal ore blocks.
+}

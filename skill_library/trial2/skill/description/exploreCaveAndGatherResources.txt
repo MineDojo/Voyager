@@ -1,0 +1,3 @@
+async function exploreCaveAndGatherResources(bot) {
+    // The function is about exploring a nearby cave and gathering resources. First, equip torches and find a cave entrance. Once a cave entrance is found, explore the cave and gather resources such as coal, iron, gold, and diamond ores. While exploring, place torches to light up the cave, kill nearby mobs, and mine ores. The function will continue exploring until the time limit is reached. Finally, the function will output a message indicating that the exploration and resource gathering is finished.
+}

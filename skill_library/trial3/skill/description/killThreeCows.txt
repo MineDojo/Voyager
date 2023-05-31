@@ -1,0 +1,3 @@
+async function killThreeCows(bot) {
+    // The function is about killing 3 cows. It explores the environment to find 3 cows within a certain distance. Once 3 cows are found, it equips a sword (if available) to kill the cows one by one. If no sword is found, it uses bare hands. After killing all 3 cows, it reports the completion of the task.
+}

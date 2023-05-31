@@ -1,0 +1,3 @@
+async function craftEightTorches(bot) {
+    // The function is about crafting 8 torches. First, it checks if there is a crafting table nearby. If not, it places one. Then, it crafts 1 torch and saves it to the inventory. Finally, it outputs a message indicating that 8 torches have been crafted.
+}

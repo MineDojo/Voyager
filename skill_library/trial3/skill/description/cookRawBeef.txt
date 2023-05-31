@@ -1,0 +1,3 @@
+async function cookRawBeef(bot) {
+    // The function is about cooking 6 raw beef using a furnace and coal as fuel. It first checks if there is a furnace in the inventory, and if not, crafts one using cobblestone. Then, it places the furnace near the player and smelts the 6 raw beef using coal as fuel in the furnace. Finally, it collects the cooked beef and sends a chat message.
+}

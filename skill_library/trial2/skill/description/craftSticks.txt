@@ -1,0 +1,3 @@
+async function craftSticks(bot) {
+    // The function crafts 4 sticks using a crafting table. If there are not enough spruce planks, it mines a spruce log and crafts the planks. Then, it places a crafting table next to the bot and crafts 4 sticks.
+}

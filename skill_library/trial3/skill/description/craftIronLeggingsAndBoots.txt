@@ -1,0 +1,3 @@
+async function craftIronLeggingsAndBoots(bot) {
+    // The function crafts iron leggings and boots. It checks if there are enough iron ingots in the inventory, and if not, it mines iron ores and coal to smelt them into iron ingots. It then checks if there is a crafting table in the inventory, and if not, it crafts one. The function places the crafting table and a furnace near the player, and uses the furnace to smelt the iron ores. Finally, it crafts iron leggings and boots using the crafting table.
+}

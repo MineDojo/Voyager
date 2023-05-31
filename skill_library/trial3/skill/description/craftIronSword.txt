@@ -1,0 +1,3 @@
+async function craftIronSword(bot) {
+    // The function crafts an iron sword using iron ingots and sticks. It first checks if there are enough iron ingots and sticks in the inventory. If there are not enough sticks, it crafts more using oak planks. Then, it places a crafting table near the player and crafts an iron sword using the crafting table. Finally, it sends a chat message indicating that the iron sword has been crafted.
+}

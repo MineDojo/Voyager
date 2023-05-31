@@ -1,0 +1,3 @@
+async function craftStonePickaxe(bot) {
+    // The function crafts a stone pickaxe using cobblestone and sticks. It checks if there are enough cobblestone and sticks in the inventory, and if not, it collects the required items. Then, it places a crafting table near the bot and crafts a stone pickaxe using the crafting table.
+}

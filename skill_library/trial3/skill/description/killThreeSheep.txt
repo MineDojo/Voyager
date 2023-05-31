@@ -1,0 +1,3 @@
+async function killThreeSheep(bot) {
+    // The function is about killing 3 sheep. First, it equips a weapon (preferably a sword) to kill the sheep. Then, it explores the environment to find 3 sheep. Once 3 sheep are found, it kills each sheep one by one. Finally, it reports the completion of the task by sending a chat message.
+}

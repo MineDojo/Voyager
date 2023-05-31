@@ -1,0 +1,3 @@
+async function smeltTwentyFiveIronIngots(bot) {
+    // The function is about smelting 25 raw iron ingots using a furnace and coal. It first checks if a furnace is in the inventory, and if not, it returns a message to craft one. Then it places the furnace next to the bot, and checks if there is enough coal in the inventory. If there isn't, it mines coal until there are 25 pieces. Finally, it smelts 25 raw iron ingots using the furnace and coal, and returns a message indicating that the process is complete.
+}

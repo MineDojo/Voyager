@@ -1,0 +1,3 @@
+async function mineCopperOreWithStonePickaxe(bot) {
+    // The function is about mining a single copper ore block using a stone pickaxe. If the stone pickaxe is not in the inventory, the bot will mine 3 cobblestone blocks and craft a stone pickaxe. Once the stone pickaxe is available, it will be equipped in the hand. The bot will then explore the environment until finding a copper ore block. Once a copper ore block is found, the bot will mine it and save the event.
+}

@@ -1,0 +1,3 @@
+async function chopDownSpruceLogs(bot) {
+    // The function is about chopping down spruce logs until there are 5 in the inventory. It first checks how many spruce logs are in the inventory and calculates how many more need to be mined. If there are less than 5, it mines the remaining logs and saves the event. If there are already 5 logs in the inventory, it does nothing.
+}

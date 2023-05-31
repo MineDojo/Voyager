@@ -1,0 +1,3 @@
+async function plantOakSapling(bot) {
+    // The function is about finding a suitable location to plant an oak sapling, going to that location, equipping the oak sapling in the bot's hand, right-clicking on the ground to plant the oak sapling, and sending a chat message to indicate the oak sapling has been planted. If a suitable location cannot be found, the function will return without planting the oak sapling.
+}

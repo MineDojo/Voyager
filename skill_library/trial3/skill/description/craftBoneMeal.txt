@@ -1,0 +1,3 @@
+async function craftBoneMeal(bot) {
+    // The function is about crafting 4 bone meal using 2 bones and a crafting table. It first checks if there are enough bones in the inventory, and if not, it returns. Then, it places a crafting table near the player using the `placeItem` helper function. Finally, it crafts 4 bone meal using 2 bones and the crafting table, and sends a chat message indicating that the bone meal has been crafted.
+}

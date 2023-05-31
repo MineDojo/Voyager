@@ -1,0 +1,3 @@
+async function fillBucketWithWater(bot) {
+    // This function fills a bucket with water by first finding a nearby water block. After locating the water block, the bot moves to it and equips the bucket in its hand. The bot then looks at the water block and activates the bucket to collect water.
+}

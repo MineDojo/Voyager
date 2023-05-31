@@ -1,0 +1,3 @@
+async function craftWhiteBed(bot) {
+    // The function crafts a white bed using oak planks and white wool. If there are not enough oak planks in the inventory, it crafts oak planks from oak logs. If there are not enough white wool in the inventory, it stops the function. Then, it places a crafting table near the bot and crafts a white bed using the crafting table.
+}

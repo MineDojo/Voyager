@@ -1,0 +1,3 @@
+async function eatCookedMuttonIfHungry(bot) {
+    // The function checks if the bot's hunger is less than 20, and if so, equips and consumes a cooked mutton to restore hunger. If the hunger is already full, it will not eat the cooked mutton.
+}

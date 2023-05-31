@@ -1,0 +1,3 @@
+async function killThreeChickens(bot) {
+    // The function is about killing 3 chickens. First, it equips a sword to kill the chickens, and if there is no sword, it uses bare hands. Then, it explores the environment to find 3 chickens within a 32 block radius. Once 3 chickens are found, it kills each chicken one by one using the equipped weapon. Finally, it reports the completion of the task by sending a chat message.
+}

@@ -1,0 +1,3 @@
+async function mineThreeMoreOakLogs(bot) {
+    // The function is about mining three oak logs. It uses a for loop to mine three oak logs. It explores the environment until finding an oak log block, and then mines one oak log block. If it cannot find an oak log block, it returns. Once three oak logs are mined, it sends a chat message.
+}

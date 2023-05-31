@@ -1,0 +1,3 @@
+async function mineDeepslateOres(bot) {
+    // The function is about mining 1 deepslate_redstone_ore and 1 deepslate_gold_ore using an iron pickaxe. The function first equips the iron pickaxe in the hand. Then, it finds and mines 1 deepslate_redstone_ore and 1 deepslate_gold_ore using the mineBlock function. Finally, it sends a chat message indicating the number of ores mined.
+}

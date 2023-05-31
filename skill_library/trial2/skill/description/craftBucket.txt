@@ -1,0 +1,3 @@
+async function craftBucket(bot) {
+    // The function crafts a bucket using 3 iron ingots. If there are not enough iron ingots, it returns. If there is no crafting table nearby, it places one. Then it crafts a bucket and sends a chat message.
+}

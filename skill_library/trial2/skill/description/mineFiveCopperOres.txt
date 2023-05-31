@@ -1,0 +1,3 @@
+async function mineFiveCopperOres(bot) {
+    // The function is about mining 5 copper ores using an iron pickaxe. It first checks if there are already 5 copper ores in the inventory, and if so, it returns. Otherwise, it equips the iron pickaxe in the hand and mines copper ores until there are 5 in the inventory. Finally, it sends a chat message indicating that 5 copper ores have been mined.
+}

@@ -1,0 +1,3 @@
+async function craftWoodenPlanks(bot) {
+    // The function crafts 4 wooden planks using any type of wooden log available in the inventory. If there is no wooden log in the inventory, it will mine one. It then finds the index of the log in the `logNames` array and uses that index to determine the corresponding plank name in the `plankNames` array. Finally, it crafts 4 planks of the corresponding type and saves the event.
+}

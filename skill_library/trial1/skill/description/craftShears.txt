@@ -1,0 +1,3 @@
+async function craftShears(bot) {
+    // The function is about crafting a pair of shears. First, place a crafting table near the bot. Then, craft a pair of shears using the crafting table. Finally, the bot will chat that it has crafted a pair of shears.
+}

@@ -1,0 +1,3 @@
+async function craftTenCobblestoneWalls(bot) {
+    // The function crafts 10 cobblestone walls using a crafting table. It first checks if there are enough cobblestones in the inventory, and if not, it returns. Then, it places a crafting table near the player and crafts 6 cobblestone walls using the crafting table. It repeats the process to craft 6 more cobblestone walls and outputs a message when the process is complete.
+}

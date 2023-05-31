@@ -1,0 +1,3 @@
+async function craftCraftingTable(bot) {
+    // The function crafts a crafting table using oak planks. It first checks if there are enough oak planks in the inventory, and if not, crafts oak planks from oak logs. Then, it crafts a crafting table using the oak planks.
+}

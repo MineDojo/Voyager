@@ -1,0 +1,3 @@
+async function cookMutton(bot) {
+    // The function is about cooking 5 raw muttons using a furnace and coal. It first checks if there are at least 5 raw muttons in the inventory, and if not, it returns a message to collect more. Then it checks if there is a furnace in the inventory, and if not, it returns a message to craft one. It places the furnace next to the player and checks if there is enough coal in the inventory. If not, it mines coal until there are 5 pieces. Finally, it smelts 5 raw muttons using coal and returns a message that 5 muttons have been cooked.
+}

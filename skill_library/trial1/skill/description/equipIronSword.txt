@@ -1,0 +1,3 @@
+async function equipIronSword(bot) {
+    // The function is about equipping an iron sword. It first checks if the iron sword is in the inventory. If not, it checks a chest for the iron sword. If the iron sword is found, it is equipped in the hand. If the iron sword is not found, a message is sent to the chat.
+}

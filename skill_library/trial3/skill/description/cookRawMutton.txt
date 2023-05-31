@@ -1,0 +1,3 @@
+async function cookRawMutton(bot) {
+    // The function is about cooking 4 raw mutton using a furnace and coal as fuel. If there is no furnace in the inventory, the bot will craft one using cobblestone. Then, the bot will place the furnace near the player and smelt the 4 raw mutton using coal as fuel. Finally, the bot will collect the cooked mutton and print a message in the chat.
+}

@@ -1,0 +1,3 @@
+async function equipIronChestplate(bot) {
+    // The function equips an iron chestplate in the torso slot of the bot's armor. It first finds the iron chestplate in the bot's inventory and then equips it using the `bot.equip` function. Finally, it sends a chat message confirming that the iron chestplate has been equipped.
+}

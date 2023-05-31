@@ -1,0 +1,3 @@
+async function craftFurnace(bot) {
+    // The function crafts a furnace using 8 cobblestones and a crafting table. If there are not enough cobblestones, the function will return. If there is no crafting table nearby, the function will place one. Finally, the function crafts a furnace and sends a chat message.
+}

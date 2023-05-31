@@ -1,0 +1,3 @@
+async function craftWoodenSword(bot) {
+    // The function crafts a wooden sword using oak planks, sticks, and a crafting table. It checks if there are enough oak planks and sticks in the inventory, and crafts them if necessary. Then, it places a crafting table near the bot and uses it to craft a wooden sword.
+}
