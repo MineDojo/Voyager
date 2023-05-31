@@ -1,0 +1,3 @@
+async function craftIronChestplate(bot) {
+    // The function crafts an iron chestplate using 8 iron ingots. It first checks if there are enough iron ingots in the inventory. If there are, it places a crafting table nearby if it's not already placed, and then crafts the iron chestplate. If there are not enough iron ingots, it sends a message saying so.
+}

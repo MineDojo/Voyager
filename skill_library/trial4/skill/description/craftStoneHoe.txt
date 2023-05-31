@@ -1,0 +1,3 @@
+async function craftStoneHoe(bot) {
+    // The function crafts a stone hoe using cobblestone and sticks. It checks if there are enough cobblestone and sticks in the inventory. If not, it crafts them. If the crafting table is not placed, it places it. Then, it crafts the stone hoe on the crafting table. If the crafting fails due to lack of resources, it retries the crafting process.
+}

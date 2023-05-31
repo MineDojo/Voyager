@@ -1,0 +1,3 @@
+async function craftFurnace(bot) {
+    // The function is about crafting a furnace. It checks if the bot has enough cobblestone to craft a furnace, and if not, it mines cobblestone using a stone pickaxe. Then, it places a crafting table if it's not already placed. Finally, it crafts a furnace using the cobblestones and saves the event of crafting a furnace.
+}

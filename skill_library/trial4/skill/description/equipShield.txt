@@ -1,0 +1,3 @@
+async function equipShield(bot) {
+    // The function is about equipping a shield in the "off-hand" slot if it is available in the bot's inventory. If the shield is found, it is equipped and a message is sent to the chat. If the shield is not found, a message is sent to the chat indicating that no shield was found in the inventory.
+}

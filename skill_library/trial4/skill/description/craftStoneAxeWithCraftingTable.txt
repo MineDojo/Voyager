@@ -1,0 +1,3 @@
+async function craftStoneAxeWithCraftingTable(bot) {
+    // The function crafts a stone axe using a crafting table. It checks if there are enough cobblestones and sticks in the inventory to craft the axe. If there are enough materials, it places a crafting table if it's not already placed and crafts the stone axe. If there are not enough sticks, it crafts sticks using spruce planks. If there are not enough materials to craft a stone axe, it sends a chat message.
+}

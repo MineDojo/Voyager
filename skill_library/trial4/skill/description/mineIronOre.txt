@@ -1,0 +1,3 @@
+async function mineIronOre(bot) {
+    // The function is about mining 1 iron ore using a stone pickaxe. First, check if the bot has enough cobblestone to craft a stone pickaxe. If not, mine 3 cobblestone using the wooden pickaxe. Then, place a crafting table and craft a stone pickaxe using the cobblestone and sticks. Next, find and mine 1 iron ore using the stone pickaxe. If no iron ore is found nearby, explore until finding one.
+}

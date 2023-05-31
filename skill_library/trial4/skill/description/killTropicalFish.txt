@@ -1,0 +1,3 @@
+async function killTropicalFish(bot) {
+    // The function is about equipping an iron sword and killing the nearest tropical fish within a 32 block radius. If a tropical fish is found, it is killed using the iron sword and a success message is sent. If no tropical fish is found, a message is sent indicating that there are no tropical fish nearby.
+}

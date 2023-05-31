@@ -1,0 +1,3 @@
+async function smeltRawIron(bot) {
+    // The function is about smelting raw iron using a furnace and coal as fuel. First, it finds a suitable position to place the furnace and places it there. Then, it mines 1 coal_ore as fuel and smelts the raw iron using the furnace and the mined coal as fuel. Finally, it sends a chat message indicating that the raw iron has been smelted.
+}

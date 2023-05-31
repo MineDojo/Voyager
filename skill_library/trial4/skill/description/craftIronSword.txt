@@ -1,0 +1,3 @@
+async function craftIronSword(bot) {
+    // The function crafts an iron sword using 2 iron ingots and 1 stick if they are available in the inventory. If the crafting table is not already placed, it places one nearby. If the materials are not available, it sends a message indicating that there are not enough materials.
+}

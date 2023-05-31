@@ -1,0 +1,3 @@
+async function craftIronPickaxe(bot) {
+    // The function crafts an iron pickaxe using 3 iron ingots and 2 sticks. If the required items are not in the inventory, it crafts them. If a crafting table is not already placed, it places one. Finally, it crafts the iron pickaxe and sends a chat message.
+}

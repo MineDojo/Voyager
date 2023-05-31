@@ -9,6 +9,7 @@
 ## Community Contributions
 
 * [daswer123/Voyager_checkpoint](https://github.com/daswer123/Voyager_checkpoint/tree/main)
+* [skill_library/trial4](trial4)
 
 ## How to Contribute
 

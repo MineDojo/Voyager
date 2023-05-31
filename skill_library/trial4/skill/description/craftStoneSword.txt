@@ -1,0 +1,3 @@
+async function craftStoneSword(bot) {
+    // The function crafts a stone sword using cobblestone and sticks. It checks if there are enough materials to craft the sword, and if not, it crafts the missing materials. If a crafting table is not already placed, it places one. Finally, it crafts the stone sword and sends a chat message.
+}

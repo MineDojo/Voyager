@@ -1,0 +1,3 @@
+async function craftStoneShovel(bot) {
+    // The function crafts a stone shovel using cobblestone and sticks. It checks if there are enough materials in the inventory to craft the stone shovel. If there are enough materials, it places a crafting table if it's not already placed and crafts the stone shovel using the cobblestone and sticks on the crafting table. If there are not enough materials, it sends a message to the chat saying so.
+}

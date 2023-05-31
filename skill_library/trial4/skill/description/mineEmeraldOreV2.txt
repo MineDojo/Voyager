@@ -1,0 +1,3 @@
+async function mineEmeraldOre(bot) {
+    // The function is about mining a single emerald ore block using an iron pickaxe. First, the function equips the iron pickaxe. Next, it explores the environment until finding an emerald ore block. Once an emerald ore block is found, it mines the block and saves the event of mining the emerald ore. If the emerald ore block is not found within the exploration time, it sends a message indicating that the emerald ore was not found.
+}
