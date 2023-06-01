@@ -9,6 +9,7 @@
 ## Community Contributions
 
 * [daswer123/Voyager_checkpoint](https://github.com/daswer123/Voyager_checkpoint/tree/main)
+* [swen128/Voyager_checkpoint](https://github.com/swen128/Voyager_checkpoint)
 
 ## How to Contribute
 
