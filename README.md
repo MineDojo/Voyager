@@ -78,7 +78,7 @@ After the installation process, you can run Voyager by:
 ```python
 from voyager import Voyager
 
-# you can also use mc_port instead of azure_login, but azure_login is highly recommended
+# You can also use mc_port instead of azure_login, but azure_login is highly recommended
 azure_login = {
     "client_id": "YOUR_CLIENT_ID",
     "redirect_url": "https://127.0.0.1/auth-response",
@@ -122,6 +122,7 @@ voyager = Voyager(
 If you want to run Voyager for a specific task with a learned skill library, you should first pass the skill library directory to Voyager:
 ```python
 from voyager import Voyager
+
 # First instantiate Voyager with skill_library_dir.
 voyager = Voyager(
     azure_login=azure_login,

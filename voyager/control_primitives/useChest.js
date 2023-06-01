@@ -84,7 +84,7 @@ async function moveToChest(bot, chestPosition) {
         await bot.waitForTicks(20);
     }
     const chestBlock = bot.blockAt(chestPosition);
-    if (chestBlock.name !== "chest" || chestBlock.name !== "chest_minecart") {
+    if (chestBlock.name !== "chest") {
         bot.emit("removeChest", chestPosition);
         throw new Error(
             `No chest at ${chestPosition}, it is ${chestBlock.name}`
@@ -131,7 +131,3 @@ function itemByName(items, name) {
     }
     return null;
 }
-//
-// function itemToString(item) {
-//     return item && `${item.count} ${item.name}`;
-// }

@@ -244,19 +244,35 @@ class CurriculumAgent:
             return task, context
 
         # hard code task when inventory is almost full
-        if events[-1][1]["status"]["inventoryUsed"] >= 33:
-            task = "Place and deposit useless items into a chest"
-            context = (
-                f"Your inventory have {events[-1][1]['status']['inventoryUsed']} occupied slots before depositing. "
-                "Place the chest in your inventory to the ground and choose some useless items to deposit. "
-                "After depositing, your inventory should only have 20 occupied slots. "
-                "You should deposit useless items such as andesite, dirt, cobblestone, etc. "
-                "Also, you can deposit low-level tools. "
-                "For example, if you have a stone pickaxe, you can deposit a wooden pickaxe. "
-                "Make sure the list of useless items are in your inventory "
-                "(do not list items already in the chest), "
-                "You can use bot.inventoryUsed() to check how many inventory slots are used."
-            )
+        inventoryUsed = events[-1][1]["status"]["inventoryUsed"]
+        if inventoryUsed >= 33:
+            if chest_observation != "Chests: None\n\n":
+                chests = chest_observation[8:-2].split("\n")
+                for chest in chests:
+                    content = chest.split(":")[1]
+                    if content == " Unknown items inside" or content == " Empty":
+                        position = chests[0].split(":")[0]
+                        task = f"Deposit useless items into the chest at {position}"
+                        context = (
+                            f"Your inventory have {inventoryUsed} occupied slots before depositing. "
+                            "After depositing, your inventory should only have 20 occupied slots. "
+                            "You should deposit useless items such as andesite, dirt, cobblestone, etc. "
+                            "Also, you can deposit low-level tools, "
+                            "For example, if you have a stone pickaxe, you can deposit a wooden pickaxe. "
+                            "Make sure the list of useless items are in your inventory "
+                            "(do not list items already in the chest), "
+                            "You can use bot.inventoryUsed() to check how many inventory slots are used."
+                        )
+                        return task, context
+            if "chest" in events[-1][1]["inventory"]:
+                task = "Place a chest"
+                context = (
+                    f"You have a chest in inventory, place it around you. "
+                    f"If chests is not None, or nearby blocks contains chest, this task is success."
+                )
+            else:
+                task = "Craft 1 chest"
+                context = "Craft 1 chest with 8 planks of any kind of wood."
             return task, context
 
         messages = [
@@ -307,6 +323,23 @@ class CurriculumAgent:
             print(f"Task: {task}\nContext: {context}")
             confirmed = input("Confirm? (y/n)").lower() in ["y", ""]
         return task, context
+
+    def update_exploration_progress(self, info):
+        task = info["task"]
+        if task.startswith("Deposit useless items into the chest at"):
+            # No need to record the deposit task
+            return
+        if info["success"]:
+            print(f"\033[35mCompleted task {task}.\033[0m")
+            self.completed_tasks.append(task)
+        else:
+            print(
+                f"\033[35mFailed to complete task {task}. Skipping to next task.\033[0m"
+            )
+            self.failed_tasks.append(task)
+
+        # clean up tasks and dump to disk
+        self.clean_up_tasks()
 
     def clean_up_tasks(self):
         updated_completed_tasks = []

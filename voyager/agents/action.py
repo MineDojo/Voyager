@@ -42,9 +42,15 @@ class ActionAgent:
             if position in self.chest_memory:
                 if isinstance(chest, dict):
                     self.chest_memory[position] = chest
+                if chest == "Invalid":
+                    print(
+                        f"\033[32mAction Agent removing chest {position}: {chest}\033[0m"
+                    )
+                    self.chest_memory.pop(position)
             else:
-                print(f"\033[32mAction Agent saving chest {position}: {chest}\033[0m")
-                self.chest_memory[position] = chest
+                if chest != "Invalid":
+                    print(f"\033[32mAction Agent saving chest {position}: {chest}\033[0m")
+                    self.chest_memory[position] = chest
         U.dump_json(self.chest_memory, f"{self.ckpt_dir}/action/chest_memory.json")
 
     def render_chest_observation(self):

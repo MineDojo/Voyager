@@ -268,6 +268,7 @@ class Voyager:
             or success
         )
         info = {
+            "task": self.task,
             "success": success,
             "conversations": self.conversations,
         }
@@ -332,9 +333,10 @@ class Voyager:
             except Exception as e:
                 time.sleep(3)  # wait for mineflayer to exit
                 info = {
+                    "task": task,
                     "success": False,
                 }
-                # reset inventory here
+                # reset bot status here
                 self.last_events = self.env.reset(
                     options={
                         "mode": "hard",
@@ -347,25 +349,11 @@ class Voyager:
                 # use red color background to print the error
                 print("Your last round rollout terminated due to error:")
                 print(f"\033[41m{e}\033[0m")
-            if (
-                task == "Place and deposit useless items into a chest"
-                or task.startswith("Deposit useless items into the chest at")
-            ):
-                continue
+
             if info["success"]:
-                print(f"\033[35mCompleted task {task}.\033[0m")
-                self.skill_manager.add_skill(
-                    program_name=info["program_name"],
-                    program_code=info["program_code"],
-                )
-                self.curriculum_agent.completed_tasks.append(task)
-            else:
-                self.curriculum_agent.failed_tasks.append(task)
-                print(
-                    f"\033[35mFailed to complete task {task}. Skipping to next task.\033[0m"
-                )
-            # clean up tasks and dump to disk
-            self.curriculum_agent.clean_up_tasks()
+                self.skill_manager.add_new_skill(info)
+
+            self.curriculum_agent.update_exploration_progress(info)
             print(
                 f"\033[35mCompleted tasks: {', '.join(self.curriculum_agent.completed_tasks)}\033[0m"
             )
@@ -376,7 +364,7 @@ class Voyager:
         return {
             "completed_tasks": self.curriculum_agent.completed_tasks,
             "failed_tasks": self.curriculum_agent.failed_tasks,
-            "control_primitives": self.skill_manager.skills,
+            "skills": self.skill_manager.skills,
         }
 
     def decompose_task(self, task):
@@ -414,17 +402,7 @@ class Voyager:
                 context=context,
                 reset_env=reset_env,
             )
-            if info["success"]:
-                print(f"\033[35mCompleted task {next_task}.\033[0m")
-                self.curriculum_agent.completed_tasks.append(next_task)
-            else:
-                print(
-                    f"\033[35mFailed to complete task {next_task}. Skipping to next task.\033[0m"
-                )
-                self.curriculum_agent.failed_tasks.append(next_task)
-
-            # clean up tasks and dump to disk
-            self.curriculum_agent.clean_up_tasks()
+            self.curriculum_agent.update_exploration_progress(info)
             print(
                 f"\033[35mCompleted tasks: {', '.join(self.curriculum_agent.completed_tasks)}\033[0m"
             )

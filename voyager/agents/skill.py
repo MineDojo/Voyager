@@ -58,7 +58,12 @@ class SkillManager:
             programs += f"{primitives}\n\n"
         return programs
 
-    def add_skill(self, program_name, program_code):
+    def add_new_skill(self, info):
+        if info["task"].startswith("Deposit useless items into the chest at"):
+            # No need to reuse the deposit skill
+            return
+        program_name = info["program_name"]
+        program_code = info["program_code"]
         skill_description = self.generate_skill_description(program_name, program_code)
         print(
             f"\033[33mSkill Manager generated description for {program_name}:\n{skill_description}\033[0m"

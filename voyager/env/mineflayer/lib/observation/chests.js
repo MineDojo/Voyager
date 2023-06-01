@@ -9,7 +9,7 @@ class Chests extends Observation {
             this.chestsItems[position] = chestItems;
         });
         bot.on("removeChest", (chestPosition) => {
-            delete this.chestsItems[chestPosition];
+            this.chestsItems[chestPosition] = "Invalid";
         });
     }
 
