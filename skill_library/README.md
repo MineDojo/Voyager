@@ -10,6 +10,7 @@
 
 * [daswer123/Voyager_checkpoint](https://github.com/daswer123/Voyager_checkpoint)
 * [swen128/Voyager_checkpoint](https://github.com/swen128/Voyager_checkpoint)
+* [DeveloperHarris/voyager_checkpoint](https://github.com/DeveloperHarris/voyager_checkpoint)
 
 ### How to resume from a community contribution
 First, you need to clone or download their repo. Then, the resume is the same as using ours skill libraries. Just set `skill_library_dir=COMMUNITY_CKPT_DIR` where `COMMUNITY_CKPT_DIR` is the ckpt dir inside the folder you just downloaded.
