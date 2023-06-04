@@ -60,7 +60,7 @@ class Voyager:
         :param azure_login: minecraft login config
         :param server_port: mineflayer port
         :param openai_api_key: openai api key
-        :param openai_api_base openai base url
+        :param openai_api_base: openai base url
         :param env_wait_ticks: how many ticks at the end each step will wait, if you found some chat log missing,
         you should increase this value
         :param env_request_timeout: how many seconds to wait for each step, if the code execution exceeds this time,
