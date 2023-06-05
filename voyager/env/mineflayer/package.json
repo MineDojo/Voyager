@@ -29,7 +29,8 @@
         "prismarine-recipe": "^1.3.1",
         "prismarine-viewer": "^1.24.0",
         "typescript": "^4.9.5",
-        "vec3": "^0.1.8"
+        "vec3": "^0.1.8",
+        "graceful-fs": "^4.2.11"
     },
     "devDependencies": {
         "prettier": "2.8.5"
