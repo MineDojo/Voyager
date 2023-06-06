@@ -26,23 +26,23 @@ class Voyager:
         max_iterations: int = 160,
         reset_placed_if_failed: bool = False,
         action_agent_model_name: str = "gpt-4",
-        action_agent_temperature: int = 0,
+        action_agent_temperature: float = 0,
         action_agent_task_max_retries: int = 4,
         action_agent_show_chat_log: bool = True,
         action_agent_show_execution_error: bool = True,
         curriculum_agent_model_name: str = "gpt-4",
-        curriculum_agent_temperature: int = 0,
+        curriculum_agent_temperature: float = 0,
         curriculum_agent_qa_model_name: str = "gpt-3.5-turbo",
-        curriculum_agent_qa_temperature: int = 0,
+        curriculum_agent_qa_temperature: float = 0,
         curriculum_agent_warm_up: Dict[str, int] = None,
         curriculum_agent_core_inventory_items: str = r".*_log|.*_planks|stick|crafting_table|furnace"
         r"|cobblestone|dirt|coal|.*_pickaxe|.*_sword|.*_axe",
         curriculum_agent_mode: str = "auto",
         critic_agent_model_name: str = "gpt-4",
-        critic_agent_temperature: int = 0,
+        critic_agent_temperature: float = 0,
         critic_agent_mode: str = "auto",
         skill_manager_model_name: str = "gpt-3.5-turbo",
-        skill_manager_temperature: int = 0,
+        skill_manager_temperature: float = 0,
         skill_manager_retrieval_top_k: int = 5,
         openai_api_request_timeout: int = 240,
         ckpt_dir: str = "ckpt",
@@ -96,7 +96,7 @@ class Voyager:
         :param skill_manager_temperature: skill manager temperature
         :param skill_manager_retrieval_top_k: how many skills to retrieve for each task
         :param openai_api_request_timeout: how many seconds to wait for openai api
-        :param ckpt_dir: checkpoint dir
+        :param ckpt_dir: checkpoint dirq
         :param skill_library_dir: skill library dir
         :param resume: whether to resume from checkpoint
         """
@@ -183,7 +183,7 @@ class Voyager:
         )
         skills = self.skill_manager.retrieve_skills(query=self.context)
         print(
-            f"\033[33mRender Action Agent system message with {len(skills)} control_primitives\033[0m"
+            f"\033[33mRender Action Agent system message with {len(skills)} skills\033[0m"
         )
         system_message = self.action_agent.render_system_message(skills=skills)
         human_message = self.action_agent.render_human_message(

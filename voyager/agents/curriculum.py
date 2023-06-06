@@ -251,7 +251,7 @@ class CurriculumAgent:
                 for chest in chests:
                     content = chest.split(":")[1]
                     if content == " Unknown items inside" or content == " Empty":
-                        position = chests[0].split(":")[0]
+                        position = chest.split(":")[0]
                         task = f"Deposit useless items into the chest at {position}"
                         context = (
                             f"Your inventory have {inventoryUsed} occupied slots before depositing. "
