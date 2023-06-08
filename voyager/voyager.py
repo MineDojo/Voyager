@@ -96,7 +96,7 @@ class Voyager:
         :param skill_manager_temperature: skill manager temperature
         :param skill_manager_retrieval_top_k: how many skills to retrieve for each task
         :param openai_api_request_timeout: how many seconds to wait for openai api
-        :param ckpt_dir: checkpoint dirq
+        :param ckpt_dir: checkpoint dir
         :param skill_library_dir: skill library dir
         :param resume: whether to resume from checkpoint
         """

@@ -15,6 +15,7 @@ It's normal that you get a connection refused or 404 error after you log in. You
 
 While testing Voyager, we use Redirect URI Type: `Public client/native (mobile & desktop)` in the app registration for Azure Login. However, according to the report in issue [#34](https://github.com/MineDojo/Voyager/issues/34#issuecomment-1567007133), the URI Type was changed to "Web" and it resolved the problem. Feel free to attempt both URI Types to determine which one works for you. If all the approaches fail, please refer to the original tutorial in [minecraft-launcher-lib](https://minecraft-launcher-lib.readthedocs.io/en/stable/tutorial/microsoft_login.html).
 
+Update: This is probably a Microsoft's bug. See [issue #80 in minecraft-launcher-lib](https://codeberg.org/JakobDev/minecraft-launcher-lib/issues/80). If you cannot solve this problem, you can try to use the [Minecraft Official Launcher](./installation/minecraft_instance_install.md#option-2-minecraft-official-launcher) and use mc_port to run.
 ## I got `Subprocess Mineflayer failed to start` error.
 
 There are many reasons that may cause this problem. You can try with following solutions:
@@ -36,7 +37,7 @@ There are many reasons that may cause this problem. You can try with following s
    
 ## I saw the bot left and rejoin the game after each task.
 
-After completing each task, we'll reset the environment, which means the bot will exit and rejoin the game. This reset is necessary to synchronize Mineflayer with the Minecraft game. However, certain commands we utilize might result in lag on the Mineflayer side, causing the inventory stored in Mineflayer to differ from the actual inventory in the game. If you wish to prevent the reset, you can use `voyager.learn(reset_env=False)` and consider increasing the `env_wait_ticks` value. This will also provide Mineflayer with additional time to sync with the Minecraft game.
+After completing each task, we'll reset the environment, which means the bot will exit and rejoin the game. This reset is necessary to synchronize Mineflayer with the Minecraft game. We do this because certain commands we utilize might result in lag on the Mineflayer side, causing the inventory stored in Mineflayer to differ from the actual inventory in the game. However, if you wish to avoid the reset, you can use `voyager.learn(reset_env=False)` and consider increasing the `env_wait_ticks` value. This will provide Mineflayer with additional time to sync with the Minecraft game.
 
 
 ## How to show the bot's first-person view?
