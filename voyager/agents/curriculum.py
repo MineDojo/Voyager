@@ -290,6 +290,8 @@ class CurriculumAgent:
             raise ValueError(f"Invalid curriculum agent mode: {self.mode}")
 
     def propose_next_ai_task(self, *, messages, max_retries=5):
+        if max_retries == 0:
+            raise RuntimeError("Max retries reached, failed to propose ai task.")
         curriculum = self.llm(messages).content
         print(f"\033[31m****Curriculum Agent ai message****\n{curriculum}\033[0m")
         try:
