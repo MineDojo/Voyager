@@ -21,6 +21,7 @@ class Voyager:
         azure_login: Dict[str, str] = None,
         server_port: int = 3000,
         openai_api_key: str = None,
+        openai_api_base: str = "https://api.openai.com/v1",
         env_wait_ticks: int = 20,
         env_request_timeout: int = 600,
         max_iterations: int = 160,
@@ -59,6 +60,7 @@ class Voyager:
         :param azure_login: minecraft login config
         :param server_port: mineflayer port
         :param openai_api_key: openai api key
+        :param openai_api_base: openai base url
         :param env_wait_ticks: how many ticks at the end each step will wait, if you found some chat log missing,
         you should increase this value
         :param env_request_timeout: how many seconds to wait for each step, if the code execution exceeds this time,
@@ -113,6 +115,9 @@ class Voyager:
 
         # set openai api key
         os.environ["OPENAI_API_KEY"] = openai_api_key
+        
+        # set openai base url
+        os.environ["OPENAI_API_BASE"] = openai_api_base
 
         # init agents
         self.action_agent = ActionAgent(
