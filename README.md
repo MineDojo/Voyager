@@ -54,6 +54,7 @@ cd voyager/env/mineflayer
 npm install -g npx
 npm install
 cd mineflayer-collectblock
+npm install
 npx tsc
 cd ..
 npm install
