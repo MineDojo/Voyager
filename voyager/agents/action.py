@@ -8,7 +8,7 @@ from langchain.schema import AIMessage, HumanMessage, SystemMessage
 
 from voyager.prompts import load_prompt
 from voyager.control_primitives_context import load_control_primitives_context
-from voyager.agents.azure_model_config import AzureModelConfig
+from voyager.agents.azure_model_config import AzureChatModelConfig
 from voyager.agents.get_llm import get_llm
 
 
@@ -23,8 +23,8 @@ class ActionAgent:
         chat_log=True,
         execution_error=True,
         openai_api_type="",
-        azure_gpt_4_config=AzureModelConfig(),
-        azure_gpt_35_config=AzureModelConfig(),
+        azure_gpt_4_config=AzureChatModelConfig(),
+        azure_gpt_35_config=AzureChatModelConfig(),
     ):
         self.ckpt_dir = ckpt_dir
         self.chat_log = chat_log

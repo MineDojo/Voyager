@@ -1,6 +1,6 @@
 from voyager.prompts import load_prompt
 from voyager.utils.json_utils import fix_and_parse_json
-from voyager.agents.azure_model_config import AzureModelConfig
+from voyager.agents.azure_model_config import AzureChatModelConfig
 from voyager.agents.get_llm import get_llm
 from langchain.schema import HumanMessage, SystemMessage
 
@@ -13,8 +13,8 @@ class CriticAgent:
         request_timout=120,
         mode="auto",
         openai_api_type="",
-        azure_gpt_4_config=AzureModelConfig(),
-        azure_gpt_35_config=AzureModelConfig(),
+        azure_gpt_4_config=AzureChatModelConfig(),
+        azure_gpt_35_config=AzureChatModelConfig(),
     ):
         self.llm = get_llm(
             model_name=model_name,

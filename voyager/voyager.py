@@ -11,7 +11,7 @@ from .agents import ActionAgent
 from .agents import CriticAgent
 from .agents import CurriculumAgent
 from .agents import SkillManager
-from .agents import AzureModelConfig
+from .agents import AzureChatModelConfig, AzureOpenAIEmbeddingsConfig
 
 
 # TODO: remove event memory
@@ -50,8 +50,9 @@ class Voyager:
         skill_library_dir: str = None,
         resume: bool = False,
         openai_api_type="",
-        azure_gpt_4_config=AzureModelConfig(),
-        azure_gpt_35_config=AzureModelConfig(),
+        azure_gpt_4_config=AzureChatModelConfig(),
+        azure_gpt_35_config=AzureChatModelConfig(),
+        azure_openai_embeddings_config=AzureOpenAIEmbeddingsConfig(),
     ):
         """
         The main class for Voyager.
