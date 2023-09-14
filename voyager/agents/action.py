@@ -3,12 +3,13 @@ import time
 
 import voyager.utils as U
 from javascript import require
-from langchain.chat_models import ChatOpenAI
 from langchain.prompts import SystemMessagePromptTemplate
 from langchain.schema import AIMessage, HumanMessage, SystemMessage
 
 from voyager.prompts import load_prompt
 from voyager.control_primitives_context import load_control_primitives_context
+from voyager.agents.azure_model_config import AzureModelConfig
+from voyager.agents.get_llm import get_llm
 
 
 class ActionAgent:
@@ -21,6 +22,9 @@ class ActionAgent:
         resume=False,
         chat_log=True,
         execution_error=True,
+        openai_api_type="",
+        azure_gpt_4_config=AzureModelConfig(),
+        azure_gpt_35_config=AzureModelConfig(),
     ):
         self.ckpt_dir = ckpt_dir
         self.chat_log = chat_log
@@ -31,10 +35,13 @@ class ActionAgent:
             self.chest_memory = U.load_json(f"{ckpt_dir}/action/chest_memory.json")
         else:
             self.chest_memory = {}
-        self.llm = ChatOpenAI(
+        self.llm = get_llm(
             model_name=model_name,
             temperature=temperature,
-            request_timeout=request_timout,
+            request_timout=request_timout,
+            openai_api_type=openai_api_type,
+            azure_gpt_4_config=azure_gpt_4_config,
+            azure_gpt_35_config=azure_gpt_35_config,
         )
 
     def update_chest_memory(self, chests):
