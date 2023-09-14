@@ -15,7 +15,6 @@ def get_llm(
         azure_model_config = azure_gpt_4_config if model_name == "gpt-4" else azure_gpt_35_config
         llm = AzureChatOpenAI(
             temperature=temperature,
-            request_timout=request_timout,
             **azure_model_config.dict(),
         )
     else:
