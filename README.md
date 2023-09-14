@@ -103,6 +103,8 @@ voyager.learn()
   3. After the world is created, press `Esc` key and press `Open to LAN`.
   4. Select `Allow cheats: ON` and press `Start LAN World`. You will see the bot join the world soon. 
 
+Or if you are using dedicated OpenAI API deployments on Azure, you can config your APIs by inferring [this](installation/run_with_azure_api_deployments.md).
+
 # Resume from a checkpoint during learning
 
 If you stop the learning process and want to resume from a checkpoint later, you can instantiate Voyager by:
