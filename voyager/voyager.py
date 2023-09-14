@@ -147,6 +147,7 @@ class Voyager:
             openai_api_type=openai_api_type,
             azure_gpt_4_config=azure_gpt_4_config,
             azure_gpt_35_config=azure_gpt_35_config,
+            azure_openai_embeddings_config=azure_openai_embeddings_config,
         )
         self.critic_agent = CriticAgent(
             model_name=critic_agent_model_name,
@@ -167,6 +168,7 @@ class Voyager:
             openai_api_type=openai_api_type,
             azure_gpt_4_config=azure_gpt_4_config,
             azure_gpt_35_config=azure_gpt_35_config,
+            azure_openai_embeddings_config=azure_openai_embeddings_config,
         )
         self.recorder = U.EventRecorder(ckpt_dir=ckpt_dir, resume=resume)
         self.resume = resume
