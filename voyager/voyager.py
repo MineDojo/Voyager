@@ -11,6 +11,7 @@ from .agents import ActionAgent
 from .agents import CriticAgent
 from .agents import CurriculumAgent
 from .agents import SkillManager
+from .agents import AzureChatModelConfig, AzureOpenAIEmbeddingsConfig
 
 
 # TODO: remove event memory
@@ -48,6 +49,10 @@ class Voyager:
         ckpt_dir: str = "ckpt",
         skill_library_dir: str = None,
         resume: bool = False,
+        openai_api_type="",
+        azure_gpt_4_config=AzureChatModelConfig(),
+        azure_gpt_35_config=AzureChatModelConfig(),
+        azure_openai_embeddings_config=AzureOpenAIEmbeddingsConfig(),
     ):
         """
         The main class for Voyager.
@@ -123,6 +128,9 @@ class Voyager:
             resume=resume,
             chat_log=action_agent_show_chat_log,
             execution_error=action_agent_show_execution_error,
+            openai_api_type=openai_api_type,
+            azure_gpt_4_config=azure_gpt_4_config,
+            azure_gpt_35_config=azure_gpt_35_config,
         )
         self.action_agent_task_max_retries = action_agent_task_max_retries
         self.curriculum_agent = CurriculumAgent(
@@ -136,12 +144,19 @@ class Voyager:
             mode=curriculum_agent_mode,
             warm_up=curriculum_agent_warm_up,
             core_inventory_items=curriculum_agent_core_inventory_items,
+            openai_api_type=openai_api_type,
+            azure_gpt_4_config=azure_gpt_4_config,
+            azure_gpt_35_config=azure_gpt_35_config,
+            azure_openai_embeddings_config=azure_openai_embeddings_config,
         )
         self.critic_agent = CriticAgent(
             model_name=critic_agent_model_name,
             temperature=critic_agent_temperature,
             request_timout=openai_api_request_timeout,
             mode=critic_agent_mode,
+            openai_api_type=openai_api_type,
+            azure_gpt_4_config=azure_gpt_4_config,
+            azure_gpt_35_config=azure_gpt_35_config,
         )
         self.skill_manager = SkillManager(
             model_name=skill_manager_model_name,
@@ -150,6 +165,10 @@ class Voyager:
             request_timout=openai_api_request_timeout,
             ckpt_dir=skill_library_dir if skill_library_dir else ckpt_dir,
             resume=True if resume or skill_library_dir else False,
+            openai_api_type=openai_api_type,
+            azure_gpt_4_config=azure_gpt_4_config,
+            azure_gpt_35_config=azure_gpt_35_config,
+            azure_openai_embeddings_config=azure_openai_embeddings_config,
         )
         self.recorder = U.EventRecorder(ckpt_dir=ckpt_dir, resume=resume)
         self.resume = resume

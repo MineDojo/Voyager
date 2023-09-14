@@ -6,7 +6,8 @@ import re
 import voyager.utils as U
 from voyager.prompts import load_prompt
 from voyager.utils.json_utils import fix_and_parse_json
-from langchain.chat_models import ChatOpenAI
+from voyager.agents.azure_model_config import AzureChatModelConfig, AzureOpenAIEmbeddingsConfig
+from voyager.agents.get_llm import get_llm
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.schema import HumanMessage, SystemMessage
 from langchain.vectorstores import Chroma
@@ -25,16 +26,26 @@ class CurriculumAgent:
         mode="auto",
         warm_up=None,
         core_inventory_items: str | None = None,
+        openai_api_type="",
+        azure_gpt_4_config=AzureChatModelConfig(),
+        azure_gpt_35_config=AzureChatModelConfig(),
+        azure_openai_embeddings_config=AzureOpenAIEmbeddingsConfig(),
     ):
-        self.llm = ChatOpenAI(
+        self.llm = get_llm(
             model_name=model_name,
             temperature=temperature,
-            request_timeout=request_timout,
+            request_timout=request_timout,
+            openai_api_type=openai_api_type,
+            azure_gpt_4_config=azure_gpt_4_config,
+            azure_gpt_35_config=azure_gpt_35_config,
         )
-        self.qa_llm = ChatOpenAI(
+        self.qa_llm = get_llm(
             model_name=qa_model_name,
             temperature=qa_temperature,
-            request_timeout=request_timout,
+            request_timout=request_timout,
+            openai_api_type=openai_api_type,
+            azure_gpt_4_config=azure_gpt_4_config,
+            azure_gpt_35_config=azure_gpt_35_config,
         )
         assert mode in [
             "auto",
@@ -57,7 +68,7 @@ class CurriculumAgent:
         # vectordb for qa cache
         self.qa_cache_questions_vectordb = Chroma(
             collection_name="qa_cache_questions_vectordb",
-            embedding_function=OpenAIEmbeddings(),
+            embedding_function=OpenAIEmbeddings(**azure_openai_embeddings_config.dict()) if openai_api_type == "azure" else OpenAIEmbeddings(),
             persist_directory=f"{ckpt_dir}/curriculum/vectordb",
         )
         assert self.qa_cache_questions_vectordb._collection.count() == len(
