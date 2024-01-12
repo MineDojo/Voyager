@@ -1,0 +1,10 @@
+{
+    "summary": "This function loads control primitives context from the \"voyager\" package. It first determines the package path, then checks for primitive names in the directory if none are provided. It retrieves and returns a list of loaded text primitives.",
+    "details": [
+        {
+            "comment": "This function loads control primitives context from the \"voyager\" package. It first determines the package path, then checks for primitive names in the directory if none are provided. It retrieves and returns a list of loaded text primitives.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/control_primitives_context/__init__.py\":0-17",
+            "content": "import pkg_resources\nimport os\nimport voyager.utils as U\ndef load_control_primitives_context(primitive_names=None):\n    package_path = pkg_resources.resource_filename(\"voyager\", \"\")\n    if primitive_names is None:\n        primitive_names = [\n            primitive[:-3]\n            for primitive in os.listdir(f\"{package_path}/control_primitives_context\")\n            if primitive.endswith(\".js\")\n        ]\n    primitives = [\n        U.load_text(f\"{package_path}/control_primitives_context/{primitive_name}.js\")\n        for primitive_name in primitive_names\n    ]\n    return primitives"
+        }
+    ]
+}

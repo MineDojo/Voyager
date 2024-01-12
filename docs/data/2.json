@@ -1,0 +1,536 @@
+{
+    "200": {
+        "file_id": 19,
+        "content": "        ignoreNoPath: true,\n        count: count,\n    });\n    bot.save(`${name}_mined`);\n}",
+        "type": "code",
+        "location": "/voyager/control_primitives/mineBlock.js:33-37"
+    },
+    "201": {
+        "file_id": 19,
+        "content": "The code snippet initializes a mine block operation, ignoring any absence of path and specifying the count. After completion, it saves the bot's state as `${name}_mined`.",
+        "type": "comment"
+    },
+    "202": {
+        "file_id": 20,
+        "content": "/voyager/control_primitives/placeItem.js",
+        "type": "filepath"
+    },
+    "203": {
+        "file_id": 20,
+        "content": "The function placeItem verifies item existence, position, and equipment before placement. It handles inventory count mismatches, saves upon success, and reports errors.",
+        "type": "summary"
+    },
+    "204": {
+        "file_id": 20,
+        "content": "async function placeItem(bot, name, position) {\n    // return if name is not string\n    if (typeof name !== \"string\") {\n        throw new Error(`name for placeItem must be a string`);\n    }\n    // return if position is not Vec3\n    if (!(position instanceof Vec3)) {\n        throw new Error(`position for placeItem must be a Vec3`);\n    }\n    const itemByName = mcData.itemsByName[name];\n    if (!itemByName) {\n        throw new Error(`No item named ${name}`);\n    }\n    const item = bot.inventory.findInventoryItem(itemByName.id);\n    if (!item) {\n        bot.chat(`No ${name} in inventory`);\n        return;\n    }\n    const item_count = item.count;\n    // find a reference block\n    const faceVectors = [\n        new Vec3(0, 1, 0),\n        new Vec3(0, -1, 0),\n        new Vec3(1, 0, 0),\n        new Vec3(-1, 0, 0),\n        new Vec3(0, 0, 1),\n        new Vec3(0, 0, -1),\n    ];\n    let referenceBlock = null;\n    let faceVector = null;\n    for (const vector of faceVectors) {\n        const block = bot.blockAt(position.minus(vector));",
+        "type": "code",
+        "location": "/voyager/control_primitives/placeItem.js:1-32"
+    },
+    "205": {
+        "file_id": 20,
+        "content": "This function, placeItem, accepts three parameters: bot, name, and position. It checks if the name is a string and the position is a Vec3. If not, it throws an error. The function then verifies that there is an item with the given name and checks if it exists in the bot's inventory. If not, it notifies via chat and returns. If everything is fine, it searches for a reference block based on faceVectors, iterating through six possible vectors to find a suitable position to place the item.",
+        "type": "comment"
+    },
+    "206": {
+        "file_id": 20,
+        "content": "        if (block?.name !== \"air\") {\n            referenceBlock = block;\n            faceVector = vector;\n            bot.chat(`Placing ${name} on ${block.name} at ${block.position}`);\n            break;\n        }\n    }\n    if (!referenceBlock) {\n        bot.chat(\n            `No block to place ${name} on. You cannot place a floating block.`\n        );\n        _placeItemFailCount++;\n        if (_placeItemFailCount > 10) {\n            throw new Error(\n                `placeItem failed too many times. You cannot place a floating block.`\n            );\n        }\n        return;\n    }\n    // You must use try catch to placeBlock\n    try {\n        // You must first go to the block position you want to place\n        await bot.pathfinder.goto(new GoalPlaceBlock(position, bot.world, {}));\n        // You must equip the item right before calling placeBlock\n        await bot.equip(item, \"hand\");\n        await bot.placeBlock(referenceBlock, faceVector);\n        bot.chat(`Placed ${name}`);\n        bot.save(`${name}_placed`);\n    } catch (err) {",
+        "type": "code",
+        "location": "/voyager/control_primitives/placeItem.js:33-62"
+    },
+    "207": {
+        "file_id": 20,
+        "content": "This code checks if there's a block to place an item on, then goes to the target block position, equips the item, and places it. If no block is found or placing fails too many times, it reports an error.",
+        "type": "comment"
+    },
+    "208": {
+        "file_id": 20,
+        "content": "        const item = bot.inventory.findInventoryItem(itemByName.id);\n        if (item?.count === item_count) {\n            bot.chat(\n                `Error placing ${name}: ${err.message}, please find another position to place`\n            );\n            _placeItemFailCount++;\n            if (_placeItemFailCount > 10) {\n                throw new Error(\n                    `placeItem failed too many times, please find another position to place.`\n                );\n            }\n        } else {\n            bot.chat(`Placed ${name}`);\n            bot.save(`${name}_placed`);\n        }\n    }\n}",
+        "type": "code",
+        "location": "/voyager/control_primitives/placeItem.js:63-79"
+    },
+    "209": {
+        "file_id": 20,
+        "content": "Checks if the item count in inventory matches, handles failure and displays error message, and saves when successfully placed.",
+        "type": "comment"
+    },
+    "210": {
+        "file_id": 21,
+        "content": "/voyager/control_primitives/shoot.js",
+        "type": "filepath"
+    },
+    "211": {
+        "file_id": 21,
+        "content": "This function \"shoot\" allows a bot to shoot a valid weapon at a target entity. It checks if the weapon is valid, if it exists in the bot's inventory, and if the target is nearby. If all conditions are met, it auto-attacks using a bow and handles auto_shot_stopped event.",
+        "type": "summary"
+    },
+    "212": {
+        "file_id": 21,
+        "content": "// shoot 1 pig with a bow: shoot(bot, \"bow\", \"pig\");\nasync function shoot(bot, weapon, target) {\n    const validWeapons = [\n        \"bow\",\n        \"crossbow\",\n        \"snowball\",\n        \"ender_pearl\",\n        \"egg\",\n        \"splash_potion\",\n        \"trident\",\n    ];\n    if (!validWeapons.includes(weapon)) {\n        bot.chat(`${weapon} is not a valid weapon for shooting`);\n        return;\n    }\n    const weaponItem = mcData.itemsByName[weapon];\n    if (!bot.inventory.findInventoryItem(weaponItem.id, null)) {\n        bot.chat(`No ${weapon} in inventory for shooting`);\n        return;\n    }\n    const targetEntity = bot.nearestEntity(\n        (entity) =>\n            entity.name === target\n    );\n    if (!targetEntity) {\n        bot.chat(`No ${target} nearby`);\n        return;\n    }\n    bot.hawkEye.autoAttack(targetEntity, \"bow\");\n    bot.on('auto_shot_stopped', (target) => {\n    })\n}",
+        "type": "code",
+        "location": "/voyager/control_primitives/shoot.js:1-34"
+    },
+    "213": {
+        "file_id": 21,
+        "content": "This function \"shoot\" allows a bot to shoot a valid weapon at a target entity. It checks if the weapon is valid, if it exists in the bot's inventory, and if the target is nearby. If all conditions are met, it auto-attacks using a bow and handles auto_shot_stopped event.",
+        "type": "comment"
+    },
+    "214": {
+        "file_id": 22,
+        "content": "/voyager/control_primitives/smeltItem.js",
+        "type": "filepath"
+    },
+    "215": {
+        "file_id": 22,
+        "content": "This function enables a bot to smelt items using a furnace, managing inventory and pathfinding, handles errors, and notifies users upon failure.",
+        "type": "summary"
+    },
+    "216": {
+        "file_id": 22,
+        "content": "async function smeltItem(bot, itemName, fuelName, count = 1) {\n    // return if itemName or fuelName is not string\n    if (typeof itemName !== \"string\" || typeof fuelName !== \"string\") {\n        throw new Error(\"itemName or fuelName for smeltItem must be a string\");\n    }\n    // return if count is not a number\n    if (typeof count !== \"number\") {\n        throw new Error(\"count for smeltItem must be a number\");\n    }\n    const item = mcData.itemsByName[itemName];\n    const fuel = mcData.itemsByName[fuelName];\n    if (!item) {\n        throw new Error(`No item named ${itemName}`);\n    }\n    if (!fuel) {\n        throw new Error(`No item named ${fuelName}`);\n    }\n    const furnaceBlock = bot.findBlock({\n        matching: mcData.blocksByName.furnace.id,\n        maxDistance: 32,\n    });\n    if (!furnaceBlock) {\n        throw new Error(\"No furnace nearby\");\n    } else {\n        await bot.pathfinder.goto(\n            new GoalLookAtBlock(furnaceBlock.position, bot.world)\n        );\n    }\n    const furnace = await bot.openFurnace(furnaceBlock);",
+        "type": "code",
+        "location": "/voyager/control_primitives/smeltItem.js:1-29"
+    },
+    "217": {
+        "file_id": 22,
+        "content": "Function to smelt an item using a furnace. Checks if itemName and fuelName are strings, and count is a number. Verifies the existence of items and a nearby furnace. Pathfinding to the furnace and opening it for further processing.",
+        "type": "comment"
+    },
+    "218": {
+        "file_id": 22,
+        "content": "    let success_count = 0;\n    for (let i = 0; i < count; i++) {\n        if (!bot.inventory.findInventoryItem(item.id, null)) {\n            bot.chat(`No ${itemName} to smelt in inventory`);\n            break;\n        }\n        if (furnace.fuelSeconds < 15 && furnace.fuelItem()?.name !== fuelName) {\n            if (!bot.inventory.findInventoryItem(fuel.id, null)) {\n                bot.chat(`No ${fuelName} as fuel in inventory`);\n                break;\n            }\n            await furnace.putFuel(fuel.id, null, 1);\n            await bot.waitForTicks(20);\n            if (!furnace.fuel && furnace.fuelItem()?.name !== fuelName) {\n                throw new Error(`${fuelName} is not a valid fuel`);\n            }\n        }\n        await furnace.putInput(item.id, null, 1);\n        await bot.waitForTicks(12 * 20);\n        if (!furnace.outputItem()) {\n            throw new Error(`${itemName} is not a valid input`);\n        }\n        await furnace.takeOutput();\n        success_count++;\n    }\n    furnace.close();\n    if (success_count > 0) bot.chat(`Smelted ${success_count} ${itemName}.`);",
+        "type": "code",
+        "location": "/voyager/control_primitives/smeltItem.js:30-56"
+    },
+    "219": {
+        "file_id": 22,
+        "content": "The code checks if the bot has the required items (item and fuel) in its inventory, then smelts them one by one in a furnace. It also handles potential errors like invalid fuels or inputs, and closes the furnace after finishing the smelting process.",
+        "type": "comment"
+    },
+    "220": {
+        "file_id": 22,
+        "content": "    else {\n        bot.chat(\n            `Failed to smelt ${itemName}, please check the fuel and input.`\n        );\n        _smeltItemFailCount++;\n        if (_smeltItemFailCount > 10) {\n            throw new Error(\n                `smeltItem failed too many times, please check the fuel and input.`\n            );\n        }\n    }\n}",
+        "type": "code",
+        "location": "/voyager/control_primitives/smeltItem.js:57-68"
+    },
+    "221": {
+        "file_id": 22,
+        "content": "Else block executed when smelting fails, notifies user to check fuel and input, increments fail count, throws an error after 10 failures for further investigation.",
+        "type": "comment"
+    },
+    "222": {
+        "file_id": 23,
+        "content": "/voyager/control_primitives/useChest.js",
+        "type": "filepath"
+    },
+    "223": {
+        "file_id": 23,
+        "content": "This function enables bot-controlled chest interaction, allowing users to teleport, open/close chests, list items, emit events, and search by name.",
+        "type": "summary"
+    },
+    "224": {
+        "file_id": 23,
+        "content": "async function getItemFromChest(bot, chestPosition, itemsToGet) {\n    // return if chestPosition is not Vec3\n    if (!(chestPosition instanceof Vec3)) {\n        bot.chat(\"chestPosition for getItemFromChest must be a Vec3\");\n        return;\n    }\n    await moveToChest(bot, chestPosition);\n    const chestBlock = bot.blockAt(chestPosition);\n    const chest = await bot.openContainer(chestBlock);\n    for (const name in itemsToGet) {\n        const itemByName = mcData.itemsByName[name];\n        if (!itemByName) {\n            bot.chat(`No item named ${name}`);\n            continue;\n        }\n        const item = chest.findContainerItem(itemByName.id);\n        if (!item) {\n            bot.chat(`I don't see ${name} in this chest`);\n            continue;\n        }\n        try {\n            await chest.withdraw(item.type, null, itemsToGet[name]);\n        } catch (err) {\n            bot.chat(`Not enough ${name} in chest.`);\n        }\n    }\n    await closeChest(bot, chestBlock);\n}\nasync function depositItemIntoChest(bot, chestPosition, itemsToDeposit) {",
+        "type": "code",
+        "location": "/voyager/control_primitives/useChest.js:1-31"
+    },
+    "225": {
+        "file_id": 23,
+        "content": "Function to retrieve items from a chest at specified position using Vec3. Moves the bot to the chest location, opens it, and retrieves specific items from the container. Displays error messages if an item is not found or insufficient quantity exists in the chest. Closes the chest after completion.",
+        "type": "comment"
+    },
+    "226": {
+        "file_id": 23,
+        "content": "    // return if chestPosition is not Vec3\n    if (!(chestPosition instanceof Vec3)) {\n        throw new Error(\n            \"chestPosition for depositItemIntoChest must be a Vec3\"\n        );\n    }\n    await moveToChest(bot, chestPosition);\n    const chestBlock = bot.blockAt(chestPosition);\n    const chest = await bot.openContainer(chestBlock);\n    for (const name in itemsToDeposit) {\n        const itemByName = mcData.itemsByName[name];\n        if (!itemByName) {\n            bot.chat(`No item named ${name}`);\n            continue;\n        }\n        const item = bot.inventory.findInventoryItem(itemByName.id);\n        if (!item) {\n            bot.chat(`No ${name} in inventory`);\n            continue;\n        }\n        try {\n            await chest.deposit(item.type, null, itemsToDeposit[name]);\n        } catch (err) {\n            bot.chat(`Not enough ${name} in inventory.`);\n        }\n    }\n    await closeChest(bot, chestBlock);\n}\nasync function checkItemInsideChest(bot, chestPosition) {\n    // return if chestPosition is not Vec3",
+        "type": "code",
+        "location": "/voyager/control_primitives/useChest.js:32-62"
+    },
+    "227": {
+        "file_id": 23,
+        "content": "Code snippet checks if chestPosition is a Vec3, then moves to the chest position, opens the chest, iterates through itemsToDeposit, deposits each item into the chest if available, and finally closes the chest.",
+        "type": "comment"
+    },
+    "228": {
+        "file_id": 23,
+        "content": "    if (!(chestPosition instanceof Vec3)) {\n        throw new Error(\n            \"chestPosition for depositItemIntoChest must be a Vec3\"\n        );\n    }\n    await moveToChest(bot, chestPosition);\n    const chestBlock = bot.blockAt(chestPosition);\n    await bot.openContainer(chestBlock);\n    await closeChest(bot, chestBlock);\n}\nasync function moveToChest(bot, chestPosition) {\n    if (!(chestPosition instanceof Vec3)) {\n        throw new Error(\n            \"chestPosition for depositItemIntoChest must be a Vec3\"\n        );\n    }\n    if (chestPosition.distanceTo(bot.entity.position) > 32) {\n        bot.chat(\n            `/tp ${chestPosition.x} ${chestPosition.y} ${chestPosition.z}`\n        );\n        await bot.waitForTicks(20);\n    }\n    const chestBlock = bot.blockAt(chestPosition);\n    if (chestBlock.name !== \"chest\") {\n        bot.emit(\"removeChest\", chestPosition);\n        throw new Error(\n            `No chest at ${chestPosition}, it is ${chestBlock.name}`\n        );\n    }\n    await bot.pathfinder.goto(\n        new GoalLookAtBlock(chestBlock.position, bot.world, {})",
+        "type": "code",
+        "location": "/voyager/control_primitives/useChest.js:63-94"
+    },
+    "229": {
+        "file_id": 23,
+        "content": "Code snippet handles depositing an item into a chest. First, it ensures the 'chestPosition' is a Vec3 instance and throws an error if not. It then moves the bot to the specified chest position using teleportation if it's more than 32 blocks away. After reaching the chest, it checks whether the block at that position is indeed a chest or not. If not, it removes the chest and throws an error with the current block name.",
+        "type": "comment"
+    },
+    "230": {
+        "file_id": 23,
+        "content": "    );\n    return chestBlock;\n}\nasync function listItemsInChest(bot, chestBlock) {\n    const chest = await bot.openContainer(chestBlock);\n    const items = chest.containerItems();\n    if (items.length > 0) {\n        const itemNames = items.reduce((acc, obj) => {\n            if (acc[obj.name]) {\n                acc[obj.name] += obj.count;\n            } else {\n                acc[obj.name] = obj.count;\n            }\n            return acc;\n        }, {});\n        bot.emit(\"closeChest\", itemNames, chestBlock.position);\n    } else {\n        bot.emit(\"closeChest\", {}, chestBlock.position);\n    }\n    return chest;\n}\nasync function closeChest(bot, chestBlock) {\n    try {\n        const chest = await listItemsInChest(bot, chestBlock);\n        await chest.close();\n    } catch (err) {\n        await bot.closeWindow(chestBlock);\n    }\n}\nfunction itemByName(items, name) {\n    for (let i = 0; i < items.length; ++i) {\n        const item = items[i];\n        if (item && item.name === name) return item;\n    }\n    return null;\n}",
+        "type": "code",
+        "location": "/voyager/control_primitives/useChest.js:95-133"
+    },
+    "231": {
+        "file_id": 23,
+        "content": "This code defines functions for interacting with chests in a game. It opens the chest, lists items inside and emits corresponding events, closes the chest after interaction, and provides an itemByName function to find an item by name from a list of items.",
+        "type": "comment"
+    },
+    "232": {
+        "file_id": 24,
+        "content": "/voyager/control_primitives/waitForMobRemoved.js",
+        "type": "filepath"
+    },
+    "233": {
+        "file_id": 24,
+        "content": "Function `waitForMobRemoved` waits for entity removal, stops attacking on timeout, resolves with item or rejects with error using event listeners.",
+        "type": "summary"
+    },
+    "234": {
+        "file_id": 24,
+        "content": "function waitForMobRemoved(bot, entity, timeout = 300) {\n    return new Promise((resolve, reject) => {\n        let success = false;\n        let droppedItem = null;\n        // Set up timeout\n        const timeoutId = setTimeout(() => {\n            success = false;\n            bot.pvp.stop();\n        }, timeout * 1000);\n        // Function to handle entityRemoved event\n        function onEntityGone(e) {\n            if (e === entity) {\n                success = true;\n                clearTimeout(timeoutId);\n                bot.chat(`Killed ${entity.name}!`);\n                bot.pvp.stop();\n            }\n        }\n        function onItemDrop(item) {\n            if (entity.position.distanceTo(item.position) <= 1) {\n                droppedItem = item;\n            }\n        }\n        function onStoppedAttacking() {\n            clearTimeout(timeoutId);\n            bot.removeListener(\"entityGone\", onEntityGone);\n            bot.removeListener(\"stoppedAttacking\", onStoppedAttacking);\n            bot.removeListener(\"itemDrop\", onItemDrop);",
+        "type": "code",
+        "location": "/voyager/control_primitives/waitForMobRemoved.js:1-31"
+    },
+    "235": {
+        "file_id": 24,
+        "content": "Function waitForMobRemoved sets up a timeout to check if a specified entity is removed, handling entityRemoved event, stops attacking when timeout ends, and notifies upon successful removal.",
+        "type": "comment"
+    },
+    "236": {
+        "file_id": 24,
+        "content": "            if (!success) reject(new Error(`Failed to kill ${entity.name}.`));\n            else resolve(droppedItem);\n        }\n        // Listen for entityRemoved event\n        bot.on(\"entityGone\", onEntityGone);\n        bot.on(\"stoppedAttacking\", onStoppedAttacking);\n        bot.on(\"itemDrop\", onItemDrop);\n    });\n}\nfunction waitForMobShot(bot, entity, timeout = 300) {\n    return new Promise((resolve, reject) => {\n        let success = false;\n        let droppedItem = null;\n        // Set up timeout\n        const timeoutId = setTimeout(() => {\n            success = false;\n            bot.hawkEye.stop();\n        }, timeout * 1000);\n        // Function to handle entityRemoved event\n        function onEntityGone(e) {\n            if (e === entity) {\n                success = true;\n                clearTimeout(timeoutId);\n                bot.chat(`Shot ${entity.name}!`);\n                bot.hawkEye.stop();\n            }\n        }\n        function onItemDrop(item) {\n            if (entity.position.distanceTo(item.position) <= 1) {",
+        "type": "code",
+        "location": "/voyager/control_primitives/waitForMobRemoved.js:32-65"
+    },
+    "237": {
+        "file_id": 24,
+        "content": "This code sets up a timeout and event listeners to wait for the entity to be killed. It resolves with the dropped item if successful, or rejects with an error if it fails. The `onEntityGone` function handles the \"entityRemoved\" event, and the `onItemDrop` function handles the \"itemDrop\" event.",
+        "type": "comment"
+    },
+    "238": {
+        "file_id": 24,
+        "content": "                droppedItem = item;\n            }\n        }\n        function onAutoShotStopped() {\n            clearTimeout(timeoutId);\n            bot.removeListener(\"entityGone\", onEntityGone);\n            bot.removeListener(\"auto_shot_stopped\", onAutoShotStopped);\n            bot.removeListener(\"itemDrop\", onItemDrop);\n            if (!success) reject(new Error(`Failed to shoot ${entity.name}.`));\n            else resolve(droppedItem);\n        }\n        // Listen for entityRemoved event\n        bot.on(\"entityGone\", onEntityGone);\n        bot.on(\"auto_shot_stopped\", onAutoShotStopped);\n        bot.on(\"itemDrop\", onItemDrop);\n    });\n}",
+        "type": "code",
+        "location": "/voyager/control_primitives/waitForMobRemoved.js:66-84"
+    },
+    "239": {
+        "file_id": 24,
+        "content": "Function `waitForMobRemoved` uses event listeners to detect when an entity is removed, stopped auto shot, or an item is dropped. It resolves with the dropped item if successful, otherwise rejects with an error.",
+        "type": "comment"
+    },
+    "240": {
+        "file_id": 25,
+        "content": "/voyager/control_primitives_context/__init__.py",
+        "type": "filepath"
+    },
+    "241": {
+        "file_id": 25,
+        "content": "This function loads control primitives context from the \"voyager\" package. It first determines the package path, then checks for primitive names in the directory if none are provided. It retrieves and returns a list of loaded text primitives.",
+        "type": "summary"
+    },
+    "242": {
+        "file_id": 25,
+        "content": "import pkg_resources\nimport os\nimport voyager.utils as U\ndef load_control_primitives_context(primitive_names=None):\n    package_path = pkg_resources.resource_filename(\"voyager\", \"\")\n    if primitive_names is None:\n        primitive_names = [\n            primitive[:-3]\n            for primitive in os.listdir(f\"{package_path}/control_primitives_context\")\n            if primitive.endswith(\".js\")\n        ]\n    primitives = [\n        U.load_text(f\"{package_path}/control_primitives_context/{primitive_name}.js\")\n        for primitive_name in primitive_names\n    ]\n    return primitives",
+        "type": "code",
+        "location": "/voyager/control_primitives_context/__init__.py:1-18"
+    },
+    "243": {
+        "file_id": 25,
+        "content": "This function loads control primitives context from the \"voyager\" package. It first determines the package path, then checks for primitive names in the directory if none are provided. It retrieves and returns a list of loaded text primitives.",
+        "type": "comment"
+    },
+    "244": {
+        "file_id": 26,
+        "content": "/voyager/control_primitives_context/craftItem.js",
+        "type": "filepath"
+    },
+    "245": {
+        "file_id": 26,
+        "content": "Crafts specified item by following the recipe, requires a crafting table nearby.",
+        "type": "summary"
+    },
+    "246": {
+        "file_id": 26,
+        "content": "// Craft 8 oak_planks from 2 oak_log (do the recipe 2 times): craftItem(bot, \"oak_planks\", 2);\n// You must place a crafting table before calling this function\nasync function craftItem(bot, name, count = 1) {\n    const item = mcData.itemsByName[name];\n    const craftingTable = bot.findBlock({\n        matching: mcData.blocksByName.crafting_table.id,\n        maxDistance: 32,\n    });\n    await bot.pathfinder.goto(\n        new GoalLookAtBlock(craftingTable.position, bot.world)\n    );\n    const recipe = bot.recipesFor(item.id, null, 1, craftingTable)[0];\n    await bot.craft(recipe, count, craftingTable);\n}",
+        "type": "code",
+        "location": "/voyager/control_primitives_context/craftItem.js:1-14"
+    },
+    "247": {
+        "file_id": 26,
+        "content": "Crafts specified item by following the recipe, requires a crafting table nearby.",
+        "type": "comment"
+    },
+    "248": {
+        "file_id": 27,
+        "content": "/voyager/control_primitives_context/exploreUntil.js",
+        "type": "filepath"
+    },
+    "249": {
+        "file_id": 27,
+        "content": "This code uses the exploreUntil function to search for iron ore underground and pigs on the surface, with exploration stopping after 60 seconds or upon meeting a callback condition. It is within a Voyager control function and may define/manipulate exploration-related primitives.",
+        "type": "summary"
+    },
+    "250": {
+        "file_id": 27,
+        "content": "/*\nExplore until find an iron_ore, use Vec3(0, -1, 0) because iron ores are usually underground\nawait exploreUntil(bot, new Vec3(0, -1, 0), 60, () => {\n    const iron_ore = bot.findBlock({\n        matching: mcData.blocksByName[\"iron_ore\"].id,\n        maxDistance: 32,\n    });\n    return iron_ore;\n});\nExplore until find a pig, use Vec3(1, 0, 1) because pigs are usually on the surface\nlet pig = await exploreUntil(bot, new Vec3(1, 0, 1), 60, () => {\n    const pig = bot.nearestEntity((entity) => {\n        return (\n            entity.name === \"pig\" &&\n            entity.position.distanceTo(bot.entity.position) < 32\n        );\n    });\n    return pig;\n});\n*/\nasync function exploreUntil(bot, direction, maxTime = 60, callback) {\n    /*\n    Implementation of this function is omitted.\n    direction: Vec3, can only contain value of -1, 0 or 1\n    maxTime: number, the max time for exploration\n    callback: function, early stop condition, will be called each second, exploration will stop if return value is not null\n    Return: null if explore timeout, otherwise return the return value of callback",
+        "type": "code",
+        "location": "/voyager/control_primitives_context/exploreUntil.js:1-29"
+    },
+    "251": {
+        "file_id": 27,
+        "content": "This code uses the exploreUntil function to find an iron ore underground and a pig on the surface. It uses Vec3 direction vectors for searching, with exploration stopping after 60 seconds or if the callback condition is met early. The exploreUntil function takes parameters such as bot, direction, maxTime, and callback for exploration control.",
+        "type": "comment"
+    },
+    "252": {
+        "file_id": 27,
+        "content": "    */\n}",
+        "type": "code",
+        "location": "/voyager/control_primitives_context/exploreUntil.js:30-31"
+    },
+    "253": {
+        "file_id": 27,
+        "content": "This code block appears to be within a function that controls the exploration of the Voyager. The code ends with a closing brace, which may indicate that this section is defining or manipulating some control primitives in the context of exploration.",
+        "type": "comment"
+    },
+    "254": {
+        "file_id": 28,
+        "content": "/voyager/control_primitives_context/killMob.js",
+        "type": "filepath"
+    },
+    "255": {
+        "file_id": 28,
+        "content": "Kill a pig and collect the dropped item function called \"killMob\" which uses bot's nearestEntity to find the target mob, then attacks it and moves towards its position using pathfinder.",
+        "type": "summary"
+    },
+    "256": {
+        "file_id": 28,
+        "content": "// Kill a pig and collect the dropped item: killMob(bot, \"pig\", 300);\nasync function killMob(bot, mobName, timeout = 300) {\n    const entity = bot.nearestEntity(\n        (entity) =>\n            entity.name === mobName &&\n            entity.position.distanceTo(bot.entity.position) < 32\n    );\n    await bot.pvp.attack(entity);\n    await bot.pathfinder.goto(\n        new GoalBlock(entity.position.x, entity.position.y, entity.position.z)\n    );\n}",
+        "type": "code",
+        "location": "/voyager/control_primitives_context/killMob.js:1-12"
+    },
+    "257": {
+        "file_id": 28,
+        "content": "Kill a pig and collect the dropped item function called \"killMob\" which uses bot's nearestEntity to find the target mob, then attacks it and moves towards its position using pathfinder.",
+        "type": "comment"
+    },
+    "258": {
+        "file_id": 29,
+        "content": "/voyager/control_primitives_context/mineBlock.js",
+        "type": "filepath"
+    },
+    "259": {
+        "file_id": 29,
+        "content": "This function mines a specified block (e.g., stone) by finding and collecting the blocks within a 32-distance range, up to the count specified. It ignores \"No Path\" errors during collection.",
+        "type": "summary"
+    },
+    "260": {
+        "file_id": 29,
+        "content": "// Mine 3 cobblestone: mineBlock(bot, \"stone\", 3);\nasync function mineBlock(bot, name, count = 1) {\n    const blocks = bot.findBlocks({\n        matching: (block) => {\n            return block.name === name;\n        },\n        maxDistance: 32,\n        count: count,\n    });\n    const targets = [];\n    for (let i = 0; i < Math.min(blocks.length, count); i++) {\n        targets.push(bot.blockAt(blocks[i]));\n    }\n    await bot.collectBlock.collect(targets, { ignoreNoPath: true });\n}",
+        "type": "code",
+        "location": "/voyager/control_primitives_context/mineBlock.js:1-15"
+    },
+    "261": {
+        "file_id": 29,
+        "content": "This function mines a specified block (e.g., stone) by finding and collecting the blocks within a 32-distance range, up to the count specified. It ignores \"No Path\" errors during collection.",
+        "type": "comment"
+    },
+    "262": {
+        "file_id": 30,
+        "content": "/voyager/control_primitives_context/mineflayer.js",
+        "type": "filepath"
+    },
+    "263": {
+        "file_id": 30,
+        "content": "The code allows the Mineflayer bot to move, change equipment, target blocks/entities using goals and functions. It demonstrates how to activate an item and use it on an entity in proper order for functionality.",
+        "type": "summary"
+    },
+    "264": {
+        "file_id": 30,
+        "content": "await bot.pathfinder.goto(goal); // A very useful function. This function may change your main-hand equipment.\n// Following are some Goals you can use:\nnew GoalNear(x, y, z, range); // Move the bot to a block within the specified range of the specified block. `x`, `y`, `z`, and `range` are `number`\nnew GoalXZ(x, z); // Useful for long-range goals that don't have a specific Y level. `x` and `z` are `number`\nnew GoalGetToBlock(x, y, z); // Not get into the block, but get directly adjacent to it. Useful for fishing, farming, filling bucket, and beds. `x`, `y`, and `z` are `number`\nnew GoalFollow(entity, range); // Follow the specified entity within the specified range. `entity` is `Entity`, `range` is `number`\nnew GoalPlaceBlock(position, bot.world, {}); // Position the bot in order to place a block. `position` is `Vec3`\nnew GoalLookAtBlock(position, bot.world, {}); // Path into a position where a blockface of the block at position is visible. `position` is `Vec3`\n// These are other Mineflayer functions you can use:",
+        "type": "code",
+        "location": "/voyager/control_primitives_context/mineflayer.js:1-10"
+    },
+    "265": {
+        "file_id": 30,
+        "content": "This code contains various goals and functions that can be used with the Mineflayer bot for movement, equipment changes, and targeting specific blocks or entities. The `goto` function allows the bot to move towards a specified goal location, while other goals like `GoalNear`, `GoalXZ`, `GoalGetToBlock`, `GoalFollow`, `GoalPlaceBlock`, and `GoalLookAtBlock` provide more specific options for targeting and movement.",
+        "type": "comment"
+    },
+    "266": {
+        "file_id": 30,
+        "content": "bot.isABed(bedBlock); // Return true if `bedBlock` is a bed\nbot.blockAt(position); // Return the block at `position`. `position` is `Vec3`\n// These are other Mineflayer async functions you can use:\nawait bot.equip(item, destination); // Equip the item in the specified destination. `item` is `Item`, `destination` can only be \"hand\", \"head\", \"torso\", \"legs\", \"feet\", \"off-hand\"\nawait bot.consume(); // Consume the item in the bot's hand. You must equip the item to consume first. Useful for eating food, drinking potions, etc.\nawait bot.fish(); // Let bot fish. Before calling this function, you must first get to a water block and then equip a fishing rod. The bot will automatically stop fishing when it catches a fish\nawait bot.sleep(bedBlock); // Sleep until sunrise. You must get to a bed block first\nawait bot.activateBlock(block); // This is the same as right-clicking a block in the game. Useful for buttons, doors, etc. You must get to the block first\nawait bot.lookAt(position); // Look at the spec",
+        "type": "code",
+        "location": "/voyager/control_primitives_context/mineflayer.js:11-20"
+    },
+    "267": {
+        "file_id": 30,
+        "content": "The code provides a bot object with various Minecraft-related functions. The 'bot.isABed()' checks if 'bedBlock' is a bed, while 'bot.blockAt()' retrieves the block at specified position. Other functions allow equipping items, consuming items, fishing, sleeping until sunrise, activating blocks, and looking at specific positions using the bot object.",
+        "type": "comment"
+    },
+    "268": {
+        "file_id": 30,
+        "content": "ified position. You must go near the position before you look at it. To fill bucket with water, you must lookAt first. `position` is `Vec3`\nawait bot.activateItem(); // This is the same as right-clicking to use the item in the bot's hand. Useful for using buckets, etc. You must equip the item to activate first\nawait bot.useOn(entity); // This is the same as right-clicking an entity in the game. Useful for shearing sheep, equipping harnesses, etc. You must get to the entity first",
+        "type": "code",
+        "location": "/voyager/control_primitives_context/mineflayer.js:20-22"
+    },
+    "269": {
+        "file_id": 30,
+        "content": "The code snippet is from the Voyager project's \"mineflayer.js\" file, where it demonstrates how to activate an item (such as a bucket) and use it on an entity (e.g., filling the bucket with water). The sequence starts by activating the item using \"await bot.activateItem();\", followed by using the item on the entity with \"await bot.useOn(entity);\". It's crucial to follow this order - equip the item first and then use it on the entity for proper functionality in the Minecraft game.",
+        "type": "comment"
+    },
+    "270": {
+        "file_id": 31,
+        "content": "/voyager/control_primitives_context/placeItem.js",
+        "type": "filepath"
+    },
+    "271": {
+        "file_id": 31,
+        "content": "The function places an item near the player, finds the inventory item by name, searches for a reference block to place it on, determines position and facing direction, uses pathfinder to go there, and finally places the item. The code snippet equips an item in the bot's hand and then places a block relative to a reference block.",
+        "type": "summary"
+    },
+    "272": {
+        "file_id": 31,
+        "content": "// Place a crafting_table near the player, Vec3(1, 0, 0) is just an example, you shouldn't always use that: placeItem(bot, \"crafting_table\", bot.entity.position.offset(1, 0, 0));\nasync function placeItem(bot, name, position) {\n    const item = bot.inventory.findInventoryItem(mcData.itemsByName[name].id);\n    // find a reference block\n    const faceVectors = [\n        new Vec3(0, 1, 0),\n        new Vec3(0, -1, 0),\n        new Vec3(1, 0, 0),\n        new Vec3(-1, 0, 0),\n        new Vec3(0, 0, 1),\n        new Vec3(0, 0, -1),\n    ];\n    let referenceBlock = null;\n    let faceVector = null;\n    for (const vector of faceVectors) {\n        const block = bot.blockAt(position.minus(vector));\n        if (block?.name !== \"air\") {\n            referenceBlock = block;\n            faceVector = vector;\n            break;\n        }\n    }\n    // You must first go to the block position you want to place\n    await bot.pathfinder.goto(new GoalPlaceBlock(position, bot.world, {}));\n    // You must equip the item right before calling placeBlock",
+        "type": "code",
+        "location": "/voyager/control_primitives_context/placeItem.js:1-25"
+    },
+    "273": {
+        "file_id": 31,
+        "content": "This function places an item near the player. It first finds the inventory item by name, then searches for a reference block to place it on. After finding a suitable position and facing direction, the bot goes to that position using the pathfinder, and finally places the item.",
+        "type": "comment"
+    },
+    "274": {
+        "file_id": 31,
+        "content": "    await bot.equip(item, \"hand\");\n    await bot.placeBlock(referenceBlock, faceVector);\n}",
+        "type": "code",
+        "location": "/voyager/control_primitives_context/placeItem.js:26-28"
+    },
+    "275": {
+        "file_id": 31,
+        "content": "The code snippet equips an item in the bot's hand and then places a block relative to a reference block.",
+        "type": "comment"
+    },
+    "276": {
+        "file_id": 32,
+        "content": "/voyager/control_primitives_context/smeltItem.js",
+        "type": "filepath"
+    },
+    "277": {
+        "file_id": 32,
+        "content": "This function smelts a specified item using another item as fuel in a furnace. It finds the corresponding blocks for the items and furnace, then performs actions to smelt the items. The loop repeats for the specified count of items, waiting 12 seconds between each smelt. Finally, it closes the furnace after completion.",
+        "type": "summary"
+    },
+    "278": {
+        "file_id": 32,
+        "content": "// Smelt 1 raw_iron into 1 iron_ingot using 1 oak_planks as fuel: smeltItem(bot, \"raw_iron\", \"oak_planks\");\n// You must place a furnace before calling this function\nasync function smeltItem(bot, itemName, fuelName, count = 1) {\n    const item = mcData.itemsByName[itemName];\n    const fuel = mcData.itemsByName[fuelName];\n    const furnaceBlock = bot.findBlock({\n        matching: mcData.blocksByName.furnace.id,\n        maxDistance: 32,\n    });\n    await bot.pathfinder.goto(\n        new GoalLookAtBlock(furnaceBlock.position, bot.world)\n    );\n    const furnace = await bot.openFurnace(furnaceBlock);\n    for (let i = 0; i < count; i++) {\n        await furnace.putFuel(fuel.id, null, 1);\n        await furnace.putInput(item.id, null, 1);\n        // Wait 12 seconds for the furnace to smelt the item\n        await bot.waitForTicks(12 * 20);\n        await furnace.takeOutput();\n    }\n    await furnace.close();\n}",
+        "type": "code",
+        "location": "/voyager/control_primitives_context/smeltItem.js:1-22"
+    },
+    "279": {
+        "file_id": 32,
+        "content": "This function smelts a specified item using another item as fuel in a furnace. It finds the corresponding blocks for the items and furnace, then performs actions to smelt the items. The loop repeats for the specified count of items, waiting 12 seconds between each smelt. Finally, it closes the furnace after completion.",
+        "type": "comment"
+    },
+    "280": {
+        "file_id": 33,
+        "content": "/voyager/control_primitives_context/useChest.js",
+        "type": "filepath"
+    },
+    "281": {
+        "file_id": 33,
+        "content": "The code contains functions to iterate through items to deposit, find items in bot's inventory, and deposit them into chests. It also checks items inside specific chests using bot's actions for chest interactions.",
+        "type": "summary"
+    },
+    "282": {
+        "file_id": 33,
+        "content": "// Get a torch from chest at (30, 65, 100): getItemFromChest(bot, new Vec3(30, 65, 100), {\"torch\": 1});\n// This function will work no matter how far the bot is from the chest.\nasync function getItemFromChest(bot, chestPosition, itemsToGet) {\n    await moveToChest(bot, chestPosition);\n    const chestBlock = bot.blockAt(chestPosition);\n    const chest = await bot.openContainer(chestBlock);\n    for (const name in itemsToGet) {\n        const itemByName = mcData.itemsByName[name];\n        const item = chest.findContainerItem(itemByName.id);\n        await chest.withdraw(item.type, null, itemsToGet[name]);\n    }\n    await closeChest(bot, chestBlock);\n}\n// Deposit a torch into chest at (30, 65, 100): depositItemIntoChest(bot, new Vec3(30, 65, 100), {\"torch\": 1});\n// This function will work no matter how far the bot is from the chest.\nasync function depositItemIntoChest(bot, chestPosition, itemsToDeposit) {\n    await moveToChest(bot, chestPosition);\n    const chestBlock = bot.blockAt(chestPosition);\n    const chest = await bot.openContainer(chestBlock);",
+        "type": "code",
+        "location": "/voyager/control_primitives_context/useChest.js:1-19"
+    },
+    "283": {
+        "file_id": 33,
+        "content": "Gets a torch from the chest at position (30, 65, 100) and moves bot to it, opens the chest, retrieves the torch item, closes the chest, and returns.\n\nDeposits a torch into the chest at position (30, 65, 100) and moves bot to it, opens the chest, deposits the torch item, closes the chest, and returns.",
+        "type": "comment"
+    },
+    "284": {
+        "file_id": 33,
+        "content": "    for (const name in itemsToDeposit) {\n        const itemByName = mcData.itemsByName[name];\n        const item = bot.inventory.findInventoryItem(itemByName.id);\n        await chest.deposit(item.type, null, itemsToDeposit[name]);\n    }\n    await closeChest(bot, chestBlock);\n}\n// Check the items inside the chest at (30, 65, 100): checkItemInsideChest(bot, new Vec3(30, 65, 100));\n// You only need to call this function once without any action to finish task of checking items inside the chest.\nasync function checkItemInsideChest(bot, chestPosition) {\n    await moveToChest(bot, chestPosition);\n    const chestBlock = bot.blockAt(chestPosition);\n    await bot.openContainer(chestBlock);\n    // You must close the chest after opening it if you are asked to open a chest\n    await closeChest(bot, chestBlock);\n}",
+        "type": "code",
+        "location": "/voyager/control_primitives_context/useChest.js:20-35"
+    },
+    "285": {
+        "file_id": 33,
+        "content": "The code contains a function that iterates through itemsToDeposit, finds the item in bot's inventory, and deposits it into the chest. It also includes another function for checking items inside a specific chest using bot's actions. The functions work together to perform actions related to chest interactions.",
+        "type": "comment"
+    },
+    "286": {
+        "file_id": 34,
+        "content": "/voyager/env/__init__.py",
+        "type": "filepath"
+    },
+    "287": {
+        "file_id": 34,
+        "content": "The code imports the VoyagerEnv class from the bridge module to be used in this package. It appears to be an environment setting or configuration for a project called \"Voyager\".",
+        "type": "summary"
+    },
+    "288": {
+        "file_id": 34,
+        "content": "from .bridge import VoyagerEnv",
+        "type": "code",
+        "location": "/voyager/env/__init__.py:1-1"
+    },
+    "289": {
+        "file_id": 34,
+        "content": "The code imports the VoyagerEnv class from the bridge module to be used in this package. It appears to be an environment setting or configuration for a project called \"Voyager\".",
+        "type": "comment"
+    },
+    "290": {
+        "file_id": 35,
+        "content": "/voyager/env/bridge.py",
+        "type": "filepath"
+    },
+    "291": {
+        "file_id": 35,
+        "content": "The `VoyagerEnv` class sets up a Minecraft server using Mineflayer, providing pause/unpause functionality and returning the mineflayer instance with Azure login. It also has methods to reset and render, and classes for stopping, closing, and rendering the server.",
+        "type": "summary"
+    },
+    "292": {
+        "file_id": 35,
+        "content": "import os.path\nimport time\nimport warnings\nfrom typing import SupportsFloat, Any, Tuple, Dict\nimport requests\nimport json\nimport gymnasium as gym\nfrom gymnasium.core import ObsType\nimport voyager.utils as U\nfrom .minecraft_launcher import MinecraftInstance\nfrom .process_monitor import SubprocessMonitor\nclass VoyagerEnv(gym.Env):\n    def __init__(\n        self,\n        mc_port=None,\n        azure_login=None,\n        server_host=\"http://127.0.0.1\",\n        server_port=3000,\n        request_timeout=600,\n        log_path=\"./logs\",\n    ):\n        if not mc_port and not azure_login:\n            raise ValueError(\"Either mc_port or azure_login must be specified\")\n        if mc_port and azure_login:\n            warnings.warn(\n                \"Both mc_port and mc_login are specified, mc_port will be ignored\"\n            )\n        self.mc_port = mc_port\n        self.azure_login = azure_login\n        self.server = f\"{server_host}:{server_port}\"\n        self.server_port = server_port\n        self.request_timeout = request_timeout",
+        "type": "code",
+        "location": "/voyager/env/bridge.py:1-38"
+    },
+    "293": {
+        "file_id": 35,
+        "content": "This code defines a class `VoyagerEnv` that inherits from `gym.Env`, which represents an environment in the gymnasium framework. The constructor takes parameters such as `mc_port`, `azure_login`, `server_host`, `server_port`, `request_timeout`, and `log_path`. If neither `mc_port` nor `azure_login` is specified, a ValueError will be raised. If both are specified, a warning is logged and `mc_port` is ignored. The class likely interacts with Minecraft instances using the `MinecraftInstance` and `SubprocessMonitor` classes.",
+        "type": "comment"
+    },
+    "294": {
+        "file_id": 35,
+        "content": "        self.log_path = log_path\n        self.mineflayer = self.get_mineflayer_process(server_port)\n        if azure_login:\n            self.mc_instance = self.get_mc_instance()\n        else:\n            self.mc_instance = None\n        self.has_reset = False\n        self.reset_options = None\n        self.connected = False\n        self.server_paused = False\n    def get_mineflayer_process(self, server_port):\n        U.f_mkdir(self.log_path, \"mineflayer\")\n        file_path = os.path.abspath(os.path.dirname(__file__))\n        return SubprocessMonitor(\n            commands=[\n                \"node\",\n                U.f_join(file_path, \"mineflayer/index.js\"),\n                str(server_port),\n            ],\n            name=\"mineflayer\",\n            ready_match=r\"Server started on port (\\d+)\",\n            log_path=U.f_join(self.log_path, \"mineflayer\"),\n        )\n    def get_mc_instance(self):\n        print(\"Creating Minecraft server\")\n        U.f_mkdir(self.log_path, \"minecraft\")\n        return MinecraftInstance(\n            **self.azure_login,",
+        "type": "code",
+        "location": "/voyager/env/bridge.py:39-68"
+    },
+    "295": {
+        "file_id": 35,
+        "content": "This code sets up a Minecraft server using Mineflayer and MinecraftInstance. It initializes the necessary variables, gets the mineflayer process running with specified server port, creates directories for logs, and returns the mineflayer instance if Azure login is provided, or None otherwise.",
+        "type": "comment"
+    },
+    "296": {
+        "file_id": 35,
+        "content": "            mineflayer=self.mineflayer,\n            log_path=U.f_join(self.log_path, \"minecraft\"),\n        )\n    def check_process(self):\n        if self.mc_instance and not self.mc_instance.is_running:\n            # if self.mc_instance:\n            #     self.mc_instance.check_process()\n            #     if not self.mc_instance.is_running:\n            print(\"Starting Minecraft server\")\n            self.mc_instance.run()\n            self.mc_port = self.mc_instance.port\n            self.reset_options[\"port\"] = self.mc_instance.port\n            print(f\"Server started on port {self.reset_options['port']}\")\n        retry = 0\n        while not self.mineflayer.is_running:\n            print(\"Mineflayer process has exited, restarting\")\n            self.mineflayer.run()\n            if not self.mineflayer.is_running:\n                if retry > 3:\n                    raise RuntimeError(\"Mineflayer process failed to start\")\n                else:\n                    continue\n            print(self.mineflayer.ready_line)\n            res = requests.post(",
+        "type": "code",
+        "location": "/voyager/env/bridge.py:69-93"
+    },
+    "297": {
+        "file_id": 35,
+        "content": "The code checks if the Minecraft server and Mineflayer processes are running. If not, it starts the Minecraft server and restarts the Mineflayer process if it exits. It also makes a POST request.",
+        "type": "comment"
+    },
+    "298": {
+        "file_id": 35,
+        "content": "                f\"{self.server}/start\",\n                json=self.reset_options,\n                timeout=self.request_timeout,\n            )\n            if res.status_code != 200:\n                self.mineflayer.stop()\n                raise RuntimeError(\n                    f\"Minecraft server reply with code {res.status_code}\"\n                )\n            return res.json()\n    def step(\n        self,\n        code: str,\n        programs: str = \"\",\n    ) -> Tuple[ObsType, SupportsFloat, bool, bool, Dict[str, Any]]:\n        if not self.has_reset:\n            raise RuntimeError(\"Environment has not been reset yet\")\n        self.check_process()\n        self.unpause()\n        data = {\n            \"code\": code,\n            \"programs\": programs,\n        }\n        res = requests.post(\n            f\"{self.server}/step\", json=data, timeout=self.request_timeout\n        )\n        if res.status_code != 200:\n            raise RuntimeError(\"Failed to step Minecraft server\")\n        returned_data = res.json()\n        self.pause()\n        return json.loads(returned_data)",
+        "type": "code",
+        "location": "/voyager/env/bridge.py:94-125"
+    },
+    "299": {
+        "file_id": 35,
+        "content": "This code defines a class with methods for resetting the environment, stepping the Minecraft server, and returning observed data. It uses requests library to send HTTP POST requests to the server's \"start\" and \"step\" endpoints, checking status codes and handling errors accordingly. The class also has methods for pausing and unpausing the Minecraft server execution.",
+        "type": "comment"
+    }
+}

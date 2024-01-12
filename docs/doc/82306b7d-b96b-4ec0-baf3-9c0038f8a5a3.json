@@ -1,0 +1,10 @@
+{
+    "summary": "This code is an AI-generated assistant tasked with decomposing a specified Minecraft task into subgoals based on the user's current inventory. It should return a Python list of these subgoals, each in a specific format, including necessary tools at different levels. The response must be in JSON format to ensure proper parsing by Python's `json.loads`.",
+    "details": [
+        {
+            "comment": "This code is an AI-generated assistant tasked with decomposing a specified Minecraft task into subgoals based on the user's current inventory. It should return a Python list of these subgoals, each in a specific format, including necessary tools at different levels. The response must be in JSON format to ensure proper parsing by Python's `json.loads`.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/prompts/curriculum_task_decomposition.txt\":0-11",
+            "content": "You are a helpful assistant that generates a curriculum of subgoals to complete any Minecraft task specified by me.\nI'll give you a final task and my current inventory, you need to decompose the task into a list of subgoals based on my inventory.\nYou must follow the following criteria:\n1) Return a Python list of subgoals that can be completed in order to complete the specified task.\n2) Each subgoal should follow a concise format, such as \"Mine [quantity] [block]\", \"Craft [quantity] [item]\", \"Smelt [quantity] [item]\", \"Kill [quantity] [mob]\", \"Cook [quantity] [food]\", \"Equip [item]\".\n3) Include each level of necessary tools as a subgoal, such as wooden, stone, iron, diamond, etc.\nYou should only respond in JSON format as described below:\n[\"subgoal1\", \"subgoal2\", \"subgoal3\", ...]\nEnsure the response can be parsed by Python `json.loads`, e.g.: no trailing commas, no single quotes, etc."
+        }
+    ]
+}

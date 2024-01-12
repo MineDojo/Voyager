@@ -1,0 +1,10 @@
+{
+    "summary": "The code specifies the dependencies required for the project. It includes tqdm, langchain, javascript, setuptools, openai, chardet, cchardet, chromadb, tiktoken, requests, gymnasium, psutil, and minecraft_launcher_lib. These are essential libraries needed for the project's functionality.",
+    "details": [
+        {
+            "comment": "The code specifies the dependencies required for the project. It includes tqdm, langchain, javascript, setuptools, openai, chardet, cchardet, chromadb, tiktoken, requests, gymnasium, psutil, and minecraft_launcher_lib. These are essential libraries needed for the project's functionality.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/requirements.txt\":0-13",
+            "content": "tqdm\nlangchain\njavascript\nsetuptools\nopenai\nchardet\ncchardet\nchromadb==0.3.29\ntiktoken\nrequests\nsetuptools\ngymnasium\npsutil\nminecraft_launcher_lib"
+        }
+    ]
+}

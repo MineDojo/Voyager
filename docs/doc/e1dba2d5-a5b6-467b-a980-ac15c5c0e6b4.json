@@ -1,0 +1,10 @@
+{
+    "summary": "This code defines a main function named \"yourMainFunctionName\" that takes a parameter called \"bot\". The function is async, meaning it can perform asynchronous operations. It includes helper functions, which are only used if needed and should be avoided when possible. The code also has additional lines of code that may contain instructions or prompts.",
+    "details": [
+        {
+            "comment": "This code defines a main function named \"yourMainFunctionName\" that takes a parameter called \"bot\". The function is async, meaning it can perform asynchronous operations. It includes helper functions, which are only used if needed and should be avoided when possible. The code also has additional lines of code that may contain instructions or prompts.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/prompts/action_response_format.txt\":0-14",
+            "content": "Explain: ...\nPlan:\n1) ...\n2) ...\n3) ...\n...\nCode:\n```javascript\n// helper functions (only if needed, try to avoid them)\n...\n// main function after the helper functions\nasync function yourMainFunctionName(bot) {\n  // ...\n}\n```"
+        }
+    ]
+}

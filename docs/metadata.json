@@ -1,0 +1,270 @@
+{
+    "url": {
+        "full": "https://github.com/MineDojo/Voyager",
+        "partial": "MineDojo/Voyager"
+    },
+    "file_mapping": {
+        "0": {
+            "filepath": "/FAQ.md",
+            "entry_id": 0,
+            "language_id": "markdown"
+        },
+        "1": {
+            "filepath": "/README.md",
+            "entry_id": 12,
+            "language_id": "markdown"
+        },
+        "2": {
+            "filepath": "/installation/fabric_mods_install.md",
+            "entry_id": 28,
+            "language_id": "markdown"
+        },
+        "3": {
+            "filepath": "/installation/minecraft_instance_install.md",
+            "entry_id": 36,
+            "language_id": "markdown"
+        },
+        "4": {
+            "filepath": "/requirements.txt",
+            "entry_id": 44,
+            "language_id": "plain-text"
+        },
+        "5": {
+            "filepath": "/setup.py",
+            "entry_id": 48,
+            "language_id": "python"
+        },
+        "6": {
+            "filepath": "/skill_library/README.md",
+            "entry_id": 54,
+            "language_id": "markdown"
+        },
+        "7": {
+            "filepath": "/voyager/__init__.py",
+            "entry_id": 60,
+            "language_id": "python"
+        },
+        "8": {
+            "filepath": "/voyager/agents/__init__.py",
+            "entry_id": 64,
+            "language_id": "python"
+        },
+        "9": {
+            "filepath": "/voyager/agents/action.py",
+            "entry_id": 68,
+            "language_id": "python"
+        },
+        "10": {
+            "filepath": "/voyager/agents/critic.py",
+            "entry_id": 92,
+            "language_id": "python"
+        },
+        "11": {
+            "filepath": "/voyager/agents/curriculum.py",
+            "entry_id": 104,
+            "language_id": "python"
+        },
+        "12": {
+            "filepath": "/voyager/agents/skill.py",
+            "entry_id": 146,
+            "language_id": "python"
+        },
+        "13": {
+            "filepath": "/voyager/control_primitives/__init__.py",
+            "entry_id": 158,
+            "language_id": "python"
+        },
+        "14": {
+            "filepath": "/voyager/control_primitives/craftHelper.js",
+            "entry_id": 162,
+            "language_id": "javascript"
+        },
+        "15": {
+            "filepath": "/voyager/control_primitives/craftItem.js",
+            "entry_id": 170,
+            "language_id": "javascript"
+        },
+        "16": {
+            "filepath": "/voyager/control_primitives/exploreUntil.js",
+            "entry_id": 176,
+            "language_id": "javascript"
+        },
+        "17": {
+            "filepath": "/voyager/control_primitives/givePlacedItemBack.js",
+            "entry_id": 184,
+            "language_id": "javascript"
+        },
+        "18": {
+            "filepath": "/voyager/control_primitives/killMob.js",
+            "entry_id": 190,
+            "language_id": "javascript"
+        },
+        "19": {
+            "filepath": "/voyager/control_primitives/mineBlock.js",
+            "entry_id": 196,
+            "language_id": "javascript"
+        },
+        "20": {
+            "filepath": "/voyager/control_primitives/placeItem.js",
+            "entry_id": 202,
+            "language_id": "javascript"
+        },
+        "21": {
+            "filepath": "/voyager/control_primitives/shoot.js",
+            "entry_id": 210,
+            "language_id": "javascript"
+        },
+        "22": {
+            "filepath": "/voyager/control_primitives/smeltItem.js",
+            "entry_id": 214,
+            "language_id": "javascript"
+        },
+        "23": {
+            "filepath": "/voyager/control_primitives/useChest.js",
+            "entry_id": 222,
+            "language_id": "javascript"
+        },
+        "24": {
+            "filepath": "/voyager/control_primitives/waitForMobRemoved.js",
+            "entry_id": 232,
+            "language_id": "javascript"
+        },
+        "25": {
+            "filepath": "/voyager/control_primitives_context/__init__.py",
+            "entry_id": 240,
+            "language_id": "python"
+        },
+        "26": {
+            "filepath": "/voyager/control_primitives_context/craftItem.js",
+            "entry_id": 244,
+            "language_id": "javascript"
+        },
+        "27": {
+            "filepath": "/voyager/control_primitives_context/exploreUntil.js",
+            "entry_id": 248,
+            "language_id": "javascript"
+        },
+        "28": {
+            "filepath": "/voyager/control_primitives_context/killMob.js",
+            "entry_id": 254,
+            "language_id": "javascript"
+        },
+        "29": {
+            "filepath": "/voyager/control_primitives_context/mineBlock.js",
+            "entry_id": 258,
+            "language_id": "javascript"
+        },
+        "30": {
+            "filepath": "/voyager/control_primitives_context/mineflayer.js",
+            "entry_id": 262,
+            "language_id": "javascript"
+        },
+        "31": {
+            "filepath": "/voyager/control_primitives_context/placeItem.js",
+            "entry_id": 270,
+            "language_id": "javascript"
+        },
+        "32": {
+            "filepath": "/voyager/control_primitives_context/smeltItem.js",
+            "entry_id": 276,
+            "language_id": "javascript"
+        },
+        "33": {
+            "filepath": "/voyager/control_primitives_context/useChest.js",
+            "entry_id": 280,
+            "language_id": "javascript"
+        },
+        "34": {
+            "filepath": "/voyager/env/__init__.py",
+            "entry_id": 286,
+            "language_id": "python"
+        },
+        "35": {
+            "filepath": "/voyager/env/bridge.py",
+            "entry_id": 290,
+            "language_id": "python"
+        },
+        "36": {
+            "filepath": "/voyager/env/minecraft_launcher.py",
+            "entry_id": 304,
+            "language_id": "python"
+        },
+        "37": {
+            "filepath": "/voyager/env/process_monitor.py",
+            "entry_id": 314,
+            "language_id": "python"
+        },
+        "38": {
+            "filepath": "/voyager/prompts/__init__.py",
+            "entry_id": 322,
+            "language_id": "python"
+        },
+        "39": {
+            "filepath": "/voyager/prompts/action_response_format.txt",
+            "entry_id": 326,
+            "language_id": "plain-text"
+        },
+        "40": {
+            "filepath": "/voyager/prompts/action_template.txt",
+            "entry_id": 330,
+            "language_id": "plain-text"
+        },
+        "41": {
+            "filepath": "/voyager/prompts/critic.txt",
+            "entry_id": 338,
+            "language_id": "plain-text"
+        },
+        "42": {
+            "filepath": "/voyager/prompts/curriculum.txt",
+            "entry_id": 348,
+            "language_id": "plain-text"
+        },
+        "43": {
+            "filepath": "/voyager/prompts/curriculum_qa_step1_ask_questions.txt",
+            "entry_id": 356,
+            "language_id": "plain-text"
+        },
+        "44": {
+            "filepath": "/voyager/prompts/curriculum_qa_step2_answer_questions.txt",
+            "entry_id": 366,
+            "language_id": "plain-text"
+        },
+        "45": {
+            "filepath": "/voyager/prompts/curriculum_task_decomposition.txt",
+            "entry_id": 370,
+            "language_id": "plain-text"
+        },
+        "46": {
+            "filepath": "/voyager/prompts/skill.txt",
+            "entry_id": 374,
+            "language_id": "plain-text"
+        },
+        "47": {
+            "filepath": "/voyager/utils/__init__.py",
+            "entry_id": 380,
+            "language_id": "python"
+        },
+        "48": {
+            "filepath": "/voyager/utils/file_utils.py",
+            "entry_id": 384,
+            "language_id": "python"
+        },
+        "49": {
+            "filepath": "/voyager/utils/json_utils.py",
+            "entry_id": 416,
+            "language_id": "python"
+        },
+        "50": {
+            "filepath": "/voyager/utils/record_utils.py",
+            "entry_id": 434,
+            "language_id": "python"
+        },
+        "51": {
+            "filepath": "/voyager/voyager.py",
+            "entry_id": 444,
+            "language_id": "python"
+        }
+    },
+    "project_name": "Voyager",
+    "split_count": 5
+}

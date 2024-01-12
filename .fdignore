@@ -1,0 +1,5 @@
+.*
+LICENSE
+*.{bin,pickle,parquet,png,pkl}
+vectordb
+docs

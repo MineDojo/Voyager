@@ -1,0 +1,541 @@
+{
+    "0": {
+        "file_id": 0,
+        "content": "/FAQ.md",
+        "type": "filepath"
+    },
+    "1": {
+        "file_id": 0,
+        "content": "This code tackles Voyager program FAQs and Mineflayer issues, covering solutions for errors, bots' behavior, installation, and limitations. It discusses using GPT-4 over GPT-3.5 with prompt length configuration, and estimates costs at around 50 USD for 160 iterations, advising to monitor expenses and bot behavior.",
+        "type": "summary"
+    },
+    "2": {
+        "file_id": 0,
+        "content": "# Frequently Asked Questions\n* [I got connection error after I click on the Azure login link and login to Microsoft account.](#i-got-a-connection-error-after-i-click-on-the-azure-login-link-and-login-to-my-microsoft-account)\n* [I got `KeyError: 'access_token'` after I copied the link](#i-got-keyerror-accesstoken-after-i-copied-the-link)\n* [I got `Subprocess Mineflayer failed to start` error.](#i-got-subprocess-mineflayer-failed-to-start-error)\n* [I saw the bot left and rejoin the game after each task.](#i-saw-the-bot-left-and-rejoin-the-game-after-each-task)\n* [How to show the bot's first-person perspective?](#how-to-show-the-bots-first-person-view)\n* [Can I use GPT-3.5 instead of GPT-4?](#can-i-use-gpt-35-instead-of-gpt-4)\n* [What's the estimated cost of running Voyager?](#whats-the-estimated-cost-of-running-voyager)\n## I got a connection error after I click on the Azure login link and login to my Microsoft account.\nIt's normal that you get a connection refused or 404 error after you log in. Y",
+        "type": "code",
+        "location": "/FAQ.md:1-12"
+    },
+    "3": {
+        "file_id": 0,
+        "content": "Code snippet discusses frequently asked questions related to the Voyager program, including connection errors, access token issues, bot behavior, and usage options.",
+        "type": "comment"
+    },
+    "4": {
+        "file_id": 0,
+        "content": "ou will still see the new URL in your browser. You just need to copy and paste that link. It should contain things like `code=M.C....` in that link.\n## I got `KeyError: 'access_token'` after I copied the link\nWhile testing Voyager, we use Redirect URI Type: `Public client/native (mobile & desktop)` in the app registration for Azure Login. However, according to the report in issue [#34](https://github.com/MineDojo/Voyager/issues/34#issuecomment-1567007133), the URI Type was changed to \"Web\" and it resolved the problem. Feel free to attempt both URI Types to determine which one works for you. If all the approaches fail, please refer to the original tutorial in [minecraft-launcher-lib](https://minecraft-launcher-lib.readthedocs.io/en/stable/tutorial/microsoft_login.html).\nUpdate: This is probably a Microsoft's bug. See [issue #80 in minecraft-launcher-lib](https://codeberg.org/JakobDev/minecraft-launcher-lib/issues/80). If you cannot solve this problem, you can try to use the [Minecraft Offi",
+        "type": "code",
+        "location": "/FAQ.md:12-18"
+    },
+    "5": {
+        "file_id": 0,
+        "content": "Code explains that the new URL contains necessary code like \"M.C...\" which should be copied and pasted. It also mentions a reported issue where 'KeyError: 'access_token'' occurs after copying the link, which was resolved by changing Redirect URI Type to \"Web\". If this fails, try original tutorial or it could be Microsoft's bug in reference #80.",
+        "type": "comment"
+    },
+    "6": {
+        "file_id": 0,
+        "content": "cial Launcher](./installation/minecraft_instance_install.md#option-2-minecraft-official-launcher) and use mc_port to run.\n## I got `Subprocess Mineflayer failed to start` error.\nThere are many reasons that may cause this problem. You can try with following solutions:\n1. Make sure you install nodejs and the dependency packages correctly. You can use the following command to check your installation:\n    ```bash\n    cd voyager/env/mineflayer\n    node index.js\n    ```\n   If you see `Server started on port {PORT}`, then your installation is correct. You can kill the process by `Ctrl+C`.\n2. Make sure you install Fabric correctly. You should be able to select the Fabric version in the Minecraft launcher. \n3. Each Mineflayer process can only listen to one port. If you want to start multiple instances of `Voyager`, you need to manually change the port when initialization:\n    ```python\n    from voyager import Voyager\n    voyager = Voyager(\n        server_port=3001, # default is 3000\n        ...\n    )\n    ```\n## I saw the bot left and rejoin the game after each task.",
+        "type": "code",
+        "location": "/FAQ.md:18-38"
+    },
+    "7": {
+        "file_id": 0,
+        "content": "The code provides solutions to resolve issues with Mineflayer, a bot used in the Voyager program. The first issue is ensuring proper installation of Node.js and dependencies, which can be checked by running a command in the specified directory. The second solution involves verifying the correct installation of Fabric and selecting the appropriate version in the Minecraft launcher. The third solution addresses running multiple instances of Voyager by manually changing the port during initialization.",
+        "type": "comment"
+    },
+    "8": {
+        "file_id": 0,
+        "content": "After completing each task, we'll reset the environment, which means the bot will exit and rejoin the game. This reset is necessary to synchronize Mineflayer with the Minecraft game. We do this because certain commands we utilize might result in lag on the Mineflayer side, causing the inventory stored in Mineflayer to differ from the actual inventory in the game. However, if you wish to avoid the reset, you can use `voyager.learn(reset_env=False)` and consider increasing the `env_wait_ticks` value. This will provide Mineflayer with additional time to sync with the Minecraft game.\n## How to show the bot's first-person view?\nDue to the Mineflayer's limitation, we currently can not directly get the bot's view in the game. Although there's a plugin called [prismarine-viewer](https://github.com/PrismarineJS/prismarine-viewer), the video quality is not good enough, so we opt not to use it. Our demo video is generated by [replay-mod](https://www.replaymod.com/). We start the recording and let the bot play for hours, then come back to the recording and render the view from the bot.",
+        "type": "code",
+        "location": "/FAQ.md:40-45"
+    },
+    "9": {
+        "file_id": 0,
+        "content": "Explanation: The code provides information about the necessity of resetting the environment after completing tasks to sync Mineflayer with the Minecraft game, and how to show the bot's first-person view. It also mentions the limitations of Mineflayer in directly getting the bot's view and a potential alternative (prismarine-viewer), but opts not to use it due to video quality issues. The demo video is generated by replay-mod, which records and renders the view from the bot after playing for hours.",
+        "type": "comment"
+    },
+    "10": {
+        "file_id": 0,
+        "content": "## Can I use GPT-3.5 instead of GPT-4?\nIt's highly recommended to use GPT-4. GPT-3.5 falls behind in terms of code quality and reasoning ability compared to GPT-4. Moreover, GPT-3.5 has a limited context length, which means it may provide incomplete responses. If you insist on using GPT-3.5, it is essential to configure it with `skill_manager_retrieval_top_k` ≤ 2 to reduce the context length of the prompt.\n## What's the estimated cost of running Voyager?\nUsing Voyager for approximately 160 iterations using GPT-4 will cost you around 50 USD. It's important to keep a close eye on your OpenAI API expenses and avoid unnecessary spending. Once Voyager begins running, it's recommended to monitor the bot's behavior for a period and ensure that it successfully completes some tasks.",
+        "type": "code",
+        "location": "/FAQ.md:48-54"
+    },
+    "11": {
+        "file_id": 0,
+        "content": "The code provides information about using GPT-4 instead of GPT-3.5, mentioning the benefits and the need to configure prompt length when using GPT-3.5. It also estimates the cost of running Voyager at approximately 50 USD for 160 iterations with GPT-4, advising to monitor expenses and bot behavior.",
+        "type": "comment"
+    },
+    "12": {
+        "file_id": 1,
+        "content": "/README.md",
+        "type": "filepath"
+    },
+    "13": {
+        "file_id": 1,
+        "content": "Voyager AI agent explores Minecraft, learns autonomously, outperforms SOTA, generalizes tasks, MIT licensed, expected 2023 Arxiv preprint (Arxiv-2305.16291).",
+        "type": "summary"
+    },
+    "14": {
+        "file_id": 1,
+        "content": "# Voyager: An Open-Ended Embodied Agent with Large Language Models\n<div align=\"center\">\n[[Website]](https://voyager.minedojo.org/)\n[[Arxiv]](https://arxiv.org/abs/2305.16291)\n[[PDF]](https://voyager.minedojo.org/assets/documents/voyager.pdf)\n[[Tweet]](https://twitter.com/DrJimFan/status/1662115266933972993?s=20)\n[![Python Version](https://img.shields.io/badge/Python-3.9-blue.svg)](https://github.com/MineDojo/Voyager)\n[![GitHub license](https://img.shields.io/github/license/MineDojo/Voyager)](https://github.com/MineDojo/Voyager/blob/main/LICENSE)\n______________________________________________________________________\nhttps://github.com/MineDojo/Voyager/assets/25460983/ce29f45b-43a5-4399-8fd8-5dd105fd64f2\n![](images/pull.png)\n</div>\nWe introduce Voyager, the first LLM-powered embodied lifelong learning agent\nin Minecraft that continuously explores the world, acquires diverse skills, and\nmakes novel discoveries without human intervention. Voyager consists of three\nkey components: 1) an automatic curriculum that maximizes exploration, 2) an",
+        "type": "code",
+        "location": "/README.md:1-24"
+    },
+    "15": {
+        "file_id": 1,
+        "content": "This code introduces Voyager, an embodied agent powered by large language models that continuously explores Minecraft, acquires skills, and discovers new things without human intervention. It consists of three main components: an automatic curriculum for exploration, a language model, and an interactive environment in Minecraft.",
+        "type": "comment"
+    },
+    "16": {
+        "file_id": 1,
+        "content": "ever-growing skill library of executable code for storing and retrieving complex\nbehaviors, and 3) a new iterative prompting mechanism that incorporates environment\nfeedback, execution errors, and self-verification for program improvement.\nVoyager interacts with GPT-4 via blackbox queries, which bypasses the need for\nmodel parameter fine-tuning. The skills developed by Voyager are temporally\nextended, interpretable, and compositional, which compounds the agent’s abilities\nrapidly and alleviates catastrophic forgetting. Empirically, Voyager shows\nstrong in-context lifelong learning capability and exhibits exceptional proficiency\nin playing Minecraft. It obtains 3.3× more unique items, travels 2.3× longer\ndistances, and unlocks key tech tree milestones up to 15.3× faster than prior SOTA.\nVoyager is able to utilize the learned skill library in a new Minecraft world to\nsolve novel tasks from scratch, while other techniques struggle to generalize.\nIn this repo, we provide Voyager code. This codebase is under [MIT License](LICENSE).",
+        "type": "code",
+        "location": "/README.md:25-38"
+    },
+    "17": {
+        "file_id": 1,
+        "content": "This code snippet describes Voyager's functionality: a skill library for storing and retrieving complex behaviors, an iterative prompting mechanism incorporating feedback, and interaction with GPT-4 through blackbox queries. It shows strong in-context lifelong learning capabilities, outperforming prior SOTA in Minecraft, generalizing to novel tasks from scratch. The codebase is under MIT License.",
+        "type": "comment"
+    },
+    "18": {
+        "file_id": 1,
+        "content": "# Installation\nVoyager requires Python ≥ 3.9 and Node.js ≥ 16.13.0. We have tested on Ubuntu 20.04, Windows 11, and macOS. You need to follow the instructions below to install Voyager.\n## Python Install\n```\ngit clone https://github.com/MineDojo/Voyager\ncd Voyager\npip install -e .\n```\n## Node.js Install\nIn addition to the Python dependencies, you need to install the following Node.js packages:\n```\ncd voyager/env/mineflayer\nnpm install -g npx\nnpm install\ncd mineflayer-collectblock\nnpx tsc\ncd ..\nnpm install\n```\n## Minecraft Instance Install\nVoyager depends on Minecraft game. You need to install Minecraft game and set up a Minecraft instance.\nFollow the instructions in [Minecraft Login Tutorial](installation/minecraft_instance_install.md) to set up your Minecraft Instance.\n## Fabric Mods Install\nYou need to install fabric mods to support all the features in Voyager. Remember to use the correct Fabric version of all the mods. \nFollow the instructions in [Fabric Mods Install](installation/fabric_mods_install.md) to install the mods.",
+        "type": "code",
+        "location": "/README.md:40-72"
+    },
+    "19": {
+        "file_id": 1,
+        "content": "This code provides instructions for installing Voyager, a tool that requires Python ≥ 3.9 and Node.js ≥ 16.13.0. It outlines steps for Python, Node.js, Minecraft instance, and Fabric mods installation with links to additional tutorials.",
+        "type": "comment"
+    },
+    "20": {
+        "file_id": 1,
+        "content": "# Getting Started\nVoyager uses OpenAI's GPT-4 as the language model. You need to have an OpenAI API key to use Voyager. You can get one from [here](https://platform.openai.com/account/api-keys).\nAfter the installation process, you can run Voyager by:\n```python\nfrom voyager import Voyager\n# You can also use mc_port instead of azure_login, but azure_login is highly recommended\nazure_login = {\n    \"client_id\": \"YOUR_CLIENT_ID\",\n    \"redirect_url\": \"https://127.0.0.1/auth-response\",\n    \"secret_value\": \"[OPTIONAL] YOUR_SECRET_VALUE\",\n    \"version\": \"fabric-loader-0.14.18-1.19\", # the version Voyager is tested on\n}\nopenai_api_key = \"YOUR_API_KEY\"\nvoyager = Voyager(\n    azure_login=azure_login,\n    openai_api_key=openai_api_key,\n)\n# start lifelong learning\nvoyager.learn()\n```\n* If you are running with `Azure Login` for the first time, it will ask you to follow the command line instruction to generate a config file.\n* For `Azure Login`, you also need to select the world and open the world to LAN by yourself. After you run `voyager.learn()` the game will pop up soon, you need to:",
+        "type": "code",
+        "location": "/README.md:74-100"
+    },
+    "21": {
+        "file_id": 1,
+        "content": "To use Voyager, ensure you have an OpenAI API key and install the required dependencies. Create an azure_login dictionary with your client ID, redirect URL, secret value (optional), and version. Set openai_api_key to YOUR_API_KEY. Instantiate Voyager with these settings. First-time Azure Login users will generate a config file following instructions. For Azure Login, open the world and LAN, then run learn(). The game will start soon.",
+        "type": "comment"
+    },
+    "22": {
+        "file_id": 1,
+        "content": "  1. Select `Singleplayer` and press `Create New World`.\n  2. Set Game Mode to `Creative` and Difficulty to `Peaceful`.\n  3. After the world is created, press `Esc` key and press `Open to LAN`.\n  4. Select `Allow cheats: ON` and press `Start LAN World`. You will see the bot join the world soon. \n# Resume from a checkpoint during learning\nIf you stop the learning process and want to resume from a checkpoint later, you can instantiate Voyager by:\n```python\nfrom voyager import Voyager\nvoyager = Voyager(\n    azure_login=azure_login,\n    openai_api_key=openai_api_key,\n    ckpt_dir=\"YOUR_CKPT_DIR\",\n    resume=True,\n)\n```\n# Run Voyager for a specific task with a learned skill library\nIf you want to run Voyager for a specific task with a learned skill library, you should first pass the skill library directory to Voyager:\n```python\nfrom voyager import Voyager\n# First instantiate Voyager with skill_library_dir.\nvoyager = Voyager(\n    azure_login=azure_login,\n    openai_api_key=openai_api_key,\n    skill_library_dir=\"./skill_library/trial1\", # Load a learned skill library.",
+        "type": "code",
+        "location": "/README.md:101-130"
+    },
+    "23": {
+        "file_id": 1,
+        "content": "1. The code provides instructions to set up a Minecraft world for Voyager learning.\n2. Users can resume from a checkpoint or run Voyager with a specific skill library.\n3. Required credentials, directories and settings need to be provided when instantiating the Voyager class.",
+        "type": "comment"
+    },
+    "24": {
+        "file_id": 1,
+        "content": "    ckpt_dir=\"YOUR_CKPT_DIR\", # Feel free to use a new dir. Do not use the same dir as skill library because new events will still be recorded to ckpt_dir. \n    resume=False, # Do not resume from a skill library because this is not learning.\n)\n```\nThen, you can run task decomposition. Notice: Occasionally, the task decomposition may not be logical. If you notice the printed sub-goals are flawed, you can rerun the decomposition.\n```python\n# Run task decomposition\ntask = \"YOUR TASK\" # e.g. \"Craft a diamond pickaxe\"\nsub_goals = voyager.decompose_task(task=task)\n```\nFinally, you can run the sub-goals with the learned skill library:\n```python\nvoyager.inference(sub_goals=sub_goals)\n```\nFor all valid skill libraries, see [Learned Skill Libraries](skill_library/README.md).\n# FAQ\nIf you have any questions, please check our [FAQ](FAQ.md) first before opening an issue.\n# Paper and Citation\nIf you find our work useful, please consider citing us! \n```bibtex\n@article{wang2023voyager,\n  title   = {Voyager: An Open-Ended Embodied Agent with Large Language Models},",
+        "type": "code",
+        "location": "/README.md:131-157"
+    },
+    "25": {
+        "file_id": 1,
+        "content": "This code sets up the Voyager agent with a specified checkpoint directory and disables resuming from a skill library because this task is not learning-based. After setting up, it decomposes a given task into sub-goals using Voyager's task decomposition functionality. Finally, it runs inference on these sub-goals using the learned skill library. Valid skill libraries can be found at [Learned Skill Libraries](skill_library/README.md).",
+        "type": "comment"
+    },
+    "26": {
+        "file_id": 1,
+        "content": "  author  = {Guanzhi Wang and Yuqi Xie and Yunfan Jiang and Ajay Mandlekar and Chaowei Xiao and Yuke Zhu and Linxi Fan and Anima Anandkumar},\n  year    = {2023},\n  journal = {arXiv preprint arXiv: Arxiv-2305.16291}\n}\n```\nDisclaimer: This project is strictly for research purposes, and not an official product from NVIDIA.",
+        "type": "code",
+        "location": "/README.md:158-164"
+    },
+    "27": {
+        "file_id": 1,
+        "content": "The code block represents the author, year, and journal information for a research paper. The paper is expected to be published in 2023 as an arXiv preprint with identifier Arxiv-2305.16291.",
+        "type": "comment"
+    },
+    "28": {
+        "file_id": 2,
+        "content": "/installation/fabric_mods_install.md",
+        "type": "filepath"
+    },
+    "29": {
+        "file_id": 2,
+        "content": "Summary: This code provides instructions for downloading Fabric Installer and JRE v17, installing mods, setting up respawn settings, and using fabric-loader for Minecraft gameplay.",
+        "type": "summary"
+    },
+    "30": {
+        "file_id": 2,
+        "content": "# Fabric Mods Install\nIn this tutorial, we will install the Fabric launcher and 5 mods. Remember to use the correct Fabric version that matches your game version (1.19) of all the mods. \n1. You can download the latest Fabric Installer from [here](https://fabricmc.net/use/installer/). For Windows users, just download the `.exe` file. For Mac or Ubuntu users, download the jar file and call `java -jar fabric-installer-0.11.2.jar` to install. Select game version to be `1.19` and loader version to be `0.14.18`. It will automatically detect your Minecraft game install location.\n2. After installing Fabric, you will have a `YOUR_MINECRAFT_GAME_LOCATION/mods` folder. You need to put all the mods under this folder. Also, you will have a `YOUR_MINECRAFT_GAME_LOCATION/versions/fabric-loader-0.14.18-1.19`. This is the version you will run the game with. \n3. Here are 4 mods that can be directly downloaded to `YOUR_MINECRAFT_GAME_LOCATION/mods` folder: \n   * [Fabric API](https://modrinth.com/mod/fabric-api/version/0.58.0+1.19): Basic Fabric APIs.",
+        "type": "code",
+        "location": "/installation/fabric_mods_install.md:1-6"
+    },
+    "31": {
+        "file_id": 2,
+        "content": "Installing Fabric mods: Download Fabric Installer, select 1.19 version, place mods in mods folder, use fabric-loader-0.14.18-1.19 for gameplay.",
+        "type": "comment"
+    },
+    "32": {
+        "file_id": 2,
+        "content": "   * [Mod Menu](https://cdn.modrinth.com/data/mOgUt4GM/versions/4.0.4/modmenu-4.0.4.jar): Used to manage all the mods that you download.\n   * [Complete Config](https://www.curseforge.com/minecraft/mc-mods/completeconfig/download/3821056): Dependency of server pause.\n   * [Multi Server Pause](https://www.curseforge.com/minecraft/mc-mods/multiplayer-server-pause-fabric/download/3822586): Used to pause the server when waiting for GPT-4 to reply.\n4. For the last mod [Better Respawn](https://github.com/xieleo5/better-respawn/tree/1.19), you need to manually clone and compile.\n   * After you clone the repo, remove the `'forge'` string in the last line of `settings.gradle`. Then run `gradlew build` to compile the mod. You will find the compiled jar file in `better-respawn/fabric/build/libs/better-respawn-fabric-1.19-2.0.0.jar`. Put the jar file to the mod folder.\n     * You will need a Java Runtime Environment v17+ to build `better-respawn`. Some newer JRE versions will error during build. Find th",
+        "type": "code",
+        "location": "/installation/fabric_mods_install.md:7-13"
+    },
+    "33": {
+        "file_id": 2,
+        "content": "The code provides a list of mods for Minecraft Fabric, including their descriptions and download links. It also outlines instructions for compiling the 'Better Respawn' mod manually, specifying version-specific changes to settings and build requirements.",
+        "type": "comment"
+    },
+    "34": {
+        "file_id": 2,
+        "content": "e JRE v17 archive [here](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html).\n   * After you launch the game, go to `YOUR_MINECRAFT_GAME_LOCATION/config/better-respawn`, and modify the properties file with:\n      ```\n      respawn_block_range=32\n      max_respawn_distance=32\n      min_respawn_distance=0\n      ```\n5. Don't forget to change the `version` in `azure_login` to `fabric-loader-0.14.18-1.19` that you are using. You can find it under `YOUR_MINECRAFT_GAME_LOCATION/version` folder.\nYou can return to [README.md](../README.md#getting-started) and getting started now.",
+        "type": "code",
+        "location": "/installation/fabric_mods_install.md:13-22"
+    },
+    "35": {
+        "file_id": 2,
+        "content": "Download JRE v17 archive, modify properties file with respawn settings, change `azure_login` version to `fabric-loader-0.14.18-1.19`, and return to README for getting started.",
+        "type": "comment"
+    },
+    "36": {
+        "file_id": 3,
+        "content": "/installation/minecraft_instance_install.md",
+        "type": "filepath"
+    },
+    "37": {
+        "file_id": 3,
+        "content": "This code sets up Azure login for Minecraft Voyager, requiring an Azure portal account and registering a new application with client_id, redirect_url, optional secret_value, and desired Minecraft version specified using fabric-loader.",
+        "type": "summary"
+    },
+    "38": {
+        "file_id": 3,
+        "content": "# Minecraft Instance Install\nTo start using Voyager, you should first make sure to have an official [Minecraft](https://www.minecraft.net/) game (version 1.19) installed. \nThere are two ways to start a Minecraft instance for Voyager. Sometimes GPT-4 will write an infinite loop that runs forever. In this case, there'll be a request timeout. Using Azure login can automatically resume the running if there's a request timeout.\n## Option 1: Microsoft Azure Login (Recommended)\nUsing this method will allow Voyager to automatically resume when there's a request timeout. This is dependent on the [minecraft-launcher-lib](https://minecraft-launcher-lib.readthedocs.io/en/stable/tutorial/microsoft_login.html#let-the-user-log-in) library.\n1. Sign in to [Azure Portal](https://portal.azure.com/).\n2. Go to [Azure Active Directory](https://portal.azure.com/#blade/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/Overview).\n3. Click on the `App Registrations` tab on the left panel.\n4. Click on the `New registration` button.",
+        "type": "code",
+        "location": "/installation/minecraft_instance_install.md:1-12"
+    },
+    "39": {
+        "file_id": 3,
+        "content": "Code snippet provides instructions to set up a Minecraft instance for Voyager, with the recommended method being Microsoft Azure Login. It outlines steps to create an Azure portal account, navigate to Active Directory, and register a new application.",
+        "type": "comment"
+    },
+    "40": {
+        "file_id": 3,
+        "content": "5. Fill the form with the following values:\n    - Name: `YOUR_APP_NAME`\n    - Supported account types: `Accounts in any organizational directory (Any Azure AD directory - Multitenant) and personal Microsoft accounts`\n    - Redirect URI Type: `Public client/native (mobile & desktop)`, Value: `https://127.0.0.1/auth-response` (If you get `KeyError: 'access_token'` in the end, you can try to change the type to `Web`, see [FAQ](https://github.com/MineDojo/Voyager/blob/main/FAQ.md) for more information)\n6. Click on the `Register` button.\n7. The `Application (client) ID` will be your `client_id`.\n8. [Optional] Go to the `Certificates & Secrets` tab and click on the `New client secret` button. Fill the description by yourself. After you click `Add`, you will see your value, this will be your `secret_value`.\n9. Go to your Minecraft install location `YOUR_MINECRAFT_GAME_LOCATION/versions`, and check all the versions you have. All the folder names are your valid `version` value. \nAfter these steps, you will finally get your azure_login information:",
+        "type": "code",
+        "location": "/installation/minecraft_instance_install.md:13-22"
+    },
+    "41": {
+        "file_id": 3,
+        "content": "Fill out the form with provided values, register the application, obtain client ID and secret value, check Minecraft versions for valid version, then collect azure_login information.",
+        "type": "comment"
+    },
+    "42": {
+        "file_id": 3,
+        "content": "```python\nazure_login = {\n    \"client_id\": \"CLIENT_ID FROM STEP 7\",\n    \"redirect_url\": \"https://127.0.0.1/auth-response\",\n    \"secret_value\": \"[OPTIONAL] SECRET_KEY FROM STEP 8\",\n    \"version\": \"MINECRAFT VERSION YOU WANT TO USE\",\n}\n```\n**Voyager use `fabric-loader-0.14.18-1.19` version to run all the experiments.** You may not have this version currently, you can move on to the [Fabric Mods Install](fabric_mods_install.md#fabric-mods-install) section and follow the instructions there to install the fabric version of the game.\n## Option 2: Minecraft Official Launcher\nAfter you install official Minecraft, you should have a Minecraft official launcher, open it, and follow the instructions here:\n1. Select the version you want to play and start the game.\n2. Select `Singleplayer` and create a new world.\n3. Set Game Mode to `Creative` and Difficulty to `Peaceful`.\n4. After the world is created, press `Esc` and select `Open to LAN`.\n5. Select `Allow cheats: ON` and press `Start LAN World`.\n6. You will see a port number in the chat log, that is your `mc-port`, use this number to instantiate Voyager later.",
+        "type": "code",
+        "location": "/installation/minecraft_instance_install.md:23-41"
+    },
+    "43": {
+        "file_id": 3,
+        "content": "This code sets up the necessary parameters for logging into Azure to create an instance of Minecraft. The \"client_id\" refers to a specific ID from Step 7, the \"redirect_url\" is set to \"https://127.0.0.1/auth-response\", the \"secret_value\" is an optional secret key from Step 8, and the \"version\" refers to the Minecraft version desired for use. This specific code utilizes fabric-loader-0.14.18-1.19 to run all experiments.",
+        "type": "comment"
+    },
+    "44": {
+        "file_id": 4,
+        "content": "/requirements.txt",
+        "type": "filepath"
+    },
+    "45": {
+        "file_id": 4,
+        "content": "The code specifies the dependencies required for the project. It includes tqdm, langchain, javascript, setuptools, openai, chardet, cchardet, chromadb, tiktoken, requests, gymnasium, psutil, and minecraft_launcher_lib. These are essential libraries needed for the project's functionality.",
+        "type": "summary"
+    },
+    "46": {
+        "file_id": 4,
+        "content": "tqdm\nlangchain\njavascript\nsetuptools\nopenai\nchardet\ncchardet\nchromadb==0.3.29\ntiktoken\nrequests\nsetuptools\ngymnasium\npsutil\nminecraft_launcher_lib",
+        "type": "code",
+        "location": "/requirements.txt:1-14"
+    },
+    "47": {
+        "file_id": 4,
+        "content": "The code specifies the dependencies required for the project. It includes tqdm, langchain, javascript, setuptools, openai, chardet, cchardet, chromadb, tiktoken, requests, gymnasium, psutil, and minecraft_launcher_lib. These are essential libraries needed for the project's functionality.",
+        "type": "comment"
+    },
+    "48": {
+        "file_id": 5,
+        "content": "/setup.py",
+        "type": "filepath"
+    },
+    "49": {
+        "file_id": 5,
+        "content": "This code sets up a Python package using setup.py, defining essential properties like name, requirements, and extras while adhering to given classifiers for development status, topic, and language.",
+        "type": "summary"
+    },
+    "50": {
+        "file_id": 5,
+        "content": "import os\nimport pathlib\nimport pkg_resources\nfrom setuptools import setup, find_packages\nPKG_NAME = \"voyager\"\nVERSION = \"0.1\"\nEXTRAS = {}\ndef _read_file(fname):\n    # this_dir = os.path.abspath(os.path.dirname(__file__))\n    # with open(os.path.join(this_dir, fname)) as f:\n    with pathlib.Path(fname).open(encoding=\"utf-8\") as fp:\n        return fp.read()\ndef _read_install_requires():\n    with pathlib.Path(\"requirements.txt\").open() as fp:\n        return [\n            str(requirement) for requirement in pkg_resources.parse_requirements(fp)\n        ]\ndef _fill_extras(extras):\n    if extras:\n        extras[\"all\"] = list(set([item for group in extras.values() for item in group]))\n    return extras\nsetup(\n    name=PKG_NAME,\n    version=VERSION,\n    author=f\"MineDojo Team\",\n    url=\"https://github.com/MineDojo/Voyager\",\n    description=\"research project\",\n    long_description=_read_file(\"README.md\"),\n    long_description_content_type=\"text/markdown\",\n    keywords=[\n        \"Open-Ended Learning\",\n        \"Lifelong Learning\",",
+        "type": "code",
+        "location": "/setup.py:1-42"
+    },
+    "51": {
+        "file_id": 5,
+        "content": "This code is setting up the Voyager Python package. It imports necessary modules, defines constants like PKG_NAME and VERSION, reads the installation requirements from a \"requirements.txt\" file, fills in extras if needed, and finally sets up the package using setup() function with various properties.",
+        "type": "comment"
+    },
+    "52": {
+        "file_id": 5,
+        "content": "        \"Embodied Agents\",\n        \"Large Language Models\",\n    ],\n    license=\"MIT License\",\n    packages=find_packages(include=f\"{PKG_NAME}.*\"),\n    include_package_data=True,\n    zip_safe=False,\n    install_requires=_read_install_requires(),\n    extras_require=_fill_extras(EXTRAS),\n    python_requires=\">=3.9\",\n    classifiers=[\n        \"Development Status :: 5 - Production/Stable\",\n        \"Topic :: Scientific/Engineering :: Artificial Intelligence\",\n        \"Environment :: Console\",\n        \"Programming Language :: Python :: 3.9\",\n    ],\n)",
+        "type": "code",
+        "location": "/setup.py:43-59"
+    },
+    "53": {
+        "file_id": 5,
+        "content": "This code is for setting up a Python package using setup.py. It includes the package name, author, description, license, packages to include, installation requirements, and extras. The classifiers specify development status, topic, and programming language.",
+        "type": "comment"
+    },
+    "54": {
+        "file_id": 6,
+        "content": "/skill_library/README.md",
+        "type": "filepath"
+    },
+    "55": {
+        "file_id": 6,
+        "content": "The code introduces the Skill Library and its community contributions for a project, providing instructions on resuming from a community contribution and contributing after running the learning process. It also outlines how to share the learned skill library.",
+        "type": "summary"
+    },
+    "56": {
+        "file_id": 6,
+        "content": "# Learned Skill Libraries\n## Ours\n* [skill_library/trial1](trial1)\n* [skill_library/trial2](trial2)\n* [skill_library/trial3](trial3)\n## Community Contributions\n* [daswer123/Voyager_checkpoint](https://github.com/daswer123/Voyager_checkpoint)\n* [swen128/Voyager_checkpoint](https://github.com/swen128/Voyager_checkpoint)\n* [DeveloperHarris/voyager_checkpoint](https://github.com/DeveloperHarris/voyager_checkpoint)\n### How to resume from a community contribution\nFirst, you need to clone or download their repo. Then, the resume is the same as using ours skill libraries. Just set `skill_library_dir=COMMUNITY_CKPT_DIR` where `COMMUNITY_CKPT_DIR` is the ckpt dir inside the folder you just downloaded.\n## How to Contribute\nAfter you run the learning process, you will see a checkpoint directory like:\n```\n.\n├── action\n│   └── chest_memory.json\n├── curriculum\n│   ├── completed_tasks.json\n│   ├── failed_tasks.json\n│   ├── qa_cache.json\n│   └── vectordb\n├── events\n└── skill\n    ├── code\n    │   ├── catchThreeFishWithCheck.js\n    │   ├── collectBamboo.js",
+        "type": "code",
+        "location": "/skill_library/README.md:1-34"
+    },
+    "57": {
+        "file_id": 6,
+        "content": "This code introduces the Skill Library and its community contributions for a project. It explains how to resume from a community contribution by cloning or downloading their repository and setting the skill library directory accordingly. It also provides information on how to contribute after running the learning process, resulting in a checkpoint directory with various files.",
+        "type": "comment"
+    },
+    "58": {
+        "file_id": 6,
+        "content": "    │   ├── ...\n    ├── description\n    │   ├── catchThreeFishWithCheck.txt\n    │   ├── collectBamboo.txt\n    │   └── ...\n    ├── skills.json\n    └── vectordb\n```\nOnly `YOUR_CKPT_DIR/skill` is a learned skill library, which you can share with others. Create a pull request and add your skill library link to this page.",
+        "type": "code",
+        "location": "/skill_library/README.md:35-44"
+    },
+    "59": {
+        "file_id": 6,
+        "content": "The code represents a skill library containing multiple text files, a JSON file, and a vector database. Only the `YOUR_CKPT_DIR/skill` directory is a learned skill library that can be shared with others by creating a pull request and adding the link to this page.",
+        "type": "comment"
+    },
+    "60": {
+        "file_id": 7,
+        "content": "/voyager/__init__.py",
+        "type": "filepath"
+    },
+    "61": {
+        "file_id": 7,
+        "content": "This line imports the Voyager class from the voyager module within the same package, allowing access to its methods and attributes.",
+        "type": "summary"
+    },
+    "62": {
+        "file_id": 7,
+        "content": "from .voyager import Voyager",
+        "type": "code",
+        "location": "/voyager/__init__.py:1-1"
+    },
+    "63": {
+        "file_id": 7,
+        "content": "This line imports the Voyager class from the voyager module within the same package, allowing access to its methods and attributes.",
+        "type": "comment"
+    },
+    "64": {
+        "file_id": 8,
+        "content": "/voyager/agents/__init__.py",
+        "type": "filepath"
+    },
+    "65": {
+        "file_id": 8,
+        "content": "This code imports different agents from their respective modules (action, critic, curriculum) and SkillManager for Voyager's agent functionality.",
+        "type": "summary"
+    },
+    "66": {
+        "file_id": 8,
+        "content": "from .action import ActionAgent\nfrom .critic import CriticAgent\nfrom .curriculum import CurriculumAgent\nfrom .skill import SkillManager",
+        "type": "code",
+        "location": "/voyager/agents/__init__.py:1-4"
+    },
+    "67": {
+        "file_id": 8,
+        "content": "This code imports different agents from their respective modules (action, critic, curriculum) and SkillManager for Voyager's agent functionality.",
+        "type": "comment"
+    },
+    "68": {
+        "file_id": 9,
+        "content": "/voyager/agents/action.py",
+        "type": "filepath"
+    },
+    "69": {
+        "file_id": 9,
+        "content": "The ActionAgent class handles agent behavior, using ChatOpenAI for language processing and offering options like chat log and error handling. It defines methods to update chest memory, render observations, and send actions, while processing game events, constructing observation strings, handling inventory, checking chest involvement, and executing async functions with error handling and item filtering.",
+        "type": "summary"
+    },
+    "70": {
+        "file_id": 9,
+        "content": "import re\nimport time\nimport voyager.utils as U\nfrom javascript import require\nfrom langchain.chat_models import ChatOpenAI\nfrom langchain.prompts import SystemMessagePromptTemplate\nfrom langchain.schema import AIMessage, HumanMessage, SystemMessage\nfrom voyager.prompts import load_prompt\nfrom voyager.control_primitives_context import load_control_primitives_context\nclass ActionAgent:\n    def __init__(\n        self,\n        model_name=\"gpt-3.5-turbo\",\n        temperature=0,\n        request_timout=120,\n        ckpt_dir=\"ckpt\",\n        resume=False,\n        chat_log=True,\n        execution_error=True,\n    ):\n        self.ckpt_dir = ckpt_dir\n        self.chat_log = chat_log\n        self.execution_error = execution_error\n        U.f_mkdir(f\"{ckpt_dir}/action\")\n        if resume:\n            print(f\"\\033[32mLoading Action Agent from {ckpt_dir}/action\\033[0m\")\n            self.chest_memory = U.load_json(f\"{ckpt_dir}/action/chest_memory.json\")\n        else:\n            self.chest_memory = {}\n        self.llm = ChatOpenAI(",
+        "type": "code",
+        "location": "/voyager/agents/action.py:1-34"
+    },
+    "71": {
+        "file_id": 9,
+        "content": "Initializing the ActionAgent class by setting its attributes and loading the necessary files. This class is used to control agent behavior, utilizing the ChatOpenAI language model for generating responses. It also has options for chat log, execution error handling, and saving/loading checkpoints for state persistence.",
+        "type": "comment"
+    },
+    "72": {
+        "file_id": 9,
+        "content": "            model_name=model_name,\n            temperature=temperature,\n            request_timeout=request_timout,\n        )\n    def update_chest_memory(self, chests):\n        for position, chest in chests.items():\n            if position in self.chest_memory:\n                if isinstance(chest, dict):\n                    self.chest_memory[position] = chest\n                if chest == \"Invalid\":\n                    print(\n                        f\"\\033[32mAction Agent removing chest {position}: {chest}\\033[0m\"\n                    )\n                    self.chest_memory.pop(position)\n            else:\n                if chest != \"Invalid\":\n                    print(f\"\\033[32mAction Agent saving chest {position}: {chest}\\033[0m\")\n                    self.chest_memory[position] = chest\n        U.dump_json(self.chest_memory, f\"{self.ckpt_dir}/action/chest_memory.json\")\n    def render_chest_observation(self):\n        chests = []\n        for chest_position, chest in self.chest_memory.items():\n            if isinstance(chest, dict) and len(chest) > 0:",
+        "type": "code",
+        "location": "/voyager/agents/action.py:35-59"
+    },
+    "73": {
+        "file_id": 9,
+        "content": "The code defines a class with methods for updating the agent's chest memory, rendering chest observations, and sending actions. It initializes an action agent using a model_name, temperature, and request_timeout. The update_chest_memory method checks if the chest already exists in the chest_memory dictionary and updates or removes it accordingly. If not present, it saves the new chest. Finally, the render_chest_observation method creates a list of chests from the chest memory and returns it.",
+        "type": "comment"
+    },
+    "74": {
+        "file_id": 9,
+        "content": "                chests.append(f\"{chest_position}: {chest}\")\n        for chest_position, chest in self.chest_memory.items():\n            if isinstance(chest, dict) and len(chest) == 0:\n                chests.append(f\"{chest_position}: Empty\")\n        for chest_position, chest in self.chest_memory.items():\n            if isinstance(chest, str):\n                assert chest == \"Unknown\"\n                chests.append(f\"{chest_position}: Unknown items inside\")\n        assert len(chests) == len(self.chest_memory)\n        if chests:\n            chests = \"\\n\".join(chests)\n            return f\"Chests:\\n{chests}\\n\\n\"\n        else:\n            return f\"Chests: None\\n\\n\"\n    def render_system_message(self, skills=[]):\n        system_template = load_prompt(\"action_template\")\n        # FIXME: Hardcoded control_primitives\n        base_skills = [\n            \"exploreUntil\",\n            \"mineBlock\",\n            \"craftItem\",\n            \"placeItem\",\n            \"smeltItem\",\n            \"killMob\",\n        ]\n        if not self.llm.model_name == \"gpt-3.5-turbo\":",
+        "type": "code",
+        "location": "/voyager/agents/action.py:60-86"
+    },
+    "75": {
+        "file_id": 9,
+        "content": "This code snippet is a part of the 'action.py' file in the Voyager project. It seems to be responsible for fetching information about chests from a data structure called 'chest_memory'. If a chest is empty, its status is updated accordingly. The function also checks if there are any unknown items inside a chest and updates its status as well. Finally, it returns the information on all chests found in the format of \"Chests: <list of chests>\". If no chests are found, it returns \"Chests: None\". Additionally, there's a comment indicating that this code may not work with a specific model_name (gpt-3.5-turbo).",
+        "type": "comment"
+    },
+    "76": {
+        "file_id": 9,
+        "content": "            base_skills += [\n                \"useChest\",\n                \"mineflayer\",\n            ]\n        programs = \"\\n\\n\".join(load_control_primitives_context(base_skills) + skills)\n        response_format = load_prompt(\"action_response_format\")\n        system_message_prompt = SystemMessagePromptTemplate.from_template(\n            system_template\n        )\n        system_message = system_message_prompt.format(\n            programs=programs, response_format=response_format\n        )\n        assert isinstance(system_message, SystemMessage)\n        return system_message\n    def render_human_message(\n        self, *, events, code=\"\", task=\"\", context=\"\", critique=\"\"\n    ):\n        chat_messages = []\n        error_messages = []\n        # FIXME: damage_messages is not used\n        damage_messages = []\n        assert events[-1][0] == \"observe\", \"Last event must be observe\"\n        for i, (event_type, event) in enumerate(events):\n            if event_type == \"onChat\":\n                chat_messages.append(event[\"onChat\"])",
+        "type": "code",
+        "location": "/voyager/agents/action.py:87-112"
+    },
+    "77": {
+        "file_id": 9,
+        "content": "The code initializes system message components by joining base skills with additional skills, loading the response format template, creating a system message prompt, and formatting the system message with the joined programs and response format. The render_human_message function creates chat messages, error messages, and damage messages based on event types. It asserts that the last event is \"observe\".",
+        "type": "comment"
+    },
+    "78": {
+        "file_id": 9,
+        "content": "            elif event_type == \"onError\":\n                error_messages.append(event[\"onError\"])\n            elif event_type == \"onDamage\":\n                damage_messages.append(event[\"onDamage\"])\n            elif event_type == \"observe\":\n                biome = event[\"status\"][\"biome\"]\n                time_of_day = event[\"status\"][\"timeOfDay\"]\n                voxels = event[\"voxels\"]\n                entities = event[\"status\"][\"entities\"]\n                health = event[\"status\"][\"health\"]\n                hunger = event[\"status\"][\"food\"]\n                position = event[\"status\"][\"position\"]\n                equipment = event[\"status\"][\"equipment\"]\n                inventory_used = event[\"status\"][\"inventoryUsed\"]\n                inventory = event[\"inventory\"]\n                assert i == len(events) - 1, \"observe must be the last event\"\n        observation = \"\"\n        if code:\n            observation += f\"Code from the last round:\\n{code}\\n\\n\"\n        else:\n            observation += f\"Code from the last round: No code in the first round\\n\\n\"",
+        "type": "code",
+        "location": "/voyager/agents/action.py:113-135"
+    },
+    "79": {
+        "file_id": 9,
+        "content": "This code handles different event types in a game agent. It appends error and damage messages, collects observe data like biome, time of day, voxels, entities, health, hunger, position, equipment, inventory used, and the inventory itself. Then it constructs an observation string based on if there's code from the last round or not.",
+        "type": "comment"
+    },
+    "80": {
+        "file_id": 9,
+        "content": "        if self.execution_error:\n            if error_messages:\n                error = \"\\n\".join(error_messages)\n                observation += f\"Execution error:\\n{error}\\n\\n\"\n            else:\n                observation += f\"Execution error: No error\\n\\n\"\n        if self.chat_log:\n            if chat_messages:\n                chat_log = \"\\n\".join(chat_messages)\n                observation += f\"Chat log: {chat_log}\\n\\n\"\n            else:\n                observation += f\"Chat log: None\\n\\n\"\n        observation += f\"Biome: {biome}\\n\\n\"\n        observation += f\"Time: {time_of_day}\\n\\n\"\n        if voxels:\n            observation += f\"Nearby blocks: {', '.join(voxels)}\\n\\n\"\n        else:\n            observation += f\"Nearby blocks: None\\n\\n\"\n        if entities:\n            nearby_entities = [\n                k for k, v in sorted(entities.items(), key=lambda x: x[1])\n            ]\n            observation += f\"Nearby entities (nearest to farthest): {', '.join(nearby_entities)}\\n\\n\"\n        else:\n            observation += f\"Nearby entities (nearest to farthest): None\\n\\n\"",
+        "type": "code",
+        "location": "/voyager/agents/action.py:137-166"
+    },
+    "81": {
+        "file_id": 9,
+        "content": "This code snippet is part of a larger program that appears to be an AI agent. It generates an observation for the agent, including information about execution errors, chat logs, biome, time of day, nearby blocks and entities. The observation is constructed by iterating through various lists, joining them with newlines, and appending them to the \"observation\" string variable. If a list is empty, a corresponding message is added to the observation.",
+        "type": "comment"
+    },
+    "82": {
+        "file_id": 9,
+        "content": "        observation += f\"Health: {health:.1f}/20\\n\\n\"\n        observation += f\"Hunger: {hunger:.1f}/20\\n\\n\"\n        observation += f\"Position: x={position['x']:.1f}, y={position['y']:.1f}, z={position['z']:.1f}\\n\\n\"\n        observation += f\"Equipment: {equipment}\\n\\n\"\n        if inventory:\n            observation += f\"Inventory ({inventory_used}/36): {inventory}\\n\\n\"\n        else:\n            observation += f\"Inventory ({inventory_used}/36): Empty\\n\\n\"\n        if not (\n            task == \"Place and deposit useless items into a chest\"\n            or task.startswith(\"Deposit useless items into the chest at\")\n        ):\n            observation += self.render_chest_observation()\n        observation += f\"Task: {task}\\n\\n\"\n        if context:\n            observation += f\"Context: {context}\\n\\n\"\n        else:\n            observation += f\"Context: None\\n\\n\"\n        if critique:\n            observation += f\"Critique: {critique}\\n\\n\"\n        else:\n            observation += f\"Critique: None\\n\\n\"\n        return HumanMessage(content=observation)",
+        "type": "code",
+        "location": "/voyager/agents/action.py:168-199"
+    },
+    "83": {
+        "file_id": 9,
+        "content": "This code generates an observation string containing the agent's health, hunger, position, equipment, inventory, and task. It also checks if a chest is involved in the current task, adds chest information if necessary, and includes context and critique if available. The final result is returned as a HumanMessage object.",
+        "type": "comment"
+    },
+    "84": {
+        "file_id": 9,
+        "content": "    def process_ai_message(self, message):\n        assert isinstance(message, AIMessage)\n        retry = 3\n        error = None\n        while retry > 0:\n            try:\n                babel = require(\"@babel/core\")\n                babel_generator = require(\"@babel/generator\").default\n                code_pattern = re.compile(r\"```(?:javascript|js)(.*?)```\", re.DOTALL)\n                code = \"\\n\".join(code_pattern.findall(message.content))\n                parsed = babel.parse(code)\n                functions = []\n                assert len(list(parsed.program.body)) > 0, \"No functions found\"\n                for i, node in enumerate(parsed.program.body):\n                    if node.type != \"FunctionDeclaration\":\n                        continue\n                    node_type = (\n                        \"AsyncFunctionDeclaration\"\n                        if node[\"async\"]\n                        else \"FunctionDeclaration\"\n                    )\n                    functions.append(\n                        {\n                            \"name\": node.id.name,",
+        "type": "code",
+        "location": "/voyager/agents/action.py:201-226"
+    },
+    "85": {
+        "file_id": 9,
+        "content": "The code defines a function process_ai_message, which takes an AIMessage object as input. It checks if the message is of correct type, then enters a while loop to handle potential errors. Inside the loop, it imports required libraries and compiles the JavaScript/JS code from the message content using Babel. It parses the compiled code and extracts function declarations from the program's body. If no functions are found, it raises an assertion error. The extracted functions are then stored in a list. This function seems to be part of an AI agent for processing messages containing JavaScript/JS code snippets.",
+        "type": "comment"
+    },
+    "86": {
+        "file_id": 9,
+        "content": "                            \"type\": node_type,\n                            \"body\": babel_generator(node).code,\n                            \"params\": list(node[\"params\"]),\n                        }\n                    )\n                # find the last async function\n                main_function = None\n                for function in reversed(functions):\n                    if function[\"type\"] == \"AsyncFunctionDeclaration\":\n                        main_function = function\n                        break\n                assert (\n                    main_function is not None\n                ), \"No async function found. Your main function must be async.\"\n                assert (\n                    len(main_function[\"params\"]) == 1\n                    and main_function[\"params\"][0].name == \"bot\"\n                ), f\"Main function {main_function['name']} must take a single argument named 'bot'\"\n                program_code = \"\\n\\n\".join(function[\"body\"] for function in functions)\n                exec_code = f\"await {main_function['name']}(bot);\"",
+        "type": "code",
+        "location": "/voyager/agents/action.py:227-246"
+    },
+    "87": {
+        "file_id": 9,
+        "content": "This code finds the last async function in a list of functions, asserts that there is one and it takes a single argument named \"bot\", then joins the bodies of all functions into program_code. It then creates an executable line of code with the main_function name and awaits its execution.",
+        "type": "comment"
+    },
+    "88": {
+        "file_id": 9,
+        "content": "                return {\n                    \"program_code\": program_code,\n                    \"program_name\": main_function[\"name\"],\n                    \"exec_code\": exec_code,\n                }\n            except Exception as e:\n                retry -= 1\n                error = e\n                time.sleep(1)\n        return f\"Error parsing action response (before program execution): {error}\"\n    def summarize_chatlog(self, events):\n        def filter_item(message: str):\n            craft_pattern = r\"I cannot make \\w+ because I need: (.*)\"\n            craft_pattern2 = (\n                r\"I cannot make \\w+ because there is no crafting table nearby\"\n            )\n            mine_pattern = r\"I need at least a (.*) to mine \\w+!\"\n            if re.match(craft_pattern, message):\n                return re.match(craft_pattern, message).groups()[0]\n            elif re.match(craft_pattern2, message):\n                return \"a nearby crafting table\"\n            elif re.match(mine_pattern, message):\n                return re.match(mine_pattern, message).groups()[0]",
+        "type": "code",
+        "location": "/voyager/agents/action.py:247-270"
+    },
+    "89": {
+        "file_id": 9,
+        "content": "The code defines a function that parses action responses and filters chat log messages for specific item requirements before program execution. It also includes error handling and retry mechanisms in case of exceptions during parsing. The chat log filtering uses regular expressions to match patterns and extract the required items.",
+        "type": "comment"
+    },
+    "90": {
+        "file_id": 9,
+        "content": "            else:\n                return \"\"\n        chatlog = set()\n        for event_type, event in events:\n            if event_type == \"onChat\":\n                item = filter_item(event[\"onChat\"])\n                if item:\n                    chatlog.add(item)\n        return \"I also need \" + \", \".join(chatlog) + \".\" if chatlog else \"\"",
+        "type": "code",
+        "location": "/voyager/agents/action.py:271-280"
+    },
+    "91": {
+        "file_id": 9,
+        "content": "Code checks for events of type \"onChat\", filters the items, and adds them to chatlog. If chatlog is not empty, returns a message mentioning required items. Otherwise, returns an empty string.",
+        "type": "comment"
+    },
+    "92": {
+        "file_id": 10,
+        "content": "/voyager/agents/critic.py",
+        "type": "filepath"
+    },
+    "93": {
+        "file_id": 10,
+        "content": "The CriticAgent class generates system and human messages, evaluates agent status based on mode (\"manual\" or \"auto\"), and checks task success using user or AI input. It is part of the Voyager project.",
+        "type": "summary"
+    },
+    "94": {
+        "file_id": 10,
+        "content": "from voyager.prompts import load_prompt\nfrom voyager.utils.json_utils import fix_and_parse_json\nfrom langchain.chat_models import ChatOpenAI\nfrom langchain.schema import HumanMessage, SystemMessage\nclass CriticAgent:\n    def __init__(\n        self,\n        model_name=\"gpt-3.5-turbo\",\n        temperature=0,\n        request_timout=120,\n        mode=\"auto\",\n    ):\n        self.llm = ChatOpenAI(\n            model_name=model_name,\n            temperature=temperature,\n            request_timeout=request_timout,\n        )\n        assert mode in [\"auto\", \"manual\"]\n        self.mode = mode\n    def render_system_message(self):\n        system_message = SystemMessage(content=load_prompt(\"critic\"))\n        return system_message\n    def render_human_message(self, *, events, task, context, chest_observation):\n        assert events[-1][0] == \"observe\", \"Last event must be observe\"\n        biome = events[-1][1][\"status\"][\"biome\"]\n        time_of_day = events[-1][1][\"status\"][\"timeOfDay\"]\n        voxels = events[-1][1][\"voxels\"]\n        health = events[-1][1][\"status\"][\"health\"]",
+        "type": "code",
+        "location": "/voyager/agents/critic.py:1-32"
+    },
+    "95": {
+        "file_id": 10,
+        "content": "The code defines a class named `CriticAgent`, which initializes a ChatOpenAI language model and provides methods for rendering system and human messages based on events, task, context, and chest observation. The agent's mode can be set to \"auto\" or \"manual\".",
+        "type": "comment"
+    },
+    "96": {
+        "file_id": 10,
+        "content": "        hunger = events[-1][1][\"status\"][\"food\"]\n        position = events[-1][1][\"status\"][\"position\"]\n        equipment = events[-1][1][\"status\"][\"equipment\"]\n        inventory_used = events[-1][1][\"status\"][\"inventoryUsed\"]\n        inventory = events[-1][1][\"inventory\"]\n        for i, (event_type, event) in enumerate(events):\n            if event_type == \"onError\":\n                print(f\"\\033[31mCritic Agent: Error occurs {event['onError']}\\033[0m\")\n                return None\n        observation = \"\"\n        observation += f\"Biome: {biome}\\n\\n\"\n        observation += f\"Time: {time_of_day}\\n\\n\"\n        if voxels:\n            observation += f\"Nearby blocks: {', '.join(voxels)}\\n\\n\"\n        else:\n            observation += f\"Nearby blocks: None\\n\\n\"\n        observation += f\"Health: {health:.1f}/20\\n\\n\"\n        observation += f\"Hunger: {hunger:.1f}/20\\n\\n\"\n        observation += f\"Position: x={position['x']:.1f}, y={position['y']:.1f}, z={position['z']:.1f}\\n\\n\"\n        observation += f\"Equipment: {equipment}\\n\\n\"",
+        "type": "code",
+        "location": "/voyager/agents/critic.py:33-60"
+    },
+    "97": {
+        "file_id": 10,
+        "content": "This code is capturing the agent's current status and events to construct an observation for evaluation. It checks for errors, retrieves biome, time of day, nearby blocks, health, hunger, and position information from events, and formats them into a string.",
+        "type": "comment"
+    },
+    "98": {
+        "file_id": 10,
+        "content": "        if inventory:\n            observation += f\"Inventory ({inventory_used}/36): {inventory}\\n\\n\"\n        else:\n            observation += f\"Inventory ({inventory_used}/36): Empty\\n\\n\"\n        observation += chest_observation\n        observation += f\"Task: {task}\\n\\n\"\n        if context:\n            observation += f\"Context: {context}\\n\\n\"\n        else:\n            observation += f\"Context: None\\n\\n\"\n        print(f\"\\033[31m****Critic Agent human message****\\n{observation}\\033[0m\")\n        return HumanMessage(content=observation)\n    def human_check_task_success(self):\n        confirmed = False\n        success = False\n        critique = \"\"\n        while not confirmed:\n            success = input(\"Success? (y/n)\")\n            success = success.lower() == \"y\"\n            critique = input(\"Enter your critique:\")\n            print(f\"Success: {success}\\nCritique: {critique}\")\n            confirmed = input(\"Confirm? (y/n)\") in [\"y\", \"\"]\n        return success, critique\n    def ai_check_task_success(self, messages, max_retries=5):",
+        "type": "code",
+        "location": "/voyager/agents/critic.py:62-91"
+    },
+    "99": {
+        "file_id": 10,
+        "content": "The code snippet contains two functions: \"human_check_task_success\" and \"ai_check_task_success\". The first function prompts the user to confirm if a task is successful and also asks for their critique. It repeats until the user confirms their response. The second function automatically determines whether a task was successful or not, based on the input provided by the AI system. Both functions return either True or False for success, along with the user's critique.",
+        "type": "comment"
+    }
+}

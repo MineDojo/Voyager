@@ -1,0 +1,543 @@
+{
+    "100": {
+        "file_id": 10,
+        "content": "        if max_retries == 0:\n            print(\n                \"\\033[31mFailed to parse Critic Agent response. Consider updating your prompt.\\033[0m\"\n            )\n            return False, \"\"\n        if messages[1] is None:\n            return False, \"\"\n        critic = self.llm(messages).content\n        print(f\"\\033[31m****Critic Agent ai message****\\n{critic}\\033[0m\")\n        try:\n            response = fix_and_parse_json(critic)\n            assert response[\"success\"] in [True, False]\n            if \"critique\" not in response:\n                response[\"critique\"] = \"\"\n            return response[\"success\"], response[\"critique\"]\n        except Exception as e:\n            print(f\"\\033[31mError parsing critic response: {e} Trying again!\\033[0m\")\n            return self.ai_check_task_success(\n                messages=messages,\n                max_retries=max_retries - 1,\n            )\n    def check_task_success(\n        self, *, events, task, context, chest_observation, max_retries=5\n    ):\n        human_message = self.render_human_message(",
+        "type": "code",
+        "location": "/voyager/agents/critic.py:92-119"
+    },
+    "101": {
+        "file_id": 10,
+        "content": "The code checks the Critic Agent's response and tries to parse it as JSON. If parsing fails, it prints an error message and retries up to a specified number of times. If the \"success\" field is not present in the parsed response or if \"critique\" is missing, default values are set before returning success and critique.",
+        "type": "comment"
+    },
+    "102": {
+        "file_id": 10,
+        "content": "            events=events,\n            task=task,\n            context=context,\n            chest_observation=chest_observation,\n        )\n        messages = [\n            self.render_system_message(),\n            human_message,\n        ]\n        if self.mode == \"manual\":\n            return self.human_check_task_success()\n        elif self.mode == \"auto\":\n            return self.ai_check_task_success(\n                messages=messages, max_retries=max_retries\n            )\n        else:\n            raise ValueError(f\"Invalid critic agent mode: {self.mode}\")",
+        "type": "code",
+        "location": "/voyager/agents/critic.py:120-138"
+    },
+    "103": {
+        "file_id": 10,
+        "content": "This code is a part of the critic agent class in the Voyager project. It initializes an instance with given events, task, context, and chest_observation. Then it creates a list of messages containing system and human messages. If the mode is set to \"manual\", it calls the human_check_task_success() function, otherwise if the mode is \"auto\", it calls ai_check_task_success() with the messages and max_retries as arguments. For any other invalid mode, it raises a ValueError.",
+        "type": "comment"
+    },
+    "104": {
+        "file_id": 11,
+        "content": "/voyager/agents/curriculum.py",
+        "type": "filepath"
+    },
+    "105": {
+        "file_id": 11,
+        "content": "The Curriculum Agent uses LangChain's ChatOpenAI and QA_ChatOpenAI for task-based learning, managing cache and tasks, storing info, calculating progress, generating observations during warm-up phase, and includes inventory usage checks. This AI game agent code handles QA interactions with the user, generates messages, asks questions, utilizes QA LLM for responses, processes question-concept pairs, and runs QA step 2 to answer questions.",
+        "type": "summary"
+    },
+    "106": {
+        "file_id": 11,
+        "content": "from __future__ import annotations\nimport random\nimport re\nimport voyager.utils as U\nfrom voyager.prompts import load_prompt\nfrom voyager.utils.json_utils import fix_and_parse_json\nfrom langchain.chat_models import ChatOpenAI\nfrom langchain.embeddings.openai import OpenAIEmbeddings\nfrom langchain.schema import HumanMessage, SystemMessage\nfrom langchain.vectorstores import Chroma\nclass CurriculumAgent:\n    def __init__(\n        self,\n        model_name=\"gpt-3.5-turbo\",\n        temperature=0,\n        qa_model_name=\"gpt-3.5-turbo\",\n        qa_temperature=0,\n        request_timout=120,\n        ckpt_dir=\"ckpt\",\n        resume=False,\n        mode=\"auto\",\n        warm_up=None,\n        core_inventory_items: str | None = None,\n    ):\n        self.llm = ChatOpenAI(\n            model_name=model_name,\n            temperature=temperature,\n            request_timeout=request_timout,\n        )\n        self.qa_llm = ChatOpenAI(\n            model_name=qa_model_name,\n            temperature=qa_temperature,\n            request_timeout=request_timout,",
+        "type": "code",
+        "location": "/voyager/agents/curriculum.py:1-37"
+    },
+    "107": {
+        "file_id": 11,
+        "content": "Class \"CurriculumAgent\" initializes LangChain's ChatOpenAI and QA_ChatOpenAI for language generation, with various optional parameters like model name, temperature, timeout, resume, mode etc. These LLMs (Language Generation Models) will be used to handle user queries or requests in the curriculum-based agent.",
+        "type": "comment"
+    },
+    "108": {
+        "file_id": 11,
+        "content": "        )\n        assert mode in [\n            \"auto\",\n            \"manual\",\n        ], f\"mode {mode} not supported\"\n        self.mode = mode\n        self.ckpt_dir = ckpt_dir\n        U.f_mkdir(f\"{ckpt_dir}/curriculum/vectordb\")\n        if resume:\n            print(f\"\\033[35mLoading Curriculum Agent from {ckpt_dir}/curriculum\\033[0m\")\n            self.completed_tasks = U.load_json(\n                f\"{ckpt_dir}/curriculum/completed_tasks.json\"\n            )\n            self.failed_tasks = U.load_json(f\"{ckpt_dir}/curriculum/failed_tasks.json\")\n            self.qa_cache = U.load_json(f\"{ckpt_dir}/curriculum/qa_cache.json\")\n        else:\n            self.completed_tasks = []\n            self.failed_tasks = []\n            self.qa_cache = {}\n        # vectordb for qa cache\n        self.qa_cache_questions_vectordb = Chroma(\n            collection_name=\"qa_cache_questions_vectordb\",\n            embedding_function=OpenAIEmbeddings(),\n            persist_directory=f\"{ckpt_dir}/curriculum/vectordb\",\n        )\n        assert self.qa_cache_questions_vectordb._collection.count() == len(",
+        "type": "code",
+        "location": "/voyager/agents/curriculum.py:38-63"
+    },
+    "109": {
+        "file_id": 11,
+        "content": "This code initializes a Curriculum Agent. It checks the mode (auto or manual), sets the checkpoint directory, and creates a curriculum/vectordb directory if it does not exist. If resuming from a checkpoint, it loads completed tasks, failed tasks, and QA cache from JSON files. Otherwise, it initializes empty lists for these tasks and an empty dictionary for the QA cache. The code then creates a Chroma vector database named \"qa_cache_questions_vectordb\" using the OpenAI embeddings function and specifies the persist directory as ckpt_dir/curriculum/vectordb. It asserts that the count of items in the collection is equal to the length of the loaded QA cache.",
+        "type": "comment"
+    },
+    "110": {
+        "file_id": 11,
+        "content": "            self.qa_cache\n        ), (\n            f\"Curriculum Agent's qa cache question vectordb is not synced with qa_cache.json.\\n\"\n            f\"There are {self.qa_cache_questions_vectordb._collection.count()} questions in vectordb \"\n            f\"but {len(self.qa_cache)} questions in qa_cache.json.\\n\"\n            f\"Did you set resume=False when initializing the agent?\\n\"\n            f\"You may need to manually delete the qa cache question vectordb directory for running from scratch.\\n\"\n        )\n        # if warm up not defined, initialize it as a dict, else, initialize all the missing value as a default value\n        if not warm_up:\n            warm_up = self.default_warmup\n        self.warm_up = {}\n        if \"optional_inventory_items\" in warm_up:\n            assert core_inventory_items is not None\n            self._core_inv_items_regex = re.compile(core_inventory_items)\n            self.warm_up[\"optional_inventory_items\"] = warm_up[\n                \"optional_inventory_items\"\n            ]\n        else:",
+        "type": "code",
+        "location": "/voyager/agents/curriculum.py:64-82"
+    },
+    "111": {
+        "file_id": 11,
+        "content": "This code is initializing the Curriculum Agent's QA cache, ensuring that the question vector database (vectordb) is synced with qa_cache.json. It checks if 'resume=False' was set during agent initialization and allows for the manual deletion of qa cache questions vectordb directory for running from scratch. The code also initializes the warm-up variable, ensuring it exists or setting missing values to default values.",
+        "type": "comment"
+    },
+    "112": {
+        "file_id": 11,
+        "content": "            self.warm_up[\"optional_inventory_items\"] = 0\n        for key in self.curriculum_observations:\n            self.warm_up[key] = warm_up.get(key, self.default_warmup[key])\n        self.warm_up[\"nearby_blocks\"] = 0\n        self.warm_up[\"inventory\"] = 0\n        self.warm_up[\"completed_tasks\"] = 0\n        self.warm_up[\"failed_tasks\"] = 0\n    @property\n    def default_warmup(self):\n        return {\n            \"context\": 15,\n            \"biome\": 10,\n            \"time\": 15,\n            \"nearby_blocks\": 0,\n            \"other_blocks\": 10,\n            \"nearby_entities\": 5,\n            \"health\": 15,\n            \"hunger\": 15,\n            \"position\": 0,\n            \"equipment\": 0,\n            \"inventory\": 0,\n            \"optional_inventory_items\": 7,\n            \"chests\": 0,\n            \"completed_tasks\": 0,\n            \"failed_tasks\": 0,\n        }\n    @property\n    def curriculum_observations(self):\n        return [\n            \"context\",\n            \"biome\",\n            \"time\",\n            \"nearby_blocks\",\n            \"other_blocks\",",
+        "type": "code",
+        "location": "/voyager/agents/curriculum.py:83-118"
+    },
+    "113": {
+        "file_id": 11,
+        "content": "Sets default warm-up values for curriculum agent, overrides with provided warm-up dictionary.",
+        "type": "comment"
+    },
+    "114": {
+        "file_id": 11,
+        "content": "            \"nearby_entities\",\n            \"health\",\n            \"hunger\",\n            \"position\",\n            \"equipment\",\n            \"inventory\",\n            \"chests\",\n            \"completed_tasks\",\n            \"failed_tasks\",\n        ]\n    @property\n    def progress(self):\n        return len(self.completed_tasks)\n    def render_system_message(self):\n        system_message = SystemMessage(content=load_prompt(\"curriculum\"))\n        assert isinstance(system_message, SystemMessage)\n        return system_message\n    def render_observation(self, *, events, chest_observation):\n        assert events[-1][0] == \"observe\", \"Last event must be observe\"\n        event = events[-1][1]\n        biome = event[\"status\"][\"biome\"]\n        time_of_day = event[\"status\"][\"timeOfDay\"]\n        voxels = event[\"voxels\"]\n        block_records = event[\"blockRecords\"]\n        entities = event[\"status\"][\"entities\"]\n        health = event[\"status\"][\"health\"]\n        hunger = event[\"status\"][\"food\"]\n        position = event[\"status\"][\"position\"]",
+        "type": "code",
+        "location": "/voyager/agents/curriculum.py:119-149"
+    },
+    "115": {
+        "file_id": 11,
+        "content": "This code defines a class with properties for storing information like nearby entities, health, hunger, position, equipment, inventory, chest observations, completed tasks, and failed tasks. It also has methods to calculate progress, render system messages, and generate observations based on events and chest observations, including biome, time of day, voxels, block records, entities' status, and player's health and hunger levels.",
+        "type": "comment"
+    },
+    "116": {
+        "file_id": 11,
+        "content": "        equipment = event[\"status\"][\"equipment\"]\n        inventory_used = event[\"status\"][\"inventoryUsed\"]\n        inventory = event[\"inventory\"]\n        if not any(\n            \"dirt\" in block\n            or \"log\" in block\n            or \"grass\" in block\n            or \"sand\" in block\n            or \"snow\" in block\n            for block in voxels\n        ):\n            biome = \"underground\"\n        other_blocks = \", \".join(\n            list(\n                set(block_records).difference(set(voxels).union(set(inventory.keys())))\n            )\n        )\n        other_blocks = other_blocks if other_blocks else \"None\"\n        nearby_entities = (\n            \", \".join([k for k, v in sorted(entities.items(), key=lambda x: x[1])])\n            if entities\n            else \"None\"\n        )\n        completed_tasks = (\n            \", \".join(self.completed_tasks) if self.completed_tasks else \"None\"\n        )\n        failed_tasks = \", \".join(self.failed_tasks) if self.failed_tasks else \"None\"\n        # filter out optional inventory items if required",
+        "type": "code",
+        "location": "/voyager/agents/curriculum.py:150-183"
+    },
+    "117": {
+        "file_id": 11,
+        "content": "This code block checks the equipment, inventory used, and overall inventory of an event. If there are no dirt, log, grass, sand, or snow blocks in the voxels, it sets the biome as \"underground\". It then identifies other blocks that were not present in the voxels or inventory, lists nearby entities, and lists completed and failed tasks, while handling cases where they might be empty. Finally, it filters out optional inventory items if required.",
+        "type": "comment"
+    },
+    "118": {
+        "file_id": 11,
+        "content": "        if self.progress < self.warm_up[\"optional_inventory_items\"]:\n            inventory = {\n                k: v\n                for k, v in inventory.items()\n                if self._core_inv_items_regex.search(k) is not None\n            }\n        observation = {\n            \"context\": \"\",\n            \"biome\": f\"Biome: {biome}\\n\\n\",\n            \"time\": f\"Time: {time_of_day}\\n\\n\",\n            \"nearby_blocks\": f\"Nearby blocks: {', '.join(voxels) if voxels else 'None'}\\n\\n\",\n            \"other_blocks\": f\"Other blocks that are recently seen: {other_blocks}\\n\\n\",\n            \"nearby_entities\": f\"Nearby entities: {nearby_entities}\\n\\n\",\n            \"health\": f\"Health: {health:.1f}/20\\n\\n\",\n            \"hunger\": f\"Hunger: {hunger:.1f}/20\\n\\n\",\n            \"position\": f\"Position: x={position['x']:.1f}, y={position['y']:.1f}, z={position['z']:.1f}\\n\\n\",\n            \"equipment\": f\"Equipment: {equipment}\\n\\n\",\n            \"inventory\": f\"Inventory ({inventory_used}/36): {inventory if inventory else 'Empty'}\\n\\n\",",
+        "type": "code",
+        "location": "/voyager/agents/curriculum.py:184-202"
+    },
+    "119": {
+        "file_id": 11,
+        "content": "The code checks if the agent's progress is less than the warm-up optional inventory items. If so, it filters the inventory based on core item regex and prepares an observation dictionary containing various information such as context, biome, time of day, nearby blocks, other blocks, nearby entities, health, hunger, position, equipment, and inventory (filtered). The observation dictionary is formatted with descriptive strings for each field.",
+        "type": "comment"
+    },
+    "120": {
+        "file_id": 11,
+        "content": "            \"chests\": chest_observation,\n            \"completed_tasks\": f\"Completed tasks so far: {completed_tasks}\\n\\n\",\n            \"failed_tasks\": f\"Failed tasks that are too hard: {failed_tasks}\\n\\n\",\n        }\n        return observation\n    def render_human_message(self, *, events, chest_observation):\n        content = \"\"\n        observation = self.render_observation(\n            events=events, chest_observation=chest_observation\n        )\n        if self.progress >= self.warm_up[\"context\"]:\n            questions, answers = self.run_qa(\n                events=events, chest_observation=chest_observation\n            )\n            i = 1\n            for question, answer in zip(questions, answers):\n                if \"Answer: Unknown\" in answer or \"language model\" in answer:\n                    continue\n                observation[\"context\"] += f\"Question {i}: {question}\\n\"\n                observation[\"context\"] += f\"{answer}\\n\\n\"\n                i += 1\n                if i > 5:\n                    break\n        for key in self.curriculum_observations:",
+        "type": "code",
+        "location": "/voyager/agents/curriculum.py:203-228"
+    },
+    "121": {
+        "file_id": 11,
+        "content": "This code generates an observation dictionary containing information about completed tasks, failed tasks, and contextual questions with answers. If the progress is past the warm-up phase, it adds up to 5 relevant questions and answers to the observation's \"context\" field.",
+        "type": "comment"
+    },
+    "122": {
+        "file_id": 11,
+        "content": "            if self.progress >= self.warm_up[key]:\n                if self.warm_up[key] != 0:\n                    should_include = random.random() < 0.8\n                else:\n                    should_include = True\n                if should_include:\n                    content += observation[key]\n        print(f\"\\033[35m****Curriculum Agent human message****\\n{content}\\033[0m\")\n        return HumanMessage(content=content)\n    def propose_next_task(self, *, events, chest_observation, max_retries=5):\n        if self.progress == 0 and self.mode == \"auto\":\n            task = \"Mine 1 wood log\"\n            context = \"You can mine one of oak, birch, spruce, jungle, acacia, dark oak, or mangrove logs.\"\n            return task, context\n        # hard code task when inventory is almost full\n        inventoryUsed = events[-1][1][\"status\"][\"inventoryUsed\"]\n        if inventoryUsed >= 33:\n            if chest_observation != \"Chests: None\\n\\n\":\n                chests = chest_observation[8:-2].split(\"\\n\")\n                for chest in chests:",
+        "type": "code",
+        "location": "/voyager/agents/curriculum.py:229-251"
+    },
+    "123": {
+        "file_id": 11,
+        "content": "The code defines a Curriculum Agent that generates human messages based on progress, warm-up keys, and observation data. It also proposes tasks depending on progress mode and inventory status. If the progress is zero and mode is \"auto\", it suggests mining one wood log. When inventory is almost full, it checks chest observation to propose tasks related to available chests.",
+        "type": "comment"
+    },
+    "124": {
+        "file_id": 11,
+        "content": "                    content = chest.split(\":\")[1]\n                    if content == \" Unknown items inside\" or content == \" Empty\":\n                        position = chest.split(\":\")[0]\n                        task = f\"Deposit useless items into the chest at {position}\"\n                        context = (\n                            f\"Your inventory have {inventoryUsed} occupied slots before depositing. \"\n                            \"After depositing, your inventory should only have 20 occupied slots. \"\n                            \"You should deposit useless items such as andesite, dirt, cobblestone, etc. \"\n                            \"Also, you can deposit low-level tools, \"\n                            \"For example, if you have a stone pickaxe, you can deposit a wooden pickaxe. \"\n                            \"Make sure the list of useless items are in your inventory \"\n                            \"(do not list items already in the chest), \"\n                            \"You can use bot.inventoryUsed() to check how many inventory slots are used.\"",
+        "type": "code",
+        "location": "/voyager/agents/curriculum.py:252-264"
+    },
+    "125": {
+        "file_id": 11,
+        "content": "This code checks the content of a chest and, if it's empty or contains unknown items, creates a task to deposit useless items into it. The user should have 20 occupied slots after depositing, and can use `bot.inventoryUsed()` to check inventory usage.",
+        "type": "comment"
+    },
+    "126": {
+        "file_id": 11,
+        "content": "                        )\n                        return task, context\n            if \"chest\" in events[-1][1][\"inventory\"]:\n                task = \"Place a chest\"\n                context = (\n                    f\"You have a chest in inventory, place it around you. \"\n                    f\"If chests is not None, or nearby blocks contains chest, this task is success.\"\n                )\n            else:\n                task = \"Craft 1 chest\"\n                context = \"Craft 1 chest with 8 planks of any kind of wood.\"\n            return task, context\n        messages = [\n            self.render_system_message(),\n            self.render_human_message(\n                events=events, chest_observation=chest_observation\n            ),\n        ]\n        if self.mode == \"auto\":\n            return self.propose_next_ai_task(messages=messages, max_retries=max_retries)\n        elif self.mode == \"manual\":\n            return self.propose_next_manual_task()\n        else:\n            raise ValueError(f\"Invalid curriculum agent mode: {self.mode}\")",
+        "type": "code",
+        "location": "/voyager/agents/curriculum.py:265-290"
+    },
+    "127": {
+        "file_id": 11,
+        "content": "The code checks if a chest is in the inventory or nearby blocks. If it's present, it sets the task as \"Place a chest\" and provides instructions for placing it around the player. If not, it sets the task as \"Craft 1 chest\" and gives instructions on how to craft one using planks of any wood. The code then generates messages and based on the mode (\"auto\" or \"manual\"), returns the next task proposal or manual task respectively. An error is raised for an invalid mode.",
+        "type": "comment"
+    },
+    "128": {
+        "file_id": 11,
+        "content": "    def propose_next_ai_task(self, *, messages, max_retries=5):\n        if max_retries == 0:\n            raise RuntimeError(\"Max retries reached, failed to propose ai task.\")\n        curriculum = self.llm(messages).content\n        print(f\"\\033[31m****Curriculum Agent ai message****\\n{curriculum}\\033[0m\")\n        try:\n            response = self.parse_ai_message(curriculum)\n            assert \"next_task\" in response\n            context = self.get_task_context(response[\"next_task\"])\n            return response[\"next_task\"], context\n        except Exception as e:\n            print(\n                f\"\\033[35mError parsing curriculum response: {e}. Trying again!\\033[0m\"\n            )\n            return self.propose_next_ai_task(\n                messages=messages,\n                max_retries=max_retries - 1,\n            )\n    def parse_ai_message(self, message):\n        task = \"\"\n        for line in message.split(\"\\n\"):\n            if line.startswith(\"Task:\"):\n                task = line[5:].replace(\".\", \"\").strip()",
+        "type": "code",
+        "location": "/voyager/agents/curriculum.py:292-315"
+    },
+    "129": {
+        "file_id": 11,
+        "content": "The code defines a `propose_next_ai_task` method that retrieves the curriculum from AI and parses it to get the next task. If parsing fails, it retries up to max retries or raises an error if max retries is reached. The code also includes a `parse_ai_message` method that extracts the task from the curriculum message.",
+        "type": "comment"
+    },
+    "130": {
+        "file_id": 11,
+        "content": "        assert task, \"Task not found in Curriculum Agent response\"\n        return {\"next_task\": task}\n    def propose_next_manual_task(self):\n        confirmed = False\n        task, context = \"\", \"\"\n        while not confirmed:\n            task = input(\"Enter task: \")\n            context = input(\"Enter context: \")\n            print(f\"Task: {task}\\nContext: {context}\")\n            confirmed = input(\"Confirm? (y/n)\").lower() in [\"y\", \"\"]\n        return task, context\n    def update_exploration_progress(self, info):\n        task = info[\"task\"]\n        if task.startswith(\"Deposit useless items into the chest at\"):\n            # No need to record the deposit task\n            return\n        if info[\"success\"]:\n            print(f\"\\033[35mCompleted task {task}.\\033[0m\")\n            self.completed_tasks.append(task)\n        else:\n            print(\n                f\"\\033[35mFailed to complete task {task}. Skipping to next task.\\033[0m\"\n            )\n            self.failed_tasks.append(task)\n        # clean up tasks and dump to disk",
+        "type": "code",
+        "location": "/voyager/agents/curriculum.py:316-343"
+    },
+    "131": {
+        "file_id": 11,
+        "content": "The code snippet contains three functions: \"get_next_task\", \"propose_next_manual_task\", and \"update_exploration_progress\". The first function retrieves the next task from a response, while the second one prompts the user to input a task and context. Lastly, the third function updates progress by checking task completion and adding tasks to completed or failed lists.",
+        "type": "comment"
+    },
+    "132": {
+        "file_id": 11,
+        "content": "        self.clean_up_tasks()\n    def clean_up_tasks(self):\n        updated_completed_tasks = []\n        # record repeated failed tasks\n        updated_failed_tasks = self.failed_tasks\n        # dedup but keep order\n        for task in self.completed_tasks:\n            if task not in updated_completed_tasks:\n                updated_completed_tasks.append(task)\n        # remove completed tasks from failed tasks\n        for task in updated_completed_tasks:\n            while task in updated_failed_tasks:\n                updated_failed_tasks.remove(task)\n        self.completed_tasks = updated_completed_tasks\n        self.failed_tasks = updated_failed_tasks\n        # dump to json\n        U.dump_json(\n            self.completed_tasks, f\"{self.ckpt_dir}/curriculum/completed_tasks.json\"\n        )\n        U.dump_json(self.failed_tasks, f\"{self.ckpt_dir}/curriculum/failed_tasks.json\")\n    def decompose_task(self, task, events):\n        messages = [\n            SystemMessage(\n                content=load_prompt(\"curriculum_task_decomposition\"),",
+        "type": "code",
+        "location": "/voyager/agents/curriculum.py:344-372"
+    },
+    "133": {
+        "file_id": 11,
+        "content": "The code snippet is responsible for cleaning up tasks, separating completed and failed ones, storing them in separate lists, and then dumping the updated lists into JSON files. It also contains a function to decompose a task given a set of events and generates a SystemMessage with content loaded from a curriculum_task_decomposition prompt.",
+        "type": "comment"
+    },
+    "134": {
+        "file_id": 11,
+        "content": "            ),\n            self.render_human_message(events=events, chest_observation=\"\"),\n            HumanMessage(content=f\"Final task: {task}\"),\n        ]\n        print(\n            f\"\\033[31m****Curriculum Agent task decomposition****\\nFinal task: {task}\\033[0m\"\n        )\n        response = self.llm(messages).content\n        print(f\"\\033[31m****Curriculum Agent task decomposition****\\n{response}\\033[0m\")\n        return fix_and_parse_json(response)\n    def run_qa(self, *, events, chest_observation):\n        questions_new, _ = self.run_qa_step1_ask_questions(\n            events=events, chest_observation=chest_observation\n        )\n        questions = []\n        answers = []\n        for question in questions_new:\n            if self.qa_cache_questions_vectordb._collection.count() > 0:\n                docs_and_scores = (\n                    self.qa_cache_questions_vectordb.similarity_search_with_score(\n                        question, k=1\n                    )\n                )\n                if docs_and_scores and docs_and_scores[0][1] < 0.05:",
+        "type": "code",
+        "location": "/voyager/agents/curriculum.py:373-397"
+    },
+    "135": {
+        "file_id": 11,
+        "content": "The code is a part of the Curriculum Agent, which decomposes tasks. It constructs messages for LLM and prints information about the final task. The `run_qa` function retrieves new questions from previous ones, checks if the Vectordb collection has any data, and performs a similarity search to find relevant answers with a score below 0.05.",
+        "type": "comment"
+    },
+    "136": {
+        "file_id": 11,
+        "content": "                    question_cached = docs_and_scores[0][0].page_content\n                    assert question_cached in self.qa_cache\n                    answer_cached = self.qa_cache[question_cached]\n                    questions.append(question_cached)\n                    answers.append(answer_cached)\n                    continue\n            answer = self.run_qa_step2_answer_questions(question=question)\n            assert question not in self.qa_cache\n            self.qa_cache[question] = answer\n            self.qa_cache_questions_vectordb.add_texts(\n                texts=[question],\n            )\n            U.dump_json(self.qa_cache, f\"{self.ckpt_dir}/curriculum/qa_cache.json\")\n            self.qa_cache_questions_vectordb.persist()\n            questions.append(question)\n            answers.append(answer)\n        assert len(questions_new) == len(questions) == len(answers)\n        return questions, answers\n    def get_task_context(self, task):\n        # if include ore in question, gpt will try to use tool with skill touch enhancement to mine",
+        "type": "code",
+        "location": "/voyager/agents/curriculum.py:398-418"
+    },
+    "137": {
+        "file_id": 11,
+        "content": "Code snippet:\n- Stores and retrieves question-answer pairs in cache\n- Uses run_qa_step2_answer_questions to generate answers from questions\n- Adds new question to vectordb and persists it\n- Dumps qa_cache into json file at specified location\n- Checks lengths of questions, answers, and questions_new are equal\n- Tool ore in question may prompt GPT to use touch enhancement tool for mining",
+        "type": "comment"
+    },
+    "138": {
+        "file_id": 11,
+        "content": "        question = (\n            f\"How to {task.replace('_', ' ').replace(' ore', '').replace(' ores', '').replace('.', '').strip().lower()}\"\n            f\" in Minecraft?\"\n        )\n        if question in self.qa_cache:\n            answer = self.qa_cache[question]\n        else:\n            answer = self.run_qa_step2_answer_questions(question=question)\n            self.qa_cache[question] = answer\n            self.qa_cache_questions_vectordb.add_texts(\n                texts=[question],\n            )\n            U.dump_json(self.qa_cache, f\"{self.ckpt_dir}/curriculum/qa_cache.json\")\n            self.qa_cache_questions_vectordb.persist()\n        context = f\"Question: {question}\\n{answer}\"\n        return context\n    def render_system_message_qa_step1_ask_questions(self):\n        return SystemMessage(content=load_prompt(\"curriculum_qa_step1_ask_questions\"))\n    def render_human_message_qa_step1_ask_questions(self, *, events, chest_observation):\n        observation = self.render_observation(\n            events=events, chest_observation=chest_observation",
+        "type": "code",
+        "location": "/voyager/agents/curriculum.py:419-441"
+    },
+    "139": {
+        "file_id": 11,
+        "content": "This code appears to be part of an AI agent that interacts with a user, likely in the context of a game like Minecraft. The code handles questions from the user and answers them using a caching system. It also seems to involve persistence of question-answer pairs for future reference, as well as rendering messages to guide the interaction.",
+        "type": "comment"
+    },
+    "140": {
+        "file_id": 11,
+        "content": "        )\n        content = \"\"\n        for key in self.curriculum_observations:\n            content += observation[key]\n        return HumanMessage(content=content)\n    def run_qa_step1_ask_questions(self, *, events, chest_observation):\n        biome = events[-1][1][\"status\"][\"biome\"].replace(\"_\", \" \")\n        questions = [\n            f\"What are the blocks that I can find in the {biome} in Minecraft?\",\n            f\"What are the items that I can find in the {biome} in Minecraft?\",\n            f\"What are the mobs that I can find in the {biome} in Minecraft?\",\n        ]\n        concepts = [biome, biome, biome]\n        messages = [\n            self.render_system_message_qa_step1_ask_questions(),\n            self.render_human_message_qa_step1_ask_questions(\n                events=events, chest_observation=chest_observation\n            ),\n        ]\n        qa_response = self.qa_llm(messages).content\n        try:\n            # Regex pattern to extract question and concept pairs\n            pattern = r\"Question \\d+: (.+)\\nConcept \\d+: (.+)\"",
+        "type": "code",
+        "location": "/voyager/agents/curriculum.py:442-465"
+    },
+    "141": {
+        "file_id": 11,
+        "content": "This code defines two methods: \"render_human_message_qa_step1_ask_questions\" and \"run_qa_step1_ask_questions\". The first method generates a human-readable message from the given events and chest observation. The second method asks three questions related to blocks, items, and mobs in a specific biome in Minecraft using the information from events and chest observation. It then passes these messages to the QA LLM for response, extracts question-concept pairs using regex, and tries to execute it.",
+        "type": "comment"
+    },
+    "142": {
+        "file_id": 11,
+        "content": "            # Extracting all question and concept pairs from the text\n            pairs = re.findall(pattern, qa_response)\n            # Storing each question and concept in separate lists\n            questions_new = [pair[0] for pair in pairs]\n            concepts_new = [pair[1] for pair in pairs]\n            assert len(questions_new) == len(concepts_new)\n            questions.extend(questions_new)\n            concepts.extend(concepts_new)\n        except Exception as e:\n            print(\n                f\"\\033[35mError parsing curriculum response for \"\n                f\"QA step 1 ask questions: {e}.\\033[0m\"\n            )\n        return questions, concepts\n    def render_system_message_qa_step2_answer_questions(self):\n        return SystemMessage(\n            content=load_prompt(\"curriculum_qa_step2_answer_questions\")\n        )\n    def render_human_message_qa_step2_answer_questions(self, question):\n        content = f\"Question: {question}\"\n        return HumanMessage(content=content)\n    def run_qa_step2_answer_questions(self, question):",
+        "type": "code",
+        "location": "/voyager/agents/curriculum.py:466-490"
+    },
+    "143": {
+        "file_id": 11,
+        "content": "The code extracts question and concept pairs from the text, stores them in separate lists, checks their lengths are equal, extends existing question and concept lists, handles exceptions while parsing curriculum response, renders system message with prompt for QA step 2, creates a human message with the question, and runs QA step 2 to answer questions.",
+        "type": "comment"
+    },
+    "144": {
+        "file_id": 11,
+        "content": "        messages = [\n            self.render_system_message_qa_step2_answer_questions(),\n            self.render_human_message_qa_step2_answer_questions(question=question),\n        ]\n        print(f\"\\033[35mCurriculum Agent Question: {question}\\033[0m\")\n        qa_answer = self.qa_llm(messages).content\n        print(f\"\\033[31mCurriculum Agent {qa_answer}\\033[0m\")\n        return qa_answer",
+        "type": "code",
+        "location": "/voyager/agents/curriculum.py:491-498"
+    },
+    "145": {
+        "file_id": 11,
+        "content": "This code renders system and human messages for a QA step, prints the curriculum agent's question, asks the QA language model for an answer, and returns it. The question and answer are printed in different colors for clarity.",
+        "type": "comment"
+    },
+    "146": {
+        "file_id": 12,
+        "content": "/voyager/agents/skill.py",
+        "type": "filepath"
+    },
+    "147": {
+        "file_id": 12,
+        "content": "The code initializes a SkillManager class, sets up language model (ChatOpenAI), creates directories for skill storage, loads control primitives, handles checkpoint resuming, manages skills, and utilizes VectorDB for data persistence with conflict resolution. The method retrieves top K skills based on query using vector database similarity search and returns their codes.",
+        "type": "summary"
+    },
+    "148": {
+        "file_id": 12,
+        "content": "import os\nimport voyager.utils as U\nfrom langchain.chat_models import ChatOpenAI\nfrom langchain.embeddings.openai import OpenAIEmbeddings\nfrom langchain.schema import HumanMessage, SystemMessage\nfrom langchain.vectorstores import Chroma\nfrom voyager.prompts import load_prompt\nfrom voyager.control_primitives import load_control_primitives\nclass SkillManager:\n    def __init__(\n        self,\n        model_name=\"gpt-3.5-turbo\",\n        temperature=0,\n        retrieval_top_k=5,\n        request_timout=120,\n        ckpt_dir=\"ckpt\",\n        resume=False,\n    ):\n        self.llm = ChatOpenAI(\n            model_name=model_name,\n            temperature=temperature,\n            request_timeout=request_timout,\n        )\n        U.f_mkdir(f\"{ckpt_dir}/skill/code\")\n        U.f_mkdir(f\"{ckpt_dir}/skill/description\")\n        U.f_mkdir(f\"{ckpt_dir}/skill/vectordb\")\n        # programs for env execution\n        self.control_primitives = load_control_primitives()\n        if resume:\n            print(f\"\\033[33mLoading Skill Manager from {ckpt_dir}/skill\\033[0m\")",
+        "type": "code",
+        "location": "/voyager/agents/skill.py:1-34"
+    },
+    "149": {
+        "file_id": 12,
+        "content": "The code initializes a SkillManager class, sets up the language model (ChatOpenAI), creates directories for skill storage, loads control primitives, and handles resuming from previous checkpoints if necessary.",
+        "type": "comment"
+    },
+    "150": {
+        "file_id": 12,
+        "content": "            self.skills = U.load_json(f\"{ckpt_dir}/skill/skills.json\")\n        else:\n            self.skills = {}\n        self.retrieval_top_k = retrieval_top_k\n        self.ckpt_dir = ckpt_dir\n        self.vectordb = Chroma(\n            collection_name=\"skill_vectordb\",\n            embedding_function=OpenAIEmbeddings(),\n            persist_directory=f\"{ckpt_dir}/skill/vectordb\",\n        )\n        assert self.vectordb._collection.count() == len(self.skills), (\n            f\"Skill Manager's vectordb is not synced with skills.json.\\n\"\n            f\"There are {self.vectordb._collection.count()} skills in vectordb but {len(self.skills)} skills in skills.json.\\n\"\n            f\"Did you set resume=False when initializing the manager?\\n\"\n            f\"You may need to manually delete the vectordb directory for running from scratch.\"\n        )\n    @property\n    def programs(self):\n        programs = \"\"\n        for skill_name, entry in self.skills.items():\n            programs += f\"{entry['code']}\\n\\n\"\n        for primitives in self.control_primitives:",
+        "type": "code",
+        "location": "/voyager/agents/skill.py:35-57"
+    },
+    "151": {
+        "file_id": 12,
+        "content": "The code initializes a SkillManager instance with skills loaded from a JSON file or an empty dictionary if none exists, sets retrieval_top_k and ckpt_dir attributes, creates a Chroma VectorDB with OpenAIEmbeddings, and asserts that the number of skills in the VectorDB matches the length of the skills.json file. It also provides a program property that returns programs from the skills.json file and control primitives.",
+        "type": "comment"
+    },
+    "152": {
+        "file_id": 12,
+        "content": "            programs += f\"{primitives}\\n\\n\"\n        return programs\n    def add_new_skill(self, info):\n        if info[\"task\"].startswith(\"Deposit useless items into the chest at\"):\n            # No need to reuse the deposit skill\n            return\n        program_name = info[\"program_name\"]\n        program_code = info[\"program_code\"]\n        skill_description = self.generate_skill_description(program_name, program_code)\n        print(\n            f\"\\033[33mSkill Manager generated description for {program_name}:\\n{skill_description}\\033[0m\"\n        )\n        if program_name in self.skills:\n            print(f\"\\033[33mSkill {program_name} already exists. Rewriting!\\033[0m\")\n            self.vectordb._collection.delete(ids=[program_name])\n            i = 2\n            while f\"{program_name}V{i}.js\" in os.listdir(f\"{self.ckpt_dir}/skill/code\"):\n                i += 1\n            dumped_program_name = f\"{program_name}V{i}\"\n        else:\n            dumped_program_name = program_name\n        self.vectordb.add_texts(",
+        "type": "code",
+        "location": "/voyager/agents/skill.py:58-80"
+    },
+    "153": {
+        "file_id": 12,
+        "content": "The code defines two functions: \"get_programs\" and \"add_new_skill\". The get_programs function generates a list of skills based on primitives, appends them to the programs variable with newline separators, and returns the final list. The add_new_skill function checks if a skill with the given name and code already exists. If it does, it deletes the existing skill and renames the current one to avoid conflicts before adding it to the database.",
+        "type": "comment"
+    },
+    "154": {
+        "file_id": 12,
+        "content": "            texts=[skill_description],\n            ids=[program_name],\n            metadatas=[{\"name\": program_name}],\n        )\n        self.skills[program_name] = {\n            \"code\": program_code,\n            \"description\": skill_description,\n        }\n        assert self.vectordb._collection.count() == len(\n            self.skills\n        ), \"vectordb is not synced with skills.json\"\n        U.dump_text(\n            program_code, f\"{self.ckpt_dir}/skill/code/{dumped_program_name}.js\"\n        )\n        U.dump_text(\n            skill_description,\n            f\"{self.ckpt_dir}/skill/description/{dumped_program_name}.txt\",\n        )\n        U.dump_json(self.skills, f\"{self.ckpt_dir}/skill/skills.json\")\n        self.vectordb.persist()\n    def generate_skill_description(self, program_name, program_code):\n        messages = [\n            SystemMessage(content=load_prompt(\"skill\")),\n            HumanMessage(\n                content=program_code\n                + \"\\n\\n\"\n                + f\"The main function is `{program_name}`.\"",
+        "type": "code",
+        "location": "/voyager/agents/skill.py:81-108"
+    },
+    "155": {
+        "file_id": 12,
+        "content": "This code is responsible for managing skills in a program, creating the necessary files and folders to store skill information such as code, description, and metadata. It uses VectorDB to persist data and U.dump functions to write text and JSON files. The `generate_skill_description` function generates a description based on the provided program name and code by passing it through the LLM with a system message loaded from \"load_prompt('skill')\". This function is used in skill creation or editing scenarios.",
+        "type": "comment"
+    },
+    "156": {
+        "file_id": 12,
+        "content": "            ),\n        ]\n        skill_description = f\"    // { self.llm(messages).content}\"\n        return f\"async function {program_name}(bot) {{\\n{skill_description}\\n}}\"\n    def retrieve_skills(self, query):\n        k = min(self.vectordb._collection.count(), self.retrieval_top_k)\n        if k == 0:\n            return []\n        print(f\"\\033[33mSkill Manager retrieving for {k} skills\\033[0m\")\n        docs_and_scores = self.vectordb.similarity_search_with_score(query, k=k)\n        print(\n            f\"\\033[33mSkill Manager retrieved skills: \"\n            f\"{', '.join([doc.metadata['name'] for doc, _ in docs_and_scores])}\\033[0m\"\n        )\n        skills = []\n        for doc, _ in docs_and_scores:\n            skills.append(self.skills[doc.metadata[\"name\"]][\"code\"])\n        return skills",
+        "type": "code",
+        "location": "/voyager/agents/skill.py:109-127"
+    },
+    "157": {
+        "file_id": 12,
+        "content": "This code snippet defines a method in the Voyager/voyager/agents/skill.py file responsible for retrieving skills based on query. It uses vector database similarity search to find top K skills and returns their corresponding codes. The process involves printing status messages during skill retrieval, with potential error handling for cases where no results are found or the retrieved skills' names are not present in the skills dictionary.",
+        "type": "comment"
+    },
+    "158": {
+        "file_id": 13,
+        "content": "/voyager/control_primitives/__init__.py",
+        "type": "filepath"
+    },
+    "159": {
+        "file_id": 13,
+        "content": "This function, load_control_primitives, imports necessary packages and defines the path to the \"voyager\" package. If no primitive names are provided, it retrieves them from the \"control_primitives\" directory within the package. It then loads these primitives as text files into a list and returns them.",
+        "type": "summary"
+    },
+    "160": {
+        "file_id": 13,
+        "content": "import pkg_resources\nimport os\nimport voyager.utils as U\ndef load_control_primitives(primitive_names=None):\n    package_path = pkg_resources.resource_filename(\"voyager\", \"\")\n    if primitive_names is None:\n        primitive_names = [\n            primitives[:-3]\n            for primitives in os.listdir(f\"{package_path}/control_primitives\")\n            if primitives.endswith(\".js\")\n        ]\n    primitives = [\n        U.load_text(f\"{package_path}/control_primitives/{primitive_name}.js\")\n        for primitive_name in primitive_names\n    ]\n    return primitives",
+        "type": "code",
+        "location": "/voyager/control_primitives/__init__.py:1-18"
+    },
+    "161": {
+        "file_id": 13,
+        "content": "This function, load_control_primitives, imports necessary packages and defines the path to the \"voyager\" package. If no primitive names are provided, it retrieves them from the \"control_primitives\" directory within the package. It then loads these primitives as text files into a list and returns them.",
+        "type": "comment"
+    },
+    "162": {
+        "file_id": 14,
+        "content": "/voyager/control_primitives/craftHelper.js",
+        "type": "filepath"
+    },
+    "163": {
+        "file_id": 14,
+        "content": "The function finds the minimum recipe for an item by checking nearby crafting tables and informs users about missing items needed to craft.",
+        "type": "summary"
+    },
+    "164": {
+        "file_id": 14,
+        "content": "function failedCraftFeedback(bot, name, item, craftingTable) {\n    const recipes = bot.recipesAll(item.id, null, craftingTable);\n    if (!recipes.length) {\n        throw new Error(`No crafting table nearby`);\n    } else {\n        const recipes = bot.recipesAll(\n            item.id,\n            null,\n            mcData.blocksByName.crafting_table.id\n        );\n        // find the recipe with the fewest missing ingredients\n        var min = 999;\n        var min_recipe = null;\n        for (const recipe of recipes) {\n            const delta = recipe.delta;\n            var missing = 0;\n            for (const delta_item of delta) {\n                if (delta_item.count < 0) {\n                    const inventory_item = bot.inventory.findInventoryItem(\n                        mcData.items[delta_item.id].name,\n                        null\n                    );\n                    if (!inventory_item) {\n                        missing += -delta_item.count;\n                    } else {\n                        missing += Math.max(",
+        "type": "code",
+        "location": "/voyager/control_primitives/craftHelper.js:1-26"
+    },
+    "165": {
+        "file_id": 14,
+        "content": "The function checks if there's a crafting table nearby and finds the recipe with the least missing ingredients for a specific item. It throws an error if no crafting table is found, and iterates through recipes to determine the number of missing ingredients.",
+        "type": "comment"
+    },
+    "166": {
+        "file_id": 14,
+        "content": "                            -delta_item.count - inventory_item.count,\n                            0\n                        );\n                    }\n                }\n            }\n            if (missing < min) {\n                min = missing;\n                min_recipe = recipe;\n            }\n        }\n        const delta = min_recipe.delta;\n        let message = \"\";\n        for (const delta_item of delta) {\n            if (delta_item.count < 0) {\n                const inventory_item = bot.inventory.findInventoryItem(\n                    mcData.items[delta_item.id].name,\n                    null\n                );\n                if (!inventory_item) {\n                    message += ` ${-delta_item.count} more ${\n                        mcData.items[delta_item.id].name\n                    }, `;\n                } else {\n                    if (inventory_item.count < -delta_item.count) {\n                        message += `${\n                            -delta_item.count - inventory_item.count\n                        } more ${mcData.items[delta_item.id].name}`;",
+        "type": "code",
+        "location": "/voyager/control_primitives/craftHelper.js:27-54"
+    },
+    "167": {
+        "file_id": 14,
+        "content": "This code checks if a recipe is missing any items, calculates the minimum missing item count for each ingredient, and stores the corresponding recipe. Then, it iterates through the delta (missing item counts) of each ingredient and checks if any are negative. If an ingredient's count is negative in the bot's inventory, it adds the absolute value of that difference to the message string. If the count is less than the missing count, it updates the minimum missing count and recipe accordingly. Finally, it assigns the minimum recipe delta to the variable 'delta'.",
+        "type": "comment"
+    },
+    "168": {
+        "file_id": 14,
+        "content": "                    }\n                }\n            }\n        }\n        bot.chat(`I cannot make ${name} because I need: ${message}`);\n    }\n}",
+        "type": "code",
+        "location": "/voyager/control_primitives/craftHelper.js:55-61"
+    },
+    "169": {
+        "file_id": 14,
+        "content": "The code checks if the bot has the required items to craft a specified item. If it doesn't, it informs the user about the missing items.",
+        "type": "comment"
+    },
+    "170": {
+        "file_id": 15,
+        "content": "/voyager/control_primitives/craftItem.js",
+        "type": "filepath"
+    },
+    "171": {
+        "file_id": 15,
+        "content": "\"craftItem\" is an asynchronous function that crafts items using a crafting table, validating inputs and catching errors with feedback before throwing an error after 10 tries.",
+        "type": "summary"
+    },
+    "172": {
+        "file_id": 15,
+        "content": "async function craftItem(bot, name, count = 1) {\n    // return if name is not string\n    if (typeof name !== \"string\") {\n        throw new Error(\"name for craftItem must be a string\");\n    }\n    // return if count is not number\n    if (typeof count !== \"number\") {\n        throw new Error(\"count for craftItem must be a number\");\n    }\n    const itemByName = mcData.itemsByName[name];\n    if (!itemByName) {\n        throw new Error(`No item named ${name}`);\n    }\n    const craftingTable = bot.findBlock({\n        matching: mcData.blocksByName.crafting_table.id,\n        maxDistance: 32,\n    });\n    if (!craftingTable) {\n        bot.chat(\"Craft without a crafting table\");\n    } else {\n        await bot.pathfinder.goto(\n            new GoalLookAtBlock(craftingTable.position, bot.world)\n        );\n    }\n    const recipe = bot.recipesFor(itemByName.id, null, 1, craftingTable)[0];\n    if (recipe) {\n        bot.chat(`I can make ${name}`);\n        try {\n            await bot.craft(recipe, count, craftingTable);\n            bot.chat(`I did the recipe for ${name} ${count} times`);",
+        "type": "code",
+        "location": "/voyager/control_primitives/craftItem.js:1-30"
+    },
+    "173": {
+        "file_id": 15,
+        "content": "This code defines an asynchronous function named \"craftItem\" that crafts a specified item by finding and using a crafting table. It checks if the input name is a string and count is a number before executing, ensuring valid parameters. If valid, it finds the nearest crafting table and attempts to craft the item using the bot's \"craft\" function.",
+        "type": "comment"
+    },
+    "174": {
+        "file_id": 15,
+        "content": "        } catch (err) {\n            bot.chat(`I cannot do the recipe for ${name} ${count} times`);\n        }\n    } else {\n        failedCraftFeedback(bot, name, itemByName, craftingTable);\n        _craftItemFailCount++;\n        if (_craftItemFailCount > 10) {\n            throw new Error(\n                \"craftItem failed too many times, check chat log to see what happened\"\n            );\n        }\n    }\n}",
+        "type": "code",
+        "location": "/voyager/control_primitives/craftItem.js:31-43"
+    },
+    "175": {
+        "file_id": 15,
+        "content": "Code block catches errors in crafting recipes and provides feedback for failed attempts, limiting the maximum number of tries to 10 before throwing an error.",
+        "type": "comment"
+    },
+    "176": {
+        "file_id": 16,
+        "content": "/voyager/control_primitives/exploreUntil.js",
+        "type": "filepath"
+    },
+    "177": {
+        "file_id": 16,
+        "content": "The `exploreUntil` function executes exploration tasks with a maximum time limit, resolving the result or null based on success or timeout.",
+        "type": "summary"
+    },
+    "178": {
+        "file_id": 16,
+        "content": "// Explore downward for 60 seconds: exploreUntil(bot, new Vec3(0, -1, 0), 60);\nasync function exploreUntil(\n    bot,\n    direction,\n    maxTime = 60,\n    callback = () => {\n        return false;\n    }\n) {\n    if (typeof maxTime !== \"number\") {\n        throw new Error(\"maxTime must be a number\");\n    }\n    if (typeof callback !== \"function\") {\n        throw new Error(\"callback must be a function\");\n    }\n    const test = callback();\n    if (test) {\n        bot.chat(\"Explore success.\");\n        return Promise.resolve(test);\n    }\n    if (direction.x === 0 && direction.y === 0 && direction.z === 0) {\n        throw new Error(\"direction cannot be 0, 0, 0\");\n    }\n    if (\n        !(\n            (direction.x === 0 || direction.x === 1 || direction.x === -1) &&\n            (direction.y === 0 || direction.y === 1 || direction.y === -1) &&\n            (direction.z === 0 || direction.z === 1 || direction.z === -1)\n        )\n    ) {\n        throw new Error(\n            \"direction must be a Vec3 only with value of -1, 0 or 1\"\n        );",
+        "type": "code",
+        "location": "/voyager/control_primitives/exploreUntil.js:1-33"
+    },
+    "179": {
+        "file_id": 16,
+        "content": "Explore downward for 60 seconds: exploreUntil(bot, new Vec3(0, -1, 0), 60);\n\nThe function `exploreUntil` takes a bot, direction, maximum time (default 60), and a callback. It checks if maxTime is a number, and if the callback is a function. If successful, it returns a resolved promise with the test result. If direction is 0 in all dimensions, it throws an error. If direction values are not -1, 0, or 1, it also throws an error.",
+        "type": "comment"
+    },
+    "180": {
+        "file_id": 16,
+        "content": "    }\n    maxTime = Math.min(maxTime, 1200);\n    return new Promise((resolve, reject) => {\n        const dx = direction.x;\n        const dy = direction.y;\n        const dz = direction.z;\n        let explorationInterval;\n        let maxTimeTimeout;\n        const cleanUp = () => {\n            clearInterval(explorationInterval);\n            clearTimeout(maxTimeTimeout);\n            bot.pathfinder.setGoal(null);\n        };\n        const explore = () => {\n            const x =\n                bot.entity.position.x +\n                Math.floor(Math.random() * 20 + 10) * dx;\n            const y =\n                bot.entity.position.y +\n                Math.floor(Math.random() * 20 + 10) * dy;\n            const z =\n                bot.entity.position.z +\n                Math.floor(Math.random() * 20 + 10) * dz;\n            let goal = new GoalNear(x, y, z);\n            if (dy === 0) {\n                goal = new GoalNearXZ(x, z);\n            }\n            bot.pathfinder.setGoal(goal);\n            try {\n                const result = callback();",
+        "type": "code",
+        "location": "/voyager/control_primitives/exploreUntil.js:34-67"
+    },
+    "181": {
+        "file_id": 16,
+        "content": "The code sets up an interval-based exploration function that randomly generates new exploration goals within a 20x20x20 block around the current entity position. The maxTime parameter limits the total time spent exploring to either the specified value or 1200 seconds. The function returns a Promise, and includes cleanup functions for clearing the interval and goal when complete or timed out.",
+        "type": "comment"
+    },
+    "182": {
+        "file_id": 16,
+        "content": "                if (result) {\n                    cleanUp();\n                    bot.chat(\"Explore success.\");\n                    resolve(result);\n                }\n            } catch (err) {\n                cleanUp();\n                reject(err);\n            }\n        };\n        explorationInterval = setInterval(explore, 2000);\n        maxTimeTimeout = setTimeout(() => {\n            cleanUp();\n            bot.chat(\"Max exploration time reached\");\n            resolve(null);\n        }, maxTime * 1000);\n    });\n}",
+        "type": "code",
+        "location": "/voyager/control_primitives/exploreUntil.js:68-87"
+    },
+    "183": {
+        "file_id": 16,
+        "content": "The code performs an exploration task with a maximum time limit. If the exploration succeeds within the specified time, it cleans up and resolves the result. Otherwise, it cleans up, rejects the error, and resolves null. The code sets two intervals: one for exploration at 2-second intervals, and another for timeout after the maximum time in milliseconds.",
+        "type": "comment"
+    },
+    "184": {
+        "file_id": 17,
+        "content": "/voyager/control_primitives/givePlacedItemBack.js",
+        "type": "filepath"
+    },
+    "185": {
+        "file_id": 17,
+        "content": "The givePlacedItemBack function, using parameters bot, name, and position, disables doTileDrops, calls givePlacedItemBackSingle for each pair of name and position, enables doTileDrops again. The givePlacedItemBackSingle gives item to the bot and updates history with block positions within a certain radius. This code destroys blocks, updates history, waits 20 ticks, and returns.",
+        "type": "summary"
+    },
+    "186": {
+        "file_id": 17,
+        "content": "async function givePlacedItemBack(bot, name, position) {\n    await bot.chat(\"/gamerule doTileDrops false\");\n    // iterate name and position\n    const history = [];\n    for (let i = 0; i < name.length; i++) {\n        await givePlacedItemBackSingle(bot, name[i], position[i]);\n    }\n    await bot.chat(\"/gamerule doTileDrops true\");\n    async function givePlacedItemBackSingle(bot, name, position) {\n        bot.chat(`/give bot ${name} 1`);\n        const x = Math.floor(position.x);\n        const y = Math.floor(position.y);\n        const z = Math.floor(position.z);\n        // loop through 125 blocks around the block\n        const size = 3;\n        for (let dx = -size; dx <= size; dx++) {\n            for (let dy = -size; dy <= size; dy++) {\n                for (let dz = -size; dz <= size; dz++) {\n                    const block = bot.blockAt(new Vec3(x + dx, y + dy, z + dz));\n                    if (\n                        block?.name === name &&\n                        !history.includes(block.position)\n                    ) {",
+        "type": "code",
+        "location": "/voyager/control_primitives/givePlacedItemBack.js:1-24"
+    },
+    "187": {
+        "file_id": 17,
+        "content": "Function givePlacedItemBack takes in a bot, name, and position as parameters. It disables doTileDrops, iterates through each pair of name and position, calls givePlacedItemBackSingle for each pair, then enables doTileDrops again. The givePlacedItemBackSingle function gives the item to the bot and checks if any blocks with the same name are within a certain radius, adding their positions to history if not already included.",
+        "type": "comment"
+    },
+    "188": {
+        "file_id": 17,
+        "content": "                        await bot.chat(\n                            `/setblock ${x + dx} ${y + dy} ${\n                                z + dz\n                            } air destroy`\n                        );\n                        history.push(block.position);\n                        await bot.waitForTicks(20);\n                        return;\n                    }\n                }\n            }\n        }\n    }\n}",
+        "type": "code",
+        "location": "/voyager/control_primitives/givePlacedItemBack.js:25-38"
+    },
+    "189": {
+        "file_id": 17,
+        "content": "This code sets a block at a specific location to air and destroys it if the condition is met, updates the history with the block's position, waits for 20 ticks, and returns.",
+        "type": "comment"
+    },
+    "190": {
+        "file_id": 18,
+        "content": "/voyager/control_primitives/killMob.js",
+        "type": "filepath"
+    },
+    "191": {
+        "file_id": 18,
+        "content": "This function checks inputs and retrieves the nearest entity with given name, throwing an error if not found. It handles mob killing and item collection in a game using auto-attack or regular attack based on equipped weapon, waiting for the mob to be removed before collecting items. If successful, progress is saved as \"${mobName}_killed\".",
+        "type": "summary"
+    },
+    "192": {
+        "file_id": 18,
+        "content": "async function killMob(bot, mobName, timeout = 300) {\n    // return if mobName is not string\n    if (typeof mobName !== \"string\") {\n        throw new Error(`mobName for killMob must be a string`);\n    }\n    // return if timeout is not number\n    if (typeof timeout !== \"number\") {\n        throw new Error(`timeout for killMob must be a number`);\n    }\n    const weaponsForShooting = [\n        \"bow\",\n        \"crossbow\",\n        \"snowball\",\n        \"ender_pearl\",\n        \"egg\",\n        \"splash_potion\",\n        \"trident\",\n    ];\n    const mainHandItem = bot.inventory.slots[bot.getEquipmentDestSlot(\"hand\")];\n    const entity = bot.nearestEntity(\n        (entity) =>\n            entity.name === mobName &&\n            // kill mob distance should be slightly bigger than explore distance\n            entity.position.distanceTo(bot.entity.position) < 48\n    );\n    if (!entity) {\n        bot.chat(`No ${mobName} nearby, please explore first`);\n        _killMobFailCount++;\n        if (_killMobFailCount > 10) {\n            throw new Error(",
+        "type": "code",
+        "location": "/voyager/control_primitives/killMob.js:1-32"
+    },
+    "193": {
+        "file_id": 18,
+        "content": "This function takes a bot, mob name and timeout as inputs. It checks if both the mobName is a string and timeout is a number. If not, it throws an error. Then, it retrieves the nearest entity with the given mobName, ensuring it's within a certain distance. If no entity is found, it sends a chat message and increments the fail count; if the fail count exceeds 10, it throws an error.",
+        "type": "comment"
+    },
+    "194": {
+        "file_id": 18,
+        "content": "                `killMob failed too many times, make sure you explore before calling killMob`\n            );\n        }\n        return;\n    }\n    let droppedItem;\n    if (mainHandItem && weaponsForShooting.includes(mainHandItem.name)) {\n        bot.hawkEye.autoAttack(entity, mainHandItem.name);\n        droppedItem = await waitForMobShot(bot, entity, timeout);\n    } else {\n        await bot.pvp.attack(entity);\n        droppedItem = await waitForMobRemoved(bot, entity, timeout);\n    }\n    if (droppedItem) {\n        await bot.collectBlock.collect(droppedItem, { ignoreNoPath: true });\n    }\n    bot.save(`${mobName}_killed`);\n}",
+        "type": "code",
+        "location": "/voyager/control_primitives/killMob.js:33-51"
+    },
+    "195": {
+        "file_id": 18,
+        "content": "This code handles the killing of a mob and subsequent item collection in a game. It uses auto-attack or regular attack based on the weapon equipped, then waits for the mob to be removed before collecting any dropped items. If successful, it saves the progress as \"${mobName}_killed\".",
+        "type": "comment"
+    },
+    "196": {
+        "file_id": 19,
+        "content": "/voyager/control_primitives/mineBlock.js",
+        "type": "filepath"
+    },
+    "197": {
+        "file_id": 19,
+        "content": "This function verifies valid inputs and collects blocks using the bot's `collectBlock` method. It initializes a mine block operation, ignores path, specifies count, saves bot state as `${name}_mined`, and notifies user if errors occur or no blocks are found.",
+        "type": "summary"
+    },
+    "198": {
+        "file_id": 19,
+        "content": "async function mineBlock(bot, name, count = 1) {\n    // return if name is not string\n    if (typeof name !== \"string\") {\n        throw new Error(`name for mineBlock must be a string`);\n    }\n    if (typeof count !== \"number\") {\n        throw new Error(`count for mineBlock must be a number`);\n    }\n    const blockByName = mcData.blocksByName[name];\n    if (!blockByName) {\n        throw new Error(`No block named ${name}`);\n    }\n    const blocks = bot.findBlocks({\n        matching: [blockByName.id],\n        maxDistance: 32,\n        count: 1024,\n    });\n    if (blocks.length === 0) {\n        bot.chat(`No ${name} nearby, please explore first`);\n        _mineBlockFailCount++;\n        if (_mineBlockFailCount > 10) {\n            throw new Error(\n                \"mineBlock failed too many times, make sure you explore before calling mineBlock\"\n            );\n        }\n        return;\n    }\n    const targets = [];\n    for (let i = 0; i < blocks.length; i++) {\n        targets.push(bot.blockAt(blocks[i]));\n    }\n    await bot.collectBlock.collect(targets, {",
+        "type": "code",
+        "location": "/voyager/control_primitives/mineBlock.js:1-32"
+    },
+    "199": {
+        "file_id": 19,
+        "content": "This function checks if the provided name and count are valid string and number respectively. It then searches for blocks with the specified name, and if found, collects them using the bot's `collectBlock` method. If no blocks are found or an error occurs during collection, it notifies the user accordingly.",
+        "type": "comment"
+    }
+}

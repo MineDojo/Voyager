@@ -1,0 +1,20 @@
+{
+    "summary": "The function finds the minimum recipe for an item by checking nearby crafting tables and informs users about missing items needed to craft.",
+    "details": [
+        {
+            "comment": "The function checks if there's a crafting table nearby and finds the recipe with the least missing ingredients for a specific item. It throws an error if no crafting table is found, and iterates through recipes to determine the number of missing ingredients.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/control_primitives/craftHelper.js\":0-25",
+            "content": "function failedCraftFeedback(bot, name, item, craftingTable) {\n    const recipes = bot.recipesAll(item.id, null, craftingTable);\n    if (!recipes.length) {\n        throw new Error(`No crafting table nearby`);\n    } else {\n        const recipes = bot.recipesAll(\n            item.id,\n            null,\n            mcData.blocksByName.crafting_table.id\n        );\n        // find the recipe with the fewest missing ingredients\n        var min = 999;\n        var min_recipe = null;\n        for (const recipe of recipes) {\n            const delta = recipe.delta;\n            var missing = 0;\n            for (const delta_item of delta) {\n                if (delta_item.count < 0) {\n                    const inventory_item = bot.inventory.findInventoryItem(\n                        mcData.items[delta_item.id].name,\n                        null\n                    );\n                    if (!inventory_item) {\n                        missing += -delta_item.count;\n                    } else {\n                        missing += Math.max("
+        },
+        {
+            "comment": "This code checks if a recipe is missing any items, calculates the minimum missing item count for each ingredient, and stores the corresponding recipe. Then, it iterates through the delta (missing item counts) of each ingredient and checks if any are negative. If an ingredient's count is negative in the bot's inventory, it adds the absolute value of that difference to the message string. If the count is less than the missing count, it updates the minimum missing count and recipe accordingly. Finally, it assigns the minimum recipe delta to the variable 'delta'.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/control_primitives/craftHelper.js\":26-53",
+            "content": "                            -delta_item.count - inventory_item.count,\n                            0\n                        );\n                    }\n                }\n            }\n            if (missing < min) {\n                min = missing;\n                min_recipe = recipe;\n            }\n        }\n        const delta = min_recipe.delta;\n        let message = \"\";\n        for (const delta_item of delta) {\n            if (delta_item.count < 0) {\n                const inventory_item = bot.inventory.findInventoryItem(\n                    mcData.items[delta_item.id].name,\n                    null\n                );\n                if (!inventory_item) {\n                    message += ` ${-delta_item.count} more ${\n                        mcData.items[delta_item.id].name\n                    }, `;\n                } else {\n                    if (inventory_item.count < -delta_item.count) {\n                        message += `${\n                            -delta_item.count - inventory_item.count\n                        } more ${mcData.items[delta_item.id].name}`;"
+        },
+        {
+            "comment": "The code checks if the bot has the required items to craft a specified item. If it doesn't, it informs the user about the missing items.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/control_primitives/craftHelper.js\":54-60",
+            "content": "                    }\n                }\n            }\n        }\n        bot.chat(`I cannot make ${name} because I need: ${message}`);\n    }\n}"
+        }
+    ]
+}

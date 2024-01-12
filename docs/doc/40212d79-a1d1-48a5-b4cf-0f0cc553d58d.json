@@ -1,0 +1,10 @@
+{
+    "summary": "Kill a pig and collect the dropped item function called \"killMob\" which uses bot's nearestEntity to find the target mob, then attacks it and moves towards its position using pathfinder.",
+    "details": [
+        {
+            "comment": "Kill a pig and collect the dropped item function called \"killMob\" which uses bot's nearestEntity to find the target mob, then attacks it and moves towards its position using pathfinder.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/control_primitives_context/killMob.js\":0-11",
+            "content": "// Kill a pig and collect the dropped item: killMob(bot, \"pig\", 300);\nasync function killMob(bot, mobName, timeout = 300) {\n    const entity = bot.nearestEntity(\n        (entity) =>\n            entity.name === mobName &&\n            entity.position.distanceTo(bot.entity.position) < 32\n    );\n    await bot.pvp.attack(entity);\n    await bot.pathfinder.goto(\n        new GoalBlock(entity.position.x, entity.position.y, entity.position.z)\n    );\n}"
+        }
+    ]
+}

@@ -1,0 +1,15 @@
+{
+    "summary": "This function verifies valid inputs and collects blocks using the bot's `collectBlock` method. It initializes a mine block operation, ignores path, specifies count, saves bot state as `${name}_mined`, and notifies user if errors occur or no blocks are found.",
+    "details": [
+        {
+            "comment": "This function checks if the provided name and count are valid string and number respectively. It then searches for blocks with the specified name, and if found, collects them using the bot's `collectBlock` method. If no blocks are found or an error occurs during collection, it notifies the user accordingly.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/control_primitives/mineBlock.js\":0-31",
+            "content": "async function mineBlock(bot, name, count = 1) {\n    // return if name is not string\n    if (typeof name !== \"string\") {\n        throw new Error(`name for mineBlock must be a string`);\n    }\n    if (typeof count !== \"number\") {\n        throw new Error(`count for mineBlock must be a number`);\n    }\n    const blockByName = mcData.blocksByName[name];\n    if (!blockByName) {\n        throw new Error(`No block named ${name}`);\n    }\n    const blocks = bot.findBlocks({\n        matching: [blockByName.id],\n        maxDistance: 32,\n        count: 1024,\n    });\n    if (blocks.length === 0) {\n        bot.chat(`No ${name} nearby, please explore first`);\n        _mineBlockFailCount++;\n        if (_mineBlockFailCount > 10) {\n            throw new Error(\n                \"mineBlock failed too many times, make sure you explore before calling mineBlock\"\n            );\n        }\n        return;\n    }\n    const targets = [];\n    for (let i = 0; i < blocks.length; i++) {\n        targets.push(bot.blockAt(blocks[i]));\n    }\n    await bot.collectBlock.collect(targets, {"
+        },
+        {
+            "comment": "The code snippet initializes a mine block operation, ignoring any absence of path and specifying the count. After completion, it saves the bot's state as `${name}_mined`.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/control_primitives/mineBlock.js\":32-36",
+            "content": "        ignoreNoPath: true,\n        count: count,\n    });\n    bot.save(`${name}_mined`);\n}"
+        }
+    ]
+}

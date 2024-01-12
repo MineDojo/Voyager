@@ -1,0 +1,20 @@
+{
+    "summary": "Summary: This code provides instructions for downloading Fabric Installer and JRE v17, installing mods, setting up respawn settings, and using fabric-loader for Minecraft gameplay.",
+    "details": [
+        {
+            "comment": "Installing Fabric mods: Download Fabric Installer, select 1.19 version, place mods in mods folder, use fabric-loader-0.14.18-1.19 for gameplay.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/installation/fabric_mods_install.md\":0-5",
+            "content": "# Fabric Mods Install\nIn this tutorial, we will install the Fabric launcher and 5 mods. Remember to use the correct Fabric version that matches your game version (1.19) of all the mods. \n1. You can download the latest Fabric Installer from [here](https://fabricmc.net/use/installer/). For Windows users, just download the `.exe` file. For Mac or Ubuntu users, download the jar file and call `java -jar fabric-installer-0.11.2.jar` to install. Select game version to be `1.19` and loader version to be `0.14.18`. It will automatically detect your Minecraft game install location.\n2. After installing Fabric, you will have a `YOUR_MINECRAFT_GAME_LOCATION/mods` folder. You need to put all the mods under this folder. Also, you will have a `YOUR_MINECRAFT_GAME_LOCATION/versions/fabric-loader-0.14.18-1.19`. This is the version you will run the game with. \n3. Here are 4 mods that can be directly downloaded to `YOUR_MINECRAFT_GAME_LOCATION/mods` folder: \n   * [Fabric API](https://modrinth.com/mod/fabric-api/version/0.58.0+1.19): Basic Fabric APIs."
+        },
+        {
+            "comment": "The code provides a list of mods for Minecraft Fabric, including their descriptions and download links. It also outlines instructions for compiling the 'Better Respawn' mod manually, specifying version-specific changes to settings and build requirements.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/installation/fabric_mods_install.md\":6-12",
+            "content": "   * [Mod Menu](https://cdn.modrinth.com/data/mOgUt4GM/versions/4.0.4/modmenu-4.0.4.jar): Used to manage all the mods that you download.\n   * [Complete Config](https://www.curseforge.com/minecraft/mc-mods/completeconfig/download/3821056): Dependency of server pause.\n   * [Multi Server Pause](https://www.curseforge.com/minecraft/mc-mods/multiplayer-server-pause-fabric/download/3822586): Used to pause the server when waiting for GPT-4 to reply.\n4. For the last mod [Better Respawn](https://github.com/xieleo5/better-respawn/tree/1.19), you need to manually clone and compile.\n   * After you clone the repo, remove the `'forge'` string in the last line of `settings.gradle`. Then run `gradlew build` to compile the mod. You will find the compiled jar file in `better-respawn/fabric/build/libs/better-respawn-fabric-1.19-2.0.0.jar`. Put the jar file to the mod folder.\n     * You will need a Java Runtime Environment v17+ to build `better-respawn`. Some newer JRE versions will error during build. Find th"
+        },
+        {
+            "comment": "Download JRE v17 archive, modify properties file with respawn settings, change `azure_login` version to `fabric-loader-0.14.18-1.19`, and return to README for getting started.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/installation/fabric_mods_install.md\":12-21",
+            "content": "e JRE v17 archive [here](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html).\n   * After you launch the game, go to `YOUR_MINECRAFT_GAME_LOCATION/config/better-respawn`, and modify the properties file with:\n      ```\n      respawn_block_range=32\n      max_respawn_distance=32\n      min_respawn_distance=0\n      ```\n5. Don't forget to change the `version` in `azure_login` to `fabric-loader-0.14.18-1.19` that you are using. You can find it under `YOUR_MINECRAFT_GAME_LOCATION/version` folder.\nYou can return to [README.md](../README.md#getting-started) and getting started now."
+        }
+    ]
+}

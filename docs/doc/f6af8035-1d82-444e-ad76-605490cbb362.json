@@ -1,0 +1,15 @@
+{
+    "summary": "The code introduces the Skill Library and its community contributions for a project, providing instructions on resuming from a community contribution and contributing after running the learning process. It also outlines how to share the learned skill library.",
+    "details": [
+        {
+            "comment": "This code introduces the Skill Library and its community contributions for a project. It explains how to resume from a community contribution by cloning or downloading their repository and setting the skill library directory accordingly. It also provides information on how to contribute after running the learning process, resulting in a checkpoint directory with various files.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/skill_library/README.md\":0-33",
+            "content": "# Learned Skill Libraries\n## Ours\n* [skill_library/trial1](trial1)\n* [skill_library/trial2](trial2)\n* [skill_library/trial3](trial3)\n## Community Contributions\n* [daswer123/Voyager_checkpoint](https://github.com/daswer123/Voyager_checkpoint)\n* [swen128/Voyager_checkpoint](https://github.com/swen128/Voyager_checkpoint)\n* [DeveloperHarris/voyager_checkpoint](https://github.com/DeveloperHarris/voyager_checkpoint)\n### How to resume from a community contribution\nFirst, you need to clone or download their repo. Then, the resume is the same as using ours skill libraries. Just set `skill_library_dir=COMMUNITY_CKPT_DIR` where `COMMUNITY_CKPT_DIR` is the ckpt dir inside the folder you just downloaded.\n## How to Contribute\nAfter you run the learning process, you will see a checkpoint directory like:\n```\n.\n\u251c\u2500\u2500 action\n\u2502   \u2514\u2500\u2500 chest_memory.json\n\u251c\u2500\u2500 curriculum\n\u2502   \u251c\u2500\u2500 completed_tasks.json\n\u2502   \u251c\u2500\u2500 failed_tasks.json\n\u2502   \u251c\u2500\u2500 qa_cache.json\n\u2502   \u2514\u2500\u2500 vectordb\n\u251c\u2500\u2500 events\n\u2514\u2500\u2500 skill\n    \u251c\u2500\u2500 code\n    \u2502   \u251c\u2500\u2500 catchThreeFishWithCheck.js\n    \u2502   \u251c\u2500\u2500 collectBamboo.js"
+        },
+        {
+            "comment": "The code represents a skill library containing multiple text files, a JSON file, and a vector database. Only the `YOUR_CKPT_DIR/skill` directory is a learned skill library that can be shared with others by creating a pull request and adding the link to this page.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/skill_library/README.md\":34-43",
+            "content": "    \u2502   \u251c\u2500\u2500 ...\n    \u251c\u2500\u2500 description\n    \u2502   \u251c\u2500\u2500 catchThreeFishWithCheck.txt\n    \u2502   \u251c\u2500\u2500 collectBamboo.txt\n    \u2502   \u2514\u2500\u2500 ...\n    \u251c\u2500\u2500 skills.json\n    \u2514\u2500\u2500 vectordb\n```\nOnly `YOUR_CKPT_DIR/skill` is a learned skill library, which you can share with others. Create a pull request and add your skill library link to this page."
+        }
+    ]
+}

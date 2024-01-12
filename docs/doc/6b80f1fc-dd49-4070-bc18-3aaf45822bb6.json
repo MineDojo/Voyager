@@ -1,0 +1,20 @@
+{
+    "summary": "This function enables a bot to smelt items using a furnace, managing inventory and pathfinding, handles errors, and notifies users upon failure.",
+    "details": [
+        {
+            "comment": "Function to smelt an item using a furnace. Checks if itemName and fuelName are strings, and count is a number. Verifies the existence of items and a nearby furnace. Pathfinding to the furnace and opening it for further processing.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/control_primitives/smeltItem.js\":0-28",
+            "content": "async function smeltItem(bot, itemName, fuelName, count = 1) {\n    // return if itemName or fuelName is not string\n    if (typeof itemName !== \"string\" || typeof fuelName !== \"string\") {\n        throw new Error(\"itemName or fuelName for smeltItem must be a string\");\n    }\n    // return if count is not a number\n    if (typeof count !== \"number\") {\n        throw new Error(\"count for smeltItem must be a number\");\n    }\n    const item = mcData.itemsByName[itemName];\n    const fuel = mcData.itemsByName[fuelName];\n    if (!item) {\n        throw new Error(`No item named ${itemName}`);\n    }\n    if (!fuel) {\n        throw new Error(`No item named ${fuelName}`);\n    }\n    const furnaceBlock = bot.findBlock({\n        matching: mcData.blocksByName.furnace.id,\n        maxDistance: 32,\n    });\n    if (!furnaceBlock) {\n        throw new Error(\"No furnace nearby\");\n    } else {\n        await bot.pathfinder.goto(\n            new GoalLookAtBlock(furnaceBlock.position, bot.world)\n        );\n    }\n    const furnace = await bot.openFurnace(furnaceBlock);"
+        },
+        {
+            "comment": "The code checks if the bot has the required items (item and fuel) in its inventory, then smelts them one by one in a furnace. It also handles potential errors like invalid fuels or inputs, and closes the furnace after finishing the smelting process.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/control_primitives/smeltItem.js\":29-55",
+            "content": "    let success_count = 0;\n    for (let i = 0; i < count; i++) {\n        if (!bot.inventory.findInventoryItem(item.id, null)) {\n            bot.chat(`No ${itemName} to smelt in inventory`);\n            break;\n        }\n        if (furnace.fuelSeconds < 15 && furnace.fuelItem()?.name !== fuelName) {\n            if (!bot.inventory.findInventoryItem(fuel.id, null)) {\n                bot.chat(`No ${fuelName} as fuel in inventory`);\n                break;\n            }\n            await furnace.putFuel(fuel.id, null, 1);\n            await bot.waitForTicks(20);\n            if (!furnace.fuel && furnace.fuelItem()?.name !== fuelName) {\n                throw new Error(`${fuelName} is not a valid fuel`);\n            }\n        }\n        await furnace.putInput(item.id, null, 1);\n        await bot.waitForTicks(12 * 20);\n        if (!furnace.outputItem()) {\n            throw new Error(`${itemName} is not a valid input`);\n        }\n        await furnace.takeOutput();\n        success_count++;\n    }\n    furnace.close();\n    if (success_count > 0) bot.chat(`Smelted ${success_count} ${itemName}.`);"
+        },
+        {
+            "comment": "Else block executed when smelting fails, notifies user to check fuel and input, increments fail count, throws an error after 10 failures for further investigation.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/control_primitives/smeltItem.js\":56-67",
+            "content": "    else {\n        bot.chat(\n            `Failed to smelt ${itemName}, please check the fuel and input.`\n        );\n        _smeltItemFailCount++;\n        if (_smeltItemFailCount > 10) {\n            throw new Error(\n                `smeltItem failed too many times, please check the fuel and input.`\n            );\n        }\n    }\n}"
+        }
+    ]
+}

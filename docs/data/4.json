@@ -1,0 +1,439 @@
+{
+    "400": {
+        "file_id": 48,
+        "content": "                    shutil.copystat(srcname, dstname, follow_symlinks=not symlinks)\n                else:\n                    # ignore dangling symlink if the flag is on\n                    if not os.path.exists(linkto) and ignore_dangling_symlinks:\n                        continue\n                    # otherwise let the copy occurs. copy2 will raise an error\n                    if os.path.isdir(srcname):\n                        _f_copytree(\n                            srcname, dstname, symlinks, ignore, exist_ok, copy_function\n                        )\n                    else:\n                        copy_function(srcname, dstname)\n            elif os.path.isdir(srcname):\n                _f_copytree(srcname, dstname, symlinks, ignore, exist_ok, copy_function)\n            else:\n                # Will raise a SpecialFileError for unsupported file types\n                copy_function(srcname, dstname)\n        # catch the Error from the recursive copytree so that we can\n        # continue with other files\n        except shutil.Error as err:",
+        "type": "code",
+        "location": "/voyager/utils/file_utils.py:300-319"
+    },
+    "401": {
+        "file_id": 48,
+        "content": "This code handles copying files and directories between two locations. If symlinks are ignored, it uses shutil.copystat to preserve file permissions. If a dangling symlink is encountered and ignore_dangling_symlinks flag is on, the code continues to the next file or directory. It uses _f_copytree for copying directories recursively and calls copy_function for files. Errors are caught and handled to continue with other files.",
+        "type": "comment"
+    },
+    "402": {
+        "file_id": 48,
+        "content": "            errors.extend(err.args[0])\n        except OSError as why:\n            errors.append((srcname, dstname, str(why)))\n    try:\n        shutil.copystat(src, dst)\n    except OSError as why:\n        # Copying file access times may fail on Windows\n        if getattr(why, \"winerror\", None) is None:\n            errors.append((src, dst, str(why)))\n    if errors:\n        raise shutil.Error(errors)\n    return dst\ndef _include_patterns(*patterns):\n    \"\"\"Factory function that can be used with copytree() ignore parameter.\n    Arguments define a sequence of glob-style patterns\n    that are used to specify what files to NOT ignore.\n    Creates and returns a function that determines this for each directory\n    in the file hierarchy rooted at the source directory when used with\n    shutil.copytree().\n    \"\"\"\n    def _ignore_patterns(path, names):\n        keep = set(\n            name for pattern in patterns for name in fnmatch.filter(names, pattern)\n        )\n        ignore = set(\n            name\n            for name in names",
+        "type": "code",
+        "location": "/voyager/utils/file_utils.py:320-350"
+    },
+    "403": {
+        "file_id": 48,
+        "content": "The code defines a function _include_patterns that creates and returns a function _ignore_patterns to be used with shutil.copytree(). It takes glob-style patterns as arguments, and determines what files to NOT ignore in the file hierarchy rooted at the source directory when copying using shutil.copystat(). Errors during file operations are handled by raising an Error if any occur.",
+        "type": "comment"
+    },
+    "404": {
+        "file_id": 48,
+        "content": "            if name not in keep and not os.path.isdir(os.path.join(path, name))\n        )\n        return ignore\n    return _ignore_patterns\ndef f_copytree(fsrc, fdst, symlinks=False, ignore=None, include=None, exist_ok=True):\n    fsrc, fdst = f_expand(fsrc), f_expand(fdst)\n    assert (ignore is None) or (\n        include is None\n    ), \"ignore= and include= are mutually exclusive\"\n    if ignore:\n        ignore = shutil.ignore_patterns(*ignore)\n    elif include:\n        ignore = _include_patterns(*include)\n    _f_copytree(fsrc, fdst, ignore=ignore, symlinks=symlinks, exist_ok=exist_ok)\ndef f_move(fsrc, fdst):\n    fsrc, fdst = f_expand(fsrc), f_expand(fdst)\n    for f in glob.glob(fsrc):\n        shutil.move(f, fdst)\ndef f_split_path(fpath, normpath=True):\n    \"\"\"\n    Splits path into a list of its component folders\n    Args:\n        normpath: call os.path.normpath to remove redundant '/' and\n            up-level references like \"..\"\n    \"\"\"\n    if normpath:\n        fpath = os.path.normpath(fpath)\n    allparts = []\n    while 1:",
+        "type": "code",
+        "location": "/voyager/utils/file_utils.py:351-387"
+    },
+    "405": {
+        "file_id": 48,
+        "content": "This code includes functions for copying, moving and splitting file paths. The `f_copytree` function copies a source directory to a destination, ignoring certain patterns. The `f_move` function moves files from one location to another. Lastly, the `f_split_path` function splits a file path into a list of its component folders.",
+        "type": "comment"
+    },
+    "406": {
+        "file_id": 48,
+        "content": "        parts = os.path.split(fpath)\n        if parts[0] == fpath:  # sentinel for absolute paths\n            allparts.insert(0, parts[0])\n            break\n        elif parts[1] == fpath:  # sentinel for relative paths\n            allparts.insert(0, parts[1])\n            break\n        else:\n            fpath = parts[0]\n            allparts.insert(0, parts[1])\n    return allparts\ndef get_script_dir():\n    \"\"\"\n    Returns: the dir of current script\n    \"\"\"\n    return os.path.dirname(os.path.realpath(sys.argv[0]))\ndef get_script_file_name():\n    \"\"\"\n    Returns: the dir of current script\n    \"\"\"\n    return os.path.basename(sys.argv[0])\ndef get_script_self_path():\n    \"\"\"\n    Returns: the dir of current script\n    \"\"\"\n    return os.path.realpath(sys.argv[0])\ndef get_parent_dir(location, abspath=False):\n    \"\"\"\n    Args:\n      location: current directory or file\n    Returns:\n        parent directory absolute or relative path\n    \"\"\"\n    _path = os.path.abspath if abspath else os.path.relpath\n    return _path(f_join(location, os.pardir))",
+        "type": "code",
+        "location": "/voyager/utils/file_utils.py:388-431"
+    },
+    "407": {
+        "file_id": 48,
+        "content": "This code defines several functions to deal with file paths and directories. The `get_allparts()` function splits a file path into its directory and base name, handling both absolute and relative paths. The `get_script_dir()`, `get_script_file_name()`, and `get_script_self_path()` functions return the directory, filename, and absolute path of the current script, respectively. Lastly, the `get_parent_dir()` function takes a location (directory or file) and returns its parent directory's path, either relative or absolute depending on the optional argument.",
+        "type": "comment"
+    },
+    "408": {
+        "file_id": 48,
+        "content": "def md5_checksum(*fpath):\n    \"\"\"\n    File md5 signature\n    \"\"\"\n    hash_md5 = hashlib.md5()\n    with open(f_join(*fpath), \"rb\") as f:\n        for chunk in iter(lambda: f.read(65536), b\"\"):\n            hash_md5.update(chunk)\n    return hash_md5.hexdigest()\ndef create_tar(fsrc, output_tarball, include=None, ignore=None, compress_mode=\"gz\"):\n    \"\"\"\n    Args:\n        fsrc: source file or folder\n        output_tarball: output tar file name\n        compress_mode: \"gz\", \"bz2\", \"xz\" or \"\" (empty for uncompressed write)\n        include: include pattern, will trigger copy to temp directory\n        ignore: ignore pattern, will trigger copy to temp directory\n    \"\"\"\n    fsrc, output_tarball = f_expand(fsrc), f_expand(output_tarball)\n    assert compress_mode in [\"gz\", \"bz2\", \"xz\", \"\"]\n    src_base = os.path.basename(fsrc)\n    tempdir = None\n    if include or ignore:\n        tempdir = tempfile.mkdtemp()\n        tempdest = f_join(tempdir, src_base)\n        f_copy(fsrc, tempdest, include=include, ignore=ignore)\n        fsrc = tempdest",
+        "type": "code",
+        "location": "/voyager/utils/file_utils.py:434-463"
+    },
+    "409": {
+        "file_id": 48,
+        "content": "The code provides functions for calculating an MD5 checksum of a file and creating a tarball. The `md5_checksum` function takes a file path as input and returns the MD5 hash of its contents in hexdigest format. The `create_tar` function creates a tarball from either a source file or folder, optionally compressing it with gzip, bzip2, or xz, and allows for including or excluding specific files based on patterns. If any include or ignore patterns are provided, the source files are temporarily copied to a new directory before being compressed into the tarball.",
+        "type": "comment"
+    },
+    "410": {
+        "file_id": 48,
+        "content": "    with tarfile.open(output_tarball, \"w:\" + compress_mode) as tar:\n        tar.add(fsrc, arcname=src_base)\n    if tempdir:\n        f_remove(tempdir)\ndef extract_tar(source_tarball, output_dir=\".\", members=None):\n    \"\"\"\n    Args:\n        source_tarball: extract members from archive\n        output_dir: default to current working dir\n        members: must be a subset of the list returned by getmembers()\n    \"\"\"\n    source_tarball, output_dir = f_expand(source_tarball), f_expand(output_dir)\n    with tarfile.open(source_tarball, \"r:*\") as tar:\n        tar.extractall(output_dir, members=members)\ndef move_with_backup(*fpath, suffix=\".bak\"):\n    \"\"\"\n    Ensures that a path is not occupied. If there is a file, rename it by\n    adding @suffix. Resursively backs up everything.\n    Args:\n        fpath: file path to clear\n        suffix: Add to backed up files (default: {'.bak'})\n    \"\"\"\n    fpath = str(f_join(*fpath))\n    if os.path.exists(fpath):\n        move_with_backup(fpath + suffix)\n        shutil.move(fpath, fpath + suffix)",
+        "type": "code",
+        "location": "/voyager/utils/file_utils.py:465-496"
+    },
+    "411": {
+        "file_id": 48,
+        "content": "Code snippet is from Voyager project and contains three functions: 'create_tar', 'extract_tar' and 'move_with_backup'.\n\n1. 'create_tar' creates a tar archive with the option to specify compression mode, source path, and the base name for the archive. It also removes the temporary directory if it exists.\n2. 'extract_tar' extracts members from the specified tar archive into a destination directory, allowing specification of members to extract.\n3. 'move_with_backup' ensures that a file or path is not occupied by renaming existing files with a suffix and recursively backs up everything in the directory.",
+        "type": "comment"
+    },
+    "412": {
+        "file_id": 48,
+        "content": "def insert_before_ext(name, insert):\n    \"\"\"\n    log.txt -> log.ep50.txt\n    \"\"\"\n    name, ext = os.path.splitext(name)\n    return name + insert + ext\ndef timestamp_file_name(fname):\n    timestr = datetime.now().strftime(\"_%H-%M-%S_%m-%d-%y\")\n    return insert_before_ext(fname, timestr)\ndef get_file_lock(*fpath, timeout: int = 15, logging_level=\"critical\"):\n    \"\"\"\n    NFS-safe filesystem-backed lock. `pip install flufl.lock`\n    https://flufllock.readthedocs.io/en/stable/apiref.html\n    Args:\n        fpath: should be a path on NFS so that every process can see it\n        timeout: seconds\n    \"\"\"\n    from flufl.lock import Lock\n    logging.getLogger(\"flufl.lock\").setLevel(logging_level.upper())\n    return Lock(f_join(*fpath), lifetime=timeout)\ndef load_pickle(*fpaths):\n    with open(f_join(*fpaths), \"rb\") as fp:\n        return pickle.load(fp)\ndef dump_pickle(data, *fpaths):\n    with open(f_join(*fpaths), \"wb\") as fp:\n        pickle.dump(data, fp)\ndef load_text(*fpaths, by_lines=False):\n    with open(f_join(*fpaths), \"r\") as fp:",
+        "type": "code",
+        "location": "/voyager/utils/file_utils.py:499-538"
+    },
+    "413": {
+        "file_id": 48,
+        "content": "This code contains several utility functions for file operations, including inserting a string before the extension of a file name, generating timestamp-based file names, implementing a NFS-safe file lock using flufl.lock, loading and dumping pickles, and loading text files. The code also includes some logging setup for the flufl.lock module.",
+        "type": "comment"
+    },
+    "414": {
+        "file_id": 48,
+        "content": "        if by_lines:\n            return fp.readlines()\n        else:\n            return fp.read()\ndef load_text_lines(*fpaths):\n    return load_text(*fpaths, by_lines=True)\ndef dump_text(s, *fpaths):\n    with open(f_join(*fpaths), \"w\") as fp:\n        fp.write(s)\ndef dump_text_lines(lines: list[str], *fpaths, add_newline=True):\n    with open(f_join(*fpaths), \"w\") as fp:\n        for line in lines:\n            print(line, file=fp, end=\"\\n\" if add_newline else \"\")\n# aliases to be consistent with other load_* and dump_*\npickle_load = load_pickle\npickle_dump = dump_pickle\ntext_load = load_text\nread_text = load_text\nread_text_lines = load_text_lines\nwrite_text = dump_text\nwrite_text_lines = dump_text_lines\ntext_dump = dump_text",
+        "type": "code",
+        "location": "/voyager/utils/file_utils.py:539-568"
+    },
+    "415": {
+        "file_id": 48,
+        "content": "The code defines various functions for loading and dumping text or pickle data, providing options to read by lines or not. It also includes alias names to maintain consistency with other load_* and dump_* functions in the codebase.",
+        "type": "comment"
+    },
+    "416": {
+        "file_id": 49,
+        "content": "/voyager/utils/json_utils.py",
+        "type": "filepath"
+    },
+    "417": {
+        "file_id": 49,
+        "content": "This code offers JSON handling functions, correcting escapes and braces count imbalance using aliases. It removes non-JSON content before validating with Python's json.loads().",
+        "type": "summary"
+    },
+    "418": {
+        "file_id": 49,
+        "content": "import json\nimport re\nfrom typing import Any, Dict, Union\nfrom .file_utils import f_join\ndef json_load(*file_path, **kwargs):\n    file_path = f_join(file_path)\n    with open(file_path, \"r\") as fp:\n        return json.load(fp, **kwargs)\ndef json_loads(string, **kwargs):\n    return json.loads(string, **kwargs)\ndef json_dump(data, *file_path, **kwargs):\n    file_path = f_join(file_path)\n    with open(file_path, \"w\") as fp:\n        json.dump(data, fp, **kwargs)\ndef json_dumps(data, **kwargs):\n    \"\"\"\n    Returns: string\n    \"\"\"\n    return json.dumps(data, **kwargs)\n# ---------------- Aliases -----------------\n# add aliases where verb goes first, json_load -> load_json\nload_json = json_load\nloads_json = json_loads\ndump_json = json_dump\ndumps_json = json_dumps\ndef extract_char_position(error_message: str) -> int:\n    \"\"\"Extract the character position from the JSONDecodeError message.\n    Args:\n        error_message (str): The error message from the JSONDecodeError\n          exception.\n    Returns:\n        int: The character position.",
+        "type": "code",
+        "location": "/voyager/utils/json_utils.py:1-44"
+    },
+    "419": {
+        "file_id": 49,
+        "content": "The code defines various functions for handling JSON data: `json_load`, `json_loads`, `json_dump`, and `json_dumps`. It also includes aliases for these functions prefixed with \"load_\", \"dump_\", and \"dumps_\". The function `extract_char_position` extracts the character position from a JSONDecodeError error message.",
+        "type": "comment"
+    },
+    "420": {
+        "file_id": 49,
+        "content": "    \"\"\"\n    import re\n    char_pattern = re.compile(r\"\\(char (\\d+)\\)\")\n    if match := char_pattern.search(error_message):\n        return int(match[1])\n    else:\n        raise ValueError(\"Character position not found in the error message.\")\ndef add_quotes_to_property_names(json_string: str) -> str:\n    \"\"\"\n    Add quotes to property names in a JSON string.\n    Args:\n        json_string (str): The JSON string.\n    Returns:\n        str: The JSON string with quotes added to property names.\n    \"\"\"\n    def replace_func(match):\n        return f'\"{match.group(1)}\":'\n    property_name_pattern = re.compile(r\"(\\w+):\")\n    corrected_json_string = property_name_pattern.sub(replace_func, json_string)\n    try:\n        json.loads(corrected_json_string)\n        return corrected_json_string\n    except json.JSONDecodeError as e:\n        raise e\ndef balance_braces(json_string: str) -> str:\n    \"\"\"\n    Balance the braces in a JSON string.\n    Args:\n        json_string (str): The JSON string.\n    Returns:\n        str: The JSON string with braces balanced.",
+        "type": "code",
+        "location": "/voyager/utils/json_utils.py:45-83"
+    },
+    "421": {
+        "file_id": 49,
+        "content": "Code snippet includes three functions: \n1. `char_position()` - searches for character position in error message using regex and returns the integer value.\n2. `add_quotes_to_property_names()` - adds quotes to property names in JSON string, ensuring valid syntax.\n3. `balance_braces()` - balances braces in a JSON string to ensure proper syntax.",
+        "type": "comment"
+    },
+    "422": {
+        "file_id": 49,
+        "content": "    \"\"\"\n    open_braces_count = json_string.count(\"{\")\n    close_braces_count = json_string.count(\"}\")\n    while open_braces_count > close_braces_count:\n        json_string += \"}\"\n        close_braces_count += 1\n    while close_braces_count > open_braces_count:\n        json_string = json_string.rstrip(\"}\")\n        close_braces_count -= 1\n    try:\n        json.loads(json_string)\n        return json_string\n    except json.JSONDecodeError as e:\n        raise e\ndef fix_invalid_escape(json_str: str, error_message: str) -> str:\n    while error_message.startswith(\"Invalid \\\\escape\"):\n        bad_escape_location = extract_char_position(error_message)\n        json_str = json_str[:bad_escape_location] + json_str[bad_escape_location + 1 :]\n        try:\n            json.loads(json_str)\n            return json_str\n        except json.JSONDecodeError as e:\n            error_message = str(e)\n    return json_str\ndef correct_json(json_str: str) -> str:\n    \"\"\"\n    Correct common JSON errors.\n    Args:\n        json_str (str): The JSON string.",
+        "type": "code",
+        "location": "/voyager/utils/json_utils.py:84-120"
+    },
+    "423": {
+        "file_id": 49,
+        "content": "This code fixes common JSON errors by adding missing closing braces, removing invalid escapes and ensures the corrected string is valid JSON. The function \"fix_invalid_escape\" handles removing invalid escape characters, \"correct_json\" adjusts closing brace count imbalance and \"corrected_json_string\" verifies if the string is a valid JSON.",
+        "type": "comment"
+    },
+    "424": {
+        "file_id": 49,
+        "content": "    \"\"\"\n    try:\n        json.loads(json_str)\n        return json_str\n    except json.JSONDecodeError as e:\n        error_message = str(e)\n        if error_message.startswith(\"Invalid \\\\escape\"):\n            json_str = fix_invalid_escape(json_str, error_message)\n        if error_message.startswith(\n            \"Expecting property name enclosed in double quotes\"\n        ):\n            json_str = add_quotes_to_property_names(json_str)\n            try:\n                json.loads(json_str)\n                return json_str\n            except json.JSONDecodeError as e:\n                error_message = str(e)\n        if balanced_str := balance_braces(json_str):\n            return balanced_str\n    return json_str\ndef fix_and_parse_json(\n    json_str: str, try_to_fix_with_gpt: bool = True\n) -> Union[str, Dict[Any, Any]]:\n    \"\"\"Fix and parse JSON string\"\"\"\n    try:\n        json_str = json_str.replace(\"\\t\", \"\")\n        return json.loads(json_str)\n    except json.JSONDecodeError as _:  # noqa: F841\n        json_str = correct_json(json_str)",
+        "type": "code",
+        "location": "/voyager/utils/json_utils.py:121-152"
+    },
+    "425": {
+        "file_id": 49,
+        "content": "This code attempts to fix and parse a potentially invalid JSON string. It first tries to load the string using `json.loads()`. If this fails with a `JSONDecodeError`, it checks the error message for specific issues like escape characters or missing quotes, and applies fixes accordingly before retrying to load the string as JSON. If none of these methods succeed, the original JSON string is returned. The function also includes an optional flag to try to fix the string using GPT (Generic Programming Tool), but this feature seems to be unimplemented in the provided code.",
+        "type": "comment"
+    },
+    "426": {
+        "file_id": 49,
+        "content": "        try:\n            return json.loads(json_str)\n        except json.JSONDecodeError as _:  # noqa: F841\n            pass\n    # Let's do something manually:\n    # sometimes GPT responds with something BEFORE the braces:\n    # \"I'm sorry, I don't understand. Please try again.\"\n    # {\"text\": \"I'm sorry, I don't understand. Please try again.\",\n    #  \"confidence\": 0.0}\n    # So let's try to find the first brace and then parse the rest\n    #  of the string\n    try:\n        brace_index = json_str.index(\"{\")\n        json_str = json_str[brace_index:]\n        last_brace_index = json_str.rindex(\"}\")\n        json_str = json_str[: last_brace_index + 1]\n        return json.loads(json_str)\n    except json.JSONDecodeError as e:  # noqa: F841\n        # if try_to_fix_with_gpt:\n        #     print(\n        #         \"Warning: Failed to parse AI output, attempting to fix.\"\n        #         \"\\n If you see this warning frequently, it's likely that\"\n        #         \" your prompt is confusing the AI. Try changing it up\"\n        #         \" slightly.\"",
+        "type": "code",
+        "location": "/voyager/utils/json_utils.py:153-176"
+    },
+    "427": {
+        "file_id": 49,
+        "content": "This code attempts to handle JSON strings where the AI response may contain text before the opening brace. It first tries to parse the original string using json.loads(), then, if an error occurs, it finds the first opening brace, removes any non-JSON text before it, and parses the remaining string as JSON.",
+        "type": "comment"
+    },
+    "428": {
+        "file_id": 49,
+        "content": "        #     )\n        #     # Now try to fix this up using the ai_functions\n        #     ai_fixed_json = fix_json(json_str, JSON_SCHEMA)\n        #\n        #     if ai_fixed_json != \"failed\":\n        #         return json.loads(ai_fixed_json)\n        #     else:\n        #         # This allows the AI to react to the error message,\n        #         #   which usually results in it correcting its ways.\n        #         print(\"Failed to fix ai output, telling the AI.\")\n        #         return json_str\n        # else:\n        raise e\n# def fix_json(json_str: str, schema: str) -> str:\n#     \"\"\"Fix the given JSON string to make it parseable and fully complient with the provided schema.\"\"\"\n#\n#     # Try to fix the JSON using gpt:\n#     function_string = \"def fix_json(json_str: str, schema:str=None) -> str:\"\n#     args = [f\"'''{json_str}'''\", f\"'''{schema}'''\"]\n#     description_string = (\n#         \"Fixes the provided JSON string to make it parseable\"\n#         \" and fully complient with the provided schema.\\n If an object or\"",
+        "type": "code",
+        "location": "/voyager/utils/json_utils.py:177-200"
+    },
+    "429": {
+        "file_id": 49,
+        "content": "The code attempts to fix a JSON string by using the function `fix_json` with a provided schema. If the AI-fixed JSON is not \"failed\", it will be loaded using `json.loads`. If the fix fails, it prints a message and returns the original JSON string. The function utilizes an AI to correct the JSON string according to the given schema.",
+        "type": "comment"
+    },
+    "430": {
+        "file_id": 49,
+        "content": "#         \" field specified in the schema isn't contained within the correct\"\n#         \" JSON, it is ommited.\\n This function is brilliant at guessing\"\n#         \" when the format is incorrect.\"\n#     )\n#\n#     # If it doesn't already start with a \"`\", add one:\n#     if not json_str.startswith(\"`\"):\n#         json_str = \"```json\\n\" + json_str + \"\\n```\"\n#     result_string = call_ai_function(\n#         function_string, args, description_string, model=cfg.fast_llm_model\n#     )\n#     if cfg.debug:\n#         print(\"------------ JSON FIX ATTEMPT ---------------\")\n#         print(f\"Original JSON: {json_str}\")\n#         print(\"-----------\")\n#         print(f\"Fixed JSON: {result_string}\")\n#         print(\"----------- END OF FIX ATTEMPT ----------------\")\n#\n#     try:\n#         json.loads(result_string)  # just check the validity\n#         return result_string\n#     except:  # noqa: E722\n#         # Get the call stack:\n#         # import traceback\n#         # call_stack = traceback.format_exc()\n#         # print(f\"Failed to fix JSON: '{json_str}' \"+call_stack)",
+        "type": "code",
+        "location": "/voyager/utils/json_utils.py:201-226"
+    },
+    "431": {
+        "file_id": 49,
+        "content": "This code is attempting to fix incorrect JSON format by enclosing it within triple backticks, and then validating the corrected JSON using Python's json.loads() method. If the JSON remains invalid, an error will be raised. This function is designed to handle cases where the input JSON has minor formatting issues.",
+        "type": "comment"
+    },
+    "432": {
+        "file_id": 49,
+        "content": "#         return \"failed\"",
+        "type": "code",
+        "location": "/voyager/utils/json_utils.py:227-227"
+    },
+    "433": {
+        "file_id": 49,
+        "content": "This line of code is conditionally returning the string \"failed\" as a result. It's likely part of an if statement or function that evaluates some input and assigns this value based on specific criteria not shown in this snippet.",
+        "type": "comment"
+    },
+    "434": {
+        "file_id": 50,
+        "content": "/voyager/utils/record_utils.py",
+        "type": "filepath"
+    },
+    "435": {
+        "file_id": 50,
+        "content": "The EventRecorder class records events, updates elapsed time and item history, and maintains dictionaries for item-time associations and iteration items. It has a resume method and sorts records based on timestamps.",
+        "type": "summary"
+    },
+    "436": {
+        "file_id": 50,
+        "content": "import time\nfrom .file_utils import *\nfrom .json_utils import *\nclass EventRecorder:\n    def __init__(\n        self,\n        ckpt_dir=\"ckpt\",\n        resume=False,\n        init_position=None,\n    ):\n        self.ckpt_dir = ckpt_dir\n        self.item_history = set()\n        self.item_vs_time = {}\n        self.item_vs_iter = {}\n        self.biome_history = set()\n        self.init_position = init_position\n        self.position_history = [[0, 0]]\n        self.elapsed_time = 0\n        self.iteration = 0\n        f_mkdir(self.ckpt_dir, \"events\")\n        if resume:\n            self.resume()\n    def record(self, events, task):\n        task = re.sub(r'[\\\\/:\"*?<>| ]', \"_\", task)\n        task = task.replace(\" \", \"_\") + time.strftime(\n            \"_%Y%m%d_%H%M%S\", time.localtime()\n        )\n        self.iteration += 1\n        if not self.init_position:\n            self.init_position = [\n                events[0][1][\"status\"][\"position\"][\"x\"],\n                events[0][1][\"status\"][\"position\"][\"z\"],\n            ]\n        for event_type, event in events:",
+        "type": "code",
+        "location": "/voyager/utils/record_utils.py:1-38"
+    },
+    "437": {
+        "file_id": 50,
+        "content": "Class EventRecorder initializes attributes, sets up a directory for event files, and handles resuming or starting fresh. It records events for tasks, storing information about each event type in various dictionaries for later use.",
+        "type": "comment"
+    },
+    "438": {
+        "file_id": 50,
+        "content": "            self.update_items(event)\n            if event_type == \"observe\":\n                self.update_elapsed_time(event)\n        print(\n            f\"\\033[96m****Recorder message: {self.elapsed_time} ticks have elapsed****\\033[0m\\n\"\n            f\"\\033[96m****Recorder message: {self.iteration} iteration passed****\\033[0m\"\n        )\n        dump_json(events, f_join(self.ckpt_dir, \"events\", task))\n    def resume(self, cutoff=None):\n        self.item_history = set()\n        self.item_vs_time = {}\n        self.item_vs_iter = {}\n        self.elapsed_time = 0\n        self.position_history = [[0, 0]]\n        def get_timestamp(string):\n            timestamp = \"_\".join(string.split(\"_\")[-2:])\n            return time.mktime(time.strptime(timestamp, \"%Y%m%d_%H%M%S\"))\n        records = f_listdir(self.ckpt_dir, \"events\")\n        sorted_records = sorted(records, key=get_timestamp)\n        for record in sorted_records:\n            self.iteration += 1\n            if cutoff and self.iteration > cutoff:\n                break",
+        "type": "code",
+        "location": "/voyager/utils/record_utils.py:39-64"
+    },
+    "439": {
+        "file_id": 50,
+        "content": "The code is part of a Recorder class responsible for recording events. It updates elapsed time and iteration, prints messages, dumps JSON data to disk, and provides a resume method to continue from a specific cutoff point. The get_timestamp function helps sort the records based on timestamps.",
+        "type": "comment"
+    },
+    "440": {
+        "file_id": 50,
+        "content": "            events = load_json(f_join(self.ckpt_dir, \"events\", record))\n            if not self.init_position:\n                self.init_position = (\n                    events[0][1][\"status\"][\"position\"][\"x\"],\n                    events[0][1][\"status\"][\"position\"][\"z\"],\n                )\n            for event_type, event in events:\n                self.update_items(event)\n                self.update_position(event)\n                if event_type == \"observe\":\n                    self.update_elapsed_time(event)\n    def update_items(self, event):\n        inventory = event[\"inventory\"]\n        elapsed_time = event[\"status\"][\"elapsedTime\"]\n        biome = event[\"status\"][\"biome\"]\n        items = set(inventory.keys())\n        new_items = items - self.item_history\n        self.item_history.update(items)\n        self.biome_history.add(biome)\n        if new_items:\n            if self.elapsed_time + elapsed_time not in self.item_vs_time:\n                self.item_vs_time[self.elapsed_time + elapsed_time] = []\n            self.item_vs_time[self.elapsed_time + elapsed_time].extend(new_items)",
+        "type": "code",
+        "location": "/voyager/utils/record_utils.py:65-88"
+    },
+    "441": {
+        "file_id": 50,
+        "content": "This code loads event data and updates the position, items, and elapsed time based on each event type. It also maintains a history of items and biomes encountered over time. New items are added to the item_vs_time dictionary, which tracks when they were first encountered.",
+        "type": "comment"
+    },
+    "442": {
+        "file_id": 50,
+        "content": "            if self.iteration not in self.item_vs_iter:\n                self.item_vs_iter[self.iteration] = []\n            self.item_vs_iter[self.iteration].extend(new_items)\n    def update_elapsed_time(self, event):\n        self.elapsed_time += event[\"status\"][\"elapsedTime\"]\n    def update_position(self, event):\n        position = [\n            event[\"status\"][\"position\"][\"x\"] - self.init_position[0],\n            event[\"status\"][\"position\"][\"z\"] - self.init_position[1],\n        ]\n        if self.position_history[-1] != position:\n            self.position_history.append(position)",
+        "type": "code",
+        "location": "/voyager/utils/record_utils.py:89-102"
+    },
+    "443": {
+        "file_id": 50,
+        "content": "The `update_position` function checks if the position has changed and adds it to the `position_history` list. The `update_elapsed_time` function increments the elapsed time with the event's elapsed time. The `item_vs_iter` dictionary stores the items associated with each iteration, and if a new iteration is encountered, it initializes an empty list for that iteration in the dictionary.",
+        "type": "comment"
+    },
+    "444": {
+        "file_id": 51,
+        "content": "/voyager/voyager.py",
+        "type": "filepath"
+    },
+    "445": {
+        "file_id": 51,
+        "content": "The Voyager class handles AI communication, environment setup, agent creation, rollout configuration, action updates, messaging, result recording, exception management, and prints tasks completion/failure with ANSI coloring.",
+        "type": "summary"
+    },
+    "446": {
+        "file_id": 51,
+        "content": "import copy\nimport json\nimport os\nimport time\nfrom typing import Dict\nimport voyager.utils as U\nfrom .env import VoyagerEnv\nfrom .agents import ActionAgent\nfrom .agents import CriticAgent\nfrom .agents import CurriculumAgent\nfrom .agents import SkillManager\n# TODO: remove event memory\nclass Voyager:\n    def __init__(\n        self,\n        mc_port: int = None,\n        azure_login: Dict[str, str] = None,\n        server_port: int = 3000,\n        openai_api_key: str = None,\n        env_wait_ticks: int = 20,\n        env_request_timeout: int = 600,\n        max_iterations: int = 160,\n        reset_placed_if_failed: bool = False,\n        action_agent_model_name: str = \"gpt-4\",\n        action_agent_temperature: float = 0,\n        action_agent_task_max_retries: int = 4,\n        action_agent_show_chat_log: bool = True,\n        action_agent_show_execution_error: bool = True,\n        curriculum_agent_model_name: str = \"gpt-4\",\n        curriculum_agent_temperature: float = 0,\n        curriculum_agent_qa_model_name: str = \"gpt-3.5-turbo\",",
+        "type": "code",
+        "location": "/voyager/voyager.py:1-35"
+    },
+    "447": {
+        "file_id": 51,
+        "content": "The code defines a class called \"Voyager\" that serves as the main module for an AI agent. It includes various attributes and functions related to the environment, agents (ActionAgent, CriticAgent, CurriculumAgent), SkillManager, and other settings such as server and model configurations. The class's purpose is to handle communication between the user, agent, and environment, and manage agent learning and decision-making processes.",
+        "type": "comment"
+    },
+    "448": {
+        "file_id": 51,
+        "content": "        curriculum_agent_qa_temperature: float = 0,\n        curriculum_agent_warm_up: Dict[str, int] = None,\n        curriculum_agent_core_inventory_items: str = r\".*_log|.*_planks|stick|crafting_table|furnace\"\n        r\"|cobblestone|dirt|coal|.*_pickaxe|.*_sword|.*_axe\",\n        curriculum_agent_mode: str = \"auto\",\n        critic_agent_model_name: str = \"gpt-4\",\n        critic_agent_temperature: float = 0,\n        critic_agent_mode: str = \"auto\",\n        skill_manager_model_name: str = \"gpt-3.5-turbo\",\n        skill_manager_temperature: float = 0,\n        skill_manager_retrieval_top_k: int = 5,\n        openai_api_request_timeout: int = 240,\n        ckpt_dir: str = \"ckpt\",\n        skill_library_dir: str = None,\n        resume: bool = False,\n    ):\n        \"\"\"\n        The main class for Voyager.\n        Action agent is the iterative prompting mechanism in paper.\n        Curriculum agent is the automatic curriculum in paper.\n        Critic agent is the self-verification in paper.\n        Skill manager is the skill library in paper.",
+        "type": "code",
+        "location": "/voyager/voyager.py:36-57"
+    },
+    "449": {
+        "file_id": 51,
+        "content": "The code defines a class for Voyager with various parameters. The action agent is for iterative prompting, the curriculum agent for automatic curriculum, critic agent for self-verification, and skill manager for skill library as per the paper.",
+        "type": "comment"
+    },
+    "450": {
+        "file_id": 51,
+        "content": "        :param mc_port: minecraft in-game port\n        :param azure_login: minecraft login config\n        :param server_port: mineflayer port\n        :param openai_api_key: openai api key\n        :param env_wait_ticks: how many ticks at the end each step will wait, if you found some chat log missing,\n        you should increase this value\n        :param env_request_timeout: how many seconds to wait for each step, if the code execution exceeds this time,\n        python side will terminate the connection and need to be resumed\n        :param reset_placed_if_failed: whether to reset placed blocks if failed, useful for building task\n        :param action_agent_model_name: action agent model name\n        :param action_agent_temperature: action agent temperature\n        :param action_agent_task_max_retries: how many times to retry if failed\n        :param curriculum_agent_model_name: curriculum agent model name\n        :param curriculum_agent_temperature: curriculum agent temperature\n        :param curriculum_agent_qa_model_name: curriculum agent qa model name",
+        "type": "code",
+        "location": "/voyager/voyager.py:58-72"
+    },
+    "451": {
+        "file_id": 51,
+        "content": "This code defines function parameters for a Minecraft bot. Parameters include the minecraft port, Azure login credentials, Mineflayer port, OpenAI API key, wait time for each step, timeout for execution, reset option, and model names/temperatures for action and curriculum agents.",
+        "type": "comment"
+    },
+    "452": {
+        "file_id": 51,
+        "content": "        :param curriculum_agent_qa_temperature: curriculum agent qa temperature\n        :param curriculum_agent_warm_up: info will show in curriculum human message\n        if completed task larger than the value in dict, available keys are:\n        {\n            \"context\": int,\n            \"biome\": int,\n            \"time\": int,\n            \"other_blocks\": int,\n            \"nearby_entities\": int,\n            \"health\": int,\n            \"hunger\": int,\n            \"position\": int,\n            \"equipment\": int,\n            \"chests\": int,\n            \"optional_inventory_items\": int,\n        }\n        :param curriculum_agent_core_inventory_items: only show these items in inventory before optional_inventory_items\n        reached in warm up\n        :param curriculum_agent_mode: \"auto\" for automatic curriculum, \"manual\" for human curriculum\n        :param critic_agent_model_name: critic agent model name\n        :param critic_agent_temperature: critic agent temperature\n        :param critic_agent_mode: \"auto\" for automatic critic ,\"manual\" for human critic",
+        "type": "code",
+        "location": "/voyager/voyager.py:73-94"
+    },
+    "453": {
+        "file_id": 51,
+        "content": "This code is defining the parameters for creating a curriculum and setting up agents. The curriculum_agent has temperature, warm-up, and mode parameters while the critic_agent has its own temperature and mode. It also provides available keys for different game attributes like context, biome, time, etc. The \"reached in warm up\" statement suggests that some items will only appear later in the learning process.",
+        "type": "comment"
+    },
+    "454": {
+        "file_id": 51,
+        "content": "        :param skill_manager_model_name: skill manager model name\n        :param skill_manager_temperature: skill manager temperature\n        :param skill_manager_retrieval_top_k: how many skills to retrieve for each task\n        :param openai_api_request_timeout: how many seconds to wait for openai api\n        :param ckpt_dir: checkpoint dir\n        :param skill_library_dir: skill library dir\n        :param resume: whether to resume from checkpoint\n        \"\"\"\n        # init env\n        self.env = VoyagerEnv(\n            mc_port=mc_port,\n            azure_login=azure_login,\n            server_port=server_port,\n            request_timeout=env_request_timeout,\n        )\n        self.env_wait_ticks = env_wait_ticks\n        self.reset_placed_if_failed = reset_placed_if_failed\n        self.max_iterations = max_iterations\n        # set openai api key\n        os.environ[\"OPENAI_API_KEY\"] = openai_api_key\n        # init agents\n        self.action_agent = ActionAgent(\n            model_name=action_agent_model_name,\n            temperature=action_agent_temperature,",
+        "type": "code",
+        "location": "/voyager/voyager.py:95-120"
+    },
+    "455": {
+        "file_id": 51,
+        "content": "This code initializes a VoyagerEnv environment, sets environment variables, and initializes an ActionAgent. The environment is initialized with given parameters like mc_port, azure_login, server_port, request_timeout, env_request_timeout, reset_placed_if_failed, and max_iterations. OpenAI API key is set using os.environ. An ActionAgent is initialized with model_name and temperature.",
+        "type": "comment"
+    },
+    "456": {
+        "file_id": 51,
+        "content": "            request_timout=openai_api_request_timeout,\n            ckpt_dir=ckpt_dir,\n            resume=resume,\n            chat_log=action_agent_show_chat_log,\n            execution_error=action_agent_show_execution_error,\n        )\n        self.action_agent_task_max_retries = action_agent_task_max_retries\n        self.curriculum_agent = CurriculumAgent(\n            model_name=curriculum_agent_model_name,\n            temperature=curriculum_agent_temperature,\n            qa_model_name=curriculum_agent_qa_model_name,\n            qa_temperature=curriculum_agent_qa_temperature,\n            request_timout=openai_api_request_timeout,\n            ckpt_dir=ckpt_dir,\n            resume=resume,\n            mode=curriculum_agent_mode,\n            warm_up=curriculum_agent_warm_up,\n            core_inventory_items=curriculum_agent_core_inventory_items,\n        )\n        self.critic_agent = CriticAgent(\n            model_name=critic_agent_model_name,\n            temperature=critic_agent_temperature,\n            request_timout=openai_api_request_timeout,",
+        "type": "code",
+        "location": "/voyager/voyager.py:121-143"
+    },
+    "457": {
+        "file_id": 51,
+        "content": "The code initializes three agent instances: `action_agent`, `curriculum_agent`, and `critic_agent`. Each agent is initialized with specific parameters, such as model names, temperatures, request timeouts, checkpoint directories, modes, and warm-up values. These agents are likely used for different tasks within the AI system.",
+        "type": "comment"
+    },
+    "458": {
+        "file_id": 51,
+        "content": "            mode=critic_agent_mode,\n        )\n        self.skill_manager = SkillManager(\n            model_name=skill_manager_model_name,\n            temperature=skill_manager_temperature,\n            retrieval_top_k=skill_manager_retrieval_top_k,\n            request_timout=openai_api_request_timeout,\n            ckpt_dir=skill_library_dir if skill_library_dir else ckpt_dir,\n            resume=True if resume or skill_library_dir else False,\n        )\n        self.recorder = U.EventRecorder(ckpt_dir=ckpt_dir, resume=resume)\n        self.resume = resume\n        # init variables for rollout\n        self.action_agent_rollout_num_iter = -1\n        self.task = None\n        self.context = \"\"\n        self.messages = None\n        self.conversations = []\n        self.last_events = None\n    def reset(self, task, context=\"\", reset_env=True):\n        self.action_agent_rollout_num_iter = 0\n        self.task = task\n        self.context = context\n        if reset_env:\n            self.env.reset(\n                options={\n                    \"mode\": \"soft\",",
+        "type": "code",
+        "location": "/voyager/voyager.py:144-172"
+    },
+    "459": {
+        "file_id": 51,
+        "content": "This code initializes a Voyager agent with the specified critic agent mode and skill manager parameters. It also creates an event recorder and sets up variables for rollout. The reset function resets the agent's state with the given task and context, optionally resetting the environment as well.",
+        "type": "comment"
+    },
+    "460": {
+        "file_id": 51,
+        "content": "                    \"wait_ticks\": self.env_wait_ticks,\n                }\n            )\n        difficulty = (\n            \"easy\" if len(self.curriculum_agent.completed_tasks) > 15 else \"peaceful\"\n        )\n        # step to peek an observation\n        events = self.env.step(\n            \"bot.chat(`/time set ${getNextTime()}`);\\n\"\n            + f\"bot.chat('/difficulty {difficulty}');\"\n        )\n        skills = self.skill_manager.retrieve_skills(query=self.context)\n        print(\n            f\"\\033[33mRender Action Agent system message with {len(skills)} skills\\033[0m\"\n        )\n        system_message = self.action_agent.render_system_message(skills=skills)\n        human_message = self.action_agent.render_human_message(\n            events=events, code=\"\", task=self.task, context=context, critique=\"\"\n        )\n        self.messages = [system_message, human_message]\n        print(\n            f\"\\033[32m****Action Agent human message****\\n{human_message.content}\\033[0m\"\n        )\n        assert len(self.messages) == 2",
+        "type": "code",
+        "location": "/voyager/voyager.py:173-196"
+    },
+    "461": {
+        "file_id": 51,
+        "content": "This code is setting up the environment for an agent, defining difficulty level and retrieving skills. It then renders a system message and a human message using the ActionAgent. The messages are stored in self.messages and their length is checked to ensure there are two messages. A debug statement is also printed to display the human message content.",
+        "type": "comment"
+    },
+    "462": {
+        "file_id": 51,
+        "content": "        self.conversations = []\n        return self.messages\n    def close(self):\n        self.env.close()\n    def step(self):\n        if self.action_agent_rollout_num_iter < 0:\n            raise ValueError(\"Agent must be reset before stepping\")\n        ai_message = self.action_agent.llm(self.messages)\n        print(f\"\\033[34m****Action Agent ai message****\\n{ai_message.content}\\033[0m\")\n        self.conversations.append(\n            (self.messages[0].content, self.messages[1].content, ai_message.content)\n        )\n        parsed_result = self.action_agent.process_ai_message(message=ai_message)\n        success = False\n        if isinstance(parsed_result, dict):\n            code = parsed_result[\"program_code\"] + \"\\n\" + parsed_result[\"exec_code\"]\n            events = self.env.step(\n                code,\n                programs=self.skill_manager.programs,\n            )\n            self.recorder.record(events, self.task)\n            self.action_agent.update_chest_memory(events[-1][1][\"nearbyChests\"])\n            success, critique = self.critic_agent.check_task_success(",
+        "type": "code",
+        "location": "/voyager/voyager.py:197-221"
+    },
+    "463": {
+        "file_id": 51,
+        "content": "This code initializes an empty conversations list, returns the messages, closes the environment, steps through the agent's actions, and updates the critic agent's success check.",
+        "type": "comment"
+    },
+    "464": {
+        "file_id": 51,
+        "content": "                events=events,\n                task=self.task,\n                context=self.context,\n                chest_observation=self.action_agent.render_chest_observation(),\n                max_retries=5,\n            )\n            if self.reset_placed_if_failed and not success:\n                # revert all the placing event in the last step\n                blocks = []\n                positions = []\n                for event_type, event in events:\n                    if event_type == \"onSave\" and event[\"onSave\"].endswith(\"_placed\"):\n                        block = event[\"onSave\"].split(\"_placed\")[0]\n                        position = event[\"status\"][\"position\"]\n                        blocks.append(block)\n                        positions.append(position)\n                new_events = self.env.step(\n                    f\"await givePlacedItemBack(bot, {U.json_dumps(blocks)}, {U.json_dumps(positions)})\",\n                    programs=self.skill_manager.programs,\n                )\n                events[-1][1][\"inventory\"] = new_events[-1][1][\"inventory\"]",
+        "type": "code",
+        "location": "/voyager/voyager.py:222-243"
+    },
+    "465": {
+        "file_id": 51,
+        "content": "This code is creating an event object and calling a step function to execute it. If the execution fails, it reverts all placing events in the last step by using givePlacedItemBack function and updating inventory.",
+        "type": "comment"
+    },
+    "466": {
+        "file_id": 51,
+        "content": "                events[-1][1][\"voxels\"] = new_events[-1][1][\"voxels\"]\n            new_skills = self.skill_manager.retrieve_skills(\n                query=self.context\n                + \"\\n\\n\"\n                + self.action_agent.summarize_chatlog(events)\n            )\n            system_message = self.action_agent.render_system_message(skills=new_skills)\n            human_message = self.action_agent.render_human_message(\n                events=events,\n                code=parsed_result[\"program_code\"],\n                task=self.task,\n                context=self.context,\n                critique=critique,\n            )\n            self.last_events = copy.deepcopy(events)\n            self.messages = [system_message, human_message]\n        else:\n            assert isinstance(parsed_result, str)\n            self.recorder.record([], self.task)\n            print(f\"\\033[34m{parsed_result} Trying again!\\033[0m\")\n        assert len(self.messages) == 2\n        self.action_agent_rollout_num_iter += 1\n        done = (\n            self.action_agent_rollout_num_iter >= self.action_agent_task_max_retries",
+        "type": "code",
+        "location": "/voyager/voyager.py:244-267"
+    },
+    "467": {
+        "file_id": 51,
+        "content": "The code updates the events list, retrieves new skills using the SkillManager, generates system and human messages, handles failed parsing attempts, records results, prints a message and increments rollout number if max retries are reached.",
+        "type": "comment"
+    },
+    "468": {
+        "file_id": 51,
+        "content": "            or success\n        )\n        info = {\n            \"task\": self.task,\n            \"success\": success,\n            \"conversations\": self.conversations,\n        }\n        if success:\n            assert (\n                \"program_code\" in parsed_result and \"program_name\" in parsed_result\n            ), \"program and program_name must be returned when success\"\n            info[\"program_code\"] = parsed_result[\"program_code\"]\n            info[\"program_name\"] = parsed_result[\"program_name\"]\n        else:\n            print(\n                f\"\\033[32m****Action Agent human message****\\n{self.messages[-1].content}\\033[0m\"\n            )\n        return self.messages, 0, done, info\n    def rollout(self, *, task, context, reset_env=True):\n        self.reset(task=task, context=context, reset_env=reset_env)\n        while True:\n            messages, reward, done, info = self.step()\n            if done:\n                break\n        return messages, reward, done, info\n    def learn(self, reset_env=True):\n        if self.resume:",
+        "type": "code",
+        "location": "/voyager/voyager.py:268-296"
+    },
+    "469": {
+        "file_id": 51,
+        "content": "The code snippet defines a class with methods for rollout and learn. The rollout method performs continuous steps until done, returning messages, reward, and information. If successful, it retrieves program_code and program_name from parsed result. Otherwise, it prints the last human message. The learn method resumes learning if self.resume is true.",
+        "type": "comment"
+    },
+    "470": {
+        "file_id": 51,
+        "content": "            # keep the inventory\n            self.env.reset(\n                options={\n                    \"mode\": \"soft\",\n                    \"wait_ticks\": self.env_wait_ticks,\n                }\n            )\n        else:\n            # clear the inventory\n            self.env.reset(\n                options={\n                    \"mode\": \"hard\",\n                    \"wait_ticks\": self.env_wait_ticks,\n                }\n            )\n            self.resume = True\n        self.last_events = self.env.step(\"\")\n        while True:\n            if self.recorder.iteration > self.max_iterations:\n                print(\"Iteration limit reached\")\n                break\n            task, context = self.curriculum_agent.propose_next_task(\n                events=self.last_events,\n                chest_observation=self.action_agent.render_chest_observation(),\n                max_retries=5,\n            )\n            print(\n                f\"\\033[35mStarting task {task} for at most {self.action_agent_task_max_retries} times\\033[0m\"\n            )",
+        "type": "code",
+        "location": "/voyager/voyager.py:297-326"
+    },
+    "471": {
+        "file_id": 51,
+        "content": "The code resets the environment and handles inventory management depending on a condition. It then checks if the iteration limit is reached, proposes the next task using curriculum agent, and prints the start of the task with maximum retries specified.",
+        "type": "comment"
+    },
+    "472": {
+        "file_id": 51,
+        "content": "            try:\n                messages, reward, done, info = self.rollout(\n                    task=task,\n                    context=context,\n                    reset_env=reset_env,\n                )\n            except Exception as e:\n                time.sleep(3)  # wait for mineflayer to exit\n                info = {\n                    \"task\": task,\n                    \"success\": False,\n                }\n                # reset bot status here\n                self.last_events = self.env.reset(\n                    options={\n                        \"mode\": \"hard\",\n                        \"wait_ticks\": self.env_wait_ticks,\n                        \"inventory\": self.last_events[-1][1][\"inventory\"],\n                        \"equipment\": self.last_events[-1][1][\"status\"][\"equipment\"],\n                        \"position\": self.last_events[-1][1][\"status\"][\"position\"],\n                    }\n                )\n                # use red color background to print the error\n                print(\"Your last round rollout terminated due to error:\")",
+        "type": "code",
+        "location": "/voyager/voyager.py:327-350"
+    },
+    "473": {
+        "file_id": 51,
+        "content": "Code attempts to perform a rollout task, but if an exception occurs, it sleeps for 3 seconds, resets the bot status with specific options, prints an error message, and returns information with \"success\" set to False.",
+        "type": "comment"
+    },
+    "474": {
+        "file_id": 51,
+        "content": "                print(f\"\\033[41m{e}\\033[0m\")\n            if info[\"success\"]:\n                self.skill_manager.add_new_skill(info)\n            self.curriculum_agent.update_exploration_progress(info)\n            print(\n                f\"\\033[35mCompleted tasks: {', '.join(self.curriculum_agent.completed_tasks)}\\033[0m\"\n            )\n            print(\n                f\"\\033[35mFailed tasks: {', '.join(self.curriculum_agent.failed_tasks)}\\033[0m\"\n            )\n        return {\n            \"completed_tasks\": self.curriculum_agent.completed_tasks,\n            \"failed_tasks\": self.curriculum_agent.failed_tasks,\n            \"skills\": self.skill_manager.skills,\n        }\n    def decompose_task(self, task):\n        if not self.last_events:\n            self.last_events = self.env.reset(\n                options={\n                    \"mode\": \"hard\",\n                    \"wait_ticks\": self.env_wait_ticks,\n                }\n            )\n        return self.curriculum_agent.decompose_task(task, self.last_events)\n    def inference(self, task=None, sub_goals=[], reset_mode=\"hard\", reset_env=True):",
+        "type": "code",
+        "location": "/voyager/voyager.py:351-380"
+    },
+    "475": {
+        "file_id": 51,
+        "content": "The code includes functions for handling tasks, adding new skills, updating exploration progress, and retrieving completed and failed tasks. It also handles the environment reset and inference.",
+        "type": "comment"
+    },
+    "476": {
+        "file_id": 51,
+        "content": "        if not task and not sub_goals:\n            raise ValueError(\"Either task or sub_goals must be provided\")\n        if not sub_goals:\n            sub_goals = self.decompose_task(task)\n        self.env.reset(\n            options={\n                \"mode\": reset_mode,\n                \"wait_ticks\": self.env_wait_ticks,\n            }\n        )\n        self.curriculum_agent.completed_tasks = []\n        self.curriculum_agent.failed_tasks = []\n        self.last_events = self.env.step(\"\")\n        while self.curriculum_agent.progress < len(sub_goals):\n            next_task = sub_goals[self.curriculum_agent.progress]\n            context = self.curriculum_agent.get_task_context(next_task)\n            print(\n                f\"\\033[35mStarting task {next_task} for at most {self.action_agent_task_max_retries} times\\033[0m\"\n            )\n            messages, reward, done, info = self.rollout(\n                task=next_task,\n                context=context,\n                reset_env=reset_env,\n            )\n            self.curriculum_agent.update_exploration_progress(info)",
+        "type": "code",
+        "location": "/voyager/voyager.py:381-405"
+    },
+    "477": {
+        "file_id": 51,
+        "content": "Checks if either task or sub_goals are provided, and resets the environment. Then iterates through sub_goals, prints current goal and runs rollout for each one, updating exploration progress along the way.",
+        "type": "comment"
+    },
+    "478": {
+        "file_id": 51,
+        "content": "            print(\n                f\"\\033[35mCompleted tasks: {', '.join(self.curriculum_agent.completed_tasks)}\\033[0m\"\n            )\n            print(\n                f\"\\033[35mFailed tasks: {', '.join(self.curriculum_agent.failed_tasks)}\\033[0m\"\n            )",
+        "type": "code",
+        "location": "/voyager/voyager.py:406-411"
+    },
+    "479": {
+        "file_id": 51,
+        "content": "This code is printing the completed and failed tasks in a formatted way using ANSI escape sequences for coloring.",
+        "type": "comment"
+    }
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "The code imports the VoyagerEnv class from the bridge module to be used in this package. It appears to be an environment setting or configuration for a project called \"Voyager\".",
+    "details": [
+        {
+            "comment": "The code imports the VoyagerEnv class from the bridge module to be used in this package. It appears to be an environment setting or configuration for a project called \"Voyager\".",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/env/__init__.py\":0-0",
+            "content": "from .bridge import VoyagerEnv"
+        }
+    ]
+}

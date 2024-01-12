@@ -1,0 +1,15 @@
+{
+    "summary": "This code sets up a Python package using setup.py, defining essential properties like name, requirements, and extras while adhering to given classifiers for development status, topic, and language.",
+    "details": [
+        {
+            "comment": "This code is setting up the Voyager Python package. It imports necessary modules, defines constants like PKG_NAME and VERSION, reads the installation requirements from a \"requirements.txt\" file, fills in extras if needed, and finally sets up the package using setup() function with various properties.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/setup.py\":0-41",
+            "content": "import os\nimport pathlib\nimport pkg_resources\nfrom setuptools import setup, find_packages\nPKG_NAME = \"voyager\"\nVERSION = \"0.1\"\nEXTRAS = {}\ndef _read_file(fname):\n    # this_dir = os.path.abspath(os.path.dirname(__file__))\n    # with open(os.path.join(this_dir, fname)) as f:\n    with pathlib.Path(fname).open(encoding=\"utf-8\") as fp:\n        return fp.read()\ndef _read_install_requires():\n    with pathlib.Path(\"requirements.txt\").open() as fp:\n        return [\n            str(requirement) for requirement in pkg_resources.parse_requirements(fp)\n        ]\ndef _fill_extras(extras):\n    if extras:\n        extras[\"all\"] = list(set([item for group in extras.values() for item in group]))\n    return extras\nsetup(\n    name=PKG_NAME,\n    version=VERSION,\n    author=f\"MineDojo Team\",\n    url=\"https://github.com/MineDojo/Voyager\",\n    description=\"research project\",\n    long_description=_read_file(\"README.md\"),\n    long_description_content_type=\"text/markdown\",\n    keywords=[\n        \"Open-Ended Learning\",\n        \"Lifelong Learning\","
+        },
+        {
+            "comment": "This code is for setting up a Python package using setup.py. It includes the package name, author, description, license, packages to include, installation requirements, and extras. The classifiers specify development status, topic, and programming language.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/setup.py\":42-58",
+            "content": "        \"Embodied Agents\",\n        \"Large Language Models\",\n    ],\n    license=\"MIT License\",\n    packages=find_packages(include=f\"{PKG_NAME}.*\"),\n    include_package_data=True,\n    zip_safe=False,\n    install_requires=_read_install_requires(),\n    extras_require=_fill_extras(EXTRAS),\n    python_requires=\">=3.9\",\n    classifiers=[\n        \"Development Status :: 5 - Production/Stable\",\n        \"Topic :: Scientific/Engineering :: Artificial Intelligence\",\n        \"Environment :: Console\",\n        \"Programming Language :: Python :: 3.9\",\n    ],\n)"
+        }
+    ]
+}
