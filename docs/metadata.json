@@ -37,7 +37,7 @@
         "6": {
             "filepath": "/skill_library/README.md",
             "entry_id": 54,
-            "language_id": "markdown"
+            "language_id": "plain-text"
         },
         "7": {
             "filepath": "/voyager/__init__.py",
