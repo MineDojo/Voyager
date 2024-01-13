@@ -66,12 +66,15 @@
         ul {
             list-style: none;
         }
+        #feeling-lucky:hover{
+            cursor: pointer;
+        }
     </style>
 </head>
 
 <body>
     <article class="markdown-body">
-        <h2>Project structure<span hierarchy="0" class="partial-repository-url"> of: MineDojo/Voyager</span><div style="float: right;"><a title="Document index" style="margin:3.5px;" href="index.html"><i class="bi bi-search"></i></a><a title="Feeling lucky" style="margin:3.5px;" href="tree.html?random=true"><i class="bi bi-dice-3"></i></a><a title="Expand tree" style="margin:3.5px;" href="tree.html?full=true" id="expand-tree"><i class="bi bi-caret-down-square"></i></a></div></h2>
+        <h2>Project structure<span hierarchy="0" class="partial-repository-url"> of: MineDojo/Voyager</span><div style="float: right;"><a title="Document index" style="margin:3.5px;" href="index.html"><i class="bi bi-search"></i></a><a title="Feeling lucky" style="margin:3.5px;" href="" id="feeling-lucky"><i class="bi bi-dice-3"></i></a><a title="Expand tree" style="margin:3.5px;" href="tree.html?full=true" id="expand-tree"><i class="bi bi-caret-down-square"></i></a></div></h2>
 <ul>
 <li><span hierarchy="0" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/"><code>Voyager</code></strong> <em>Root directory: Organizes subdirectories and files.</em></span><ul>
 <li><a class="file_link" href="index.html?q=/FAQ.md" id="/FAQ.md"><code>FAQ&period;md</code></a> <em>Voyager FAQ: Solutions, Limitations, Costs.</em></li>
@@ -172,18 +175,18 @@
 
         const queryParams = getQueryParams(window.location.search);
         const show_full = queryParams.full == "true";
-        const is_random = queryParams.random == 'true';
+        //const is_random = queryParams.random == 'true';
         function feelingLucky() {
             var elements = document.getElementsByClassName("file_link");
             var randomIndex = Math.floor(Math.random() * elements.length);
             window.location = elements[randomIndex].href;
         }
-        if (is_random) {feelingLucky();}
+        //if (is_random) {feelingLucky();}
+        document.getElementsById("feeling-lucky").onclick = feelingLucky;
         if (!show_full) {
             const spans = document.querySelectorAll('span');
             for (let span of spans) {
                 if (span.getAttribute("hierarchy") == '0') { continue }
-
                 toggleVisibility(span);
             }
         } else {
