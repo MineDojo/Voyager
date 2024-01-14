@@ -12,7 +12,7 @@
         "1": {
             "filepath": "/README.md",
             "entry_id": 12,
-            "language_id": "plain-text"
+            "language_id": "markdown"
         },
         "2": {
             "filepath": "/installation/fabric_mods_install.md",
@@ -37,7 +37,7 @@
         "6": {
             "filepath": "/skill_library/README.md",
             "entry_id": 54,
-            "language_id": "plain-text"
+            "language_id": "markdown"
         },
         "7": {
             "filepath": "/voyager/__init__.py",
