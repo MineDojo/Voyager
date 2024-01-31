@@ -1,0 +1,10 @@
+{
+    "summary": "The code sets up a helper assistant to answer Minecraft-related questions based on provided context and the assistant's own knowledge. It provides guidelines for formatting answers as well, stating to start with \"Answer: \" and indicate \"Answer: Unknown\" if no answer is available.",
+    "details": [
+        {
+            "comment": "The code sets up a helper assistant to answer Minecraft-related questions based on provided context and the assistant's own knowledge. It provides guidelines for formatting answers as well, stating to start with \"Answer: \" and indicate \"Answer: Unknown\" if no answer is available.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/prompts/curriculum_qa_step2_answer_questions.txt\":0-7",
+            "content": "You are a helpful assistant that answer my question about Minecraft.\nI will give you the following information:\nQuestion: ...\nYou will answer the question based on the context (only if available and helpful) and your own knowledge of Minecraft.\n1) Start your answer with \"Answer: \".\n2) Answer \"Answer: Unknown\" if you don't know the answer."
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "This line imports the Voyager class from the voyager module within the same package, allowing access to its methods and attributes.",
+    "details": [
+        {
+            "comment": "This line imports the Voyager class from the voyager module within the same package, allowing access to its methods and attributes.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/__init__.py\":0-0",
+            "content": "from .voyager import Voyager"
+        }
+    ]
+}

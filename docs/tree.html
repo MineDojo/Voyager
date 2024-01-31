@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="github-markdown.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <title>Project structure of: MineDojo/Voyager</title>
+    <style>
+        .directory:hover {
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        :target {
+            background-color: yellow !important;
+        }
+
+        .folded::before {
+            content: '\25B6';
+            margin-right: 8px;
+            /* Add space between marker and text */
+        }
+
+        .expanded::before {
+            content: '\25BC';
+            margin-right: 8px;
+            /* Add space between marker and text */
+        }
+    </style>
+    <script>
+        function toggleVisibility(element) {
+            let mclass = element.getAttribute("class");
+            if (mclass == "expanded") {
+                element.setAttribute('class', 'folded');
+            } else {
+                element.setAttribute('class', 'expanded');
+            }
+            const siblings = element.parentNode.children;
+            for (const sibling of siblings) {
+                if (sibling !== element) {
+                    sibling.style.display = (sibling.style.display === 'none') ? 'block' : 'none';
+                }
+            }
+        }
+    </script>
+    <style>
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+
+            .partial-repository-url {
+                display: none;
+            }
+        }
+
+        ul {
+            list-style: none;
+        }
+        #feeling-lucky:hover{
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <article class="markdown-body">
+        <h2>Project structure<span hierarchy="0" class="partial-repository-url"> of: MineDojo/Voyager</span><div style="float: right;"><a title="Document index" style="margin:3.5px;" href="index.html"><i class="bi bi-search"></i></a><a title="Feeling lucky" style="margin:3.5px;" id="feeling-lucky" href="#"><i class="bi bi-dice-3"></i></a><a title="Expand tree" style="margin:3.5px;" href="tree.html?full=true" id="expand-tree"><i class="bi bi-caret-down-square"></i></a></div></h2>
+<ul>
+<li><span hierarchy="0" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/"><code>Voyager</code></strong> <em>Root directory: Organizes subdirectories and files.</em></span><ul>
+<li><a class="file_link" href="index.html?q=/FAQ.md" id="/FAQ.md"><code>FAQ&period;md</code></a> <em>Voyager FAQ: Solutions, Limitations, Costs.</em></li>
+<li><span hierarchy="1" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/installation/"><code>installation</code></strong> <em>Minecraft Fabric mods and instance installation guide</em></span><ul>
+<li><a class="file_link" href="index.html?q=/installation/fabric_mods_install.md" id="/installation/fabric_mods_install.md"><code>fabric&UnderBar;mods&UnderBar;install&period;md</code></a> <em>Fabric mods installation guide</em></li>
+<li><a class="file_link" href="index.html?q=/installation/minecraft_instance_install.md" id="/installation/minecraft_instance_install.md"><code>minecraft&UnderBar;instance&UnderBar;install&period;md</code></a> <em>Azure login setup for Minecraft Voyager installation.</em></li>
+</ul>
+</li>
+<li><a class="file_link" href="index.html?q=/README.md" id="/README.md"><code>README&period;md</code></a> <em>Intelligent Minecraft agent, MIT licensed, outperforms SOTA.</em></li>
+<li><a class="file_link" href="index.html?q=/requirements.txt" id="/requirements.txt"><code>requirements&period;txt</code></a> <em>Project dependencies: tqdm, langchain, etc.</em></li>
+<li><a class="file_link" href="index.html?q=/setup.py" id="/setup.py"><code>setup&period;py</code></a> <em>Python package setup script</em></li>
+<li><span hierarchy="1" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/skill_library/"><code>skill&UnderBar;library</code></strong></span><ul>
+<li><a class="file_link" href="index.html?q=/skill_library/README.md" id="/skill_library/README.md"><code>README&period;md</code></a> <em>Skill Library: Contribution and Sharing Guide</em></li>
+</ul>
+</li>
+<li><span hierarchy="1" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/voyager/"><code>voyager</code></strong> <em>Explore, evaluate, manage Voyager AI communication utilities.</em></span><ul>
+<li><a class="file_link" href="index.html?q=/voyager/__init__.py" id="/voyager/__init__.py"><code>&UnderBar;&UnderBar;init&UnderBar;&UnderBar;&period;py</code></a> <em>Imports Voyager class from voyager module.</em></li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/voyager/agents/"><code>agents</code></strong> <em>Skill management, evaluation, and interaction for Voyager Agents.</em></span><ul>
+<li><a class="file_link" href="index.html?q=/voyager/agents/__init__.py" id="/voyager/agents/__init__.py"><code>&UnderBar;&UnderBar;init&UnderBar;&UnderBar;&period;py</code></a> <em>Imports Voyager's agents and SkillManager.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/agents/action.py" id="/voyager/agents/action.py"><code>action&period;py</code></a> <em>ActionAgent handles agent behavior with ChatOpenAI and error handling.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/agents/critic.py" id="/voyager/agents/critic.py"><code>critic&period;py</code></a> <em>CriticAgent: Evaluates, generates messages for Voyager project.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/agents/curriculum.py" id="/voyager/agents/curriculum.py"><code>curriculum&period;py</code></a> <em>Curriculum agent manages chat-based learning, QA interactions.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/agents/skill.py" id="/voyager/agents/skill.py"><code>skill&period;py</code></a> <em>SkillManager initializes, manages skills with VectorDB.</em></li>
+</ul>
+</li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/voyager/control_primitives/"><code>control&UnderBar;primitives</code></strong> <em>Control primitives for game objects and bots.</em></span><ul>
+<li><a class="file_link" href="index.html?q=/voyager/control_primitives/__init__.py" id="/voyager/control_primitives/__init__.py"><code>&UnderBar;&UnderBar;init&UnderBar;&UnderBar;&period;py</code></a> <em>Imports control primitives and loads them as text files.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/control_primitives/craftHelper.js" id="/voyager/control_primitives/craftHelper.js"><code>craftHelper&period;js</code></a> <em>Finds minimum recipe for items, informs users of missing crafting materials.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/control_primitives/craftItem.js" id="/voyager/control_primitives/craftItem.js"><code>craftItem&period;js</code></a> <em>Craft items using crafting table, validate inputs, 10 tries before error.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/control_primitives/exploreUntil.js" id="/voyager/control_primitives/exploreUntil.js"><code>exploreUntil&period;js</code></a> <em>Explores tasks with a time limit, resolves result or null.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/control_primitives/givePlacedItemBack.js" id="/voyager/control_primitives/givePlacedItemBack.js"><code>givePlacedItemBack&period;js</code></a> <em>Enables, disables doTileDrops and updates history.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/control_primitives/killMob.js" id="/voyager/control_primitives/killMob.js"><code>killMob&period;js</code></a> <em>Kills nearest entity, auto-attacks, saves progress</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/control_primitives/mineBlock.js" id="/voyager/control_primitives/mineBlock.js"><code>mineBlock&period;js</code></a> <em>Mines blocks using bot's collect method.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/control_primitives/placeItem.js" id="/voyager/control_primitives/placeItem.js"><code>placeItem&period;js</code></a> <em>Place item: Verify, position, equipment, save or report error.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/control_primitives/shoot.js" id="/voyager/control_primitives/shoot.js"><code>shoot&period;js</code></a> <em>Shoot: Bot shoots valid weapon at nearby target in inventory.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/control_primitives/smeltItem.js" id="/voyager/control_primitives/smeltItem.js"><code>smeltItem&period;js</code></a> <em>Smelt items using furnace with error handling.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/control_primitives/useChest.js" id="/voyager/control_primitives/useChest.js"><code>useChest&period;js</code></a> <em>Enables bot-controlled chest interaction.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/control_primitives/waitForMobRemoved.js" id="/voyager/control_primitives/waitForMobRemoved.js"><code>waitForMobRemoved&period;js</code></a> <em>Waits for entity removal, stops attacking.</em></li>
+</ul>
+</li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/voyager/control_primitives_context/"><code>control&UnderBar;primitives&UnderBar;context</code></strong> <em>Context-aware navigation and actions primitives directory</em></span><ul>
+<li><a class="file_link" href="index.html?q=/voyager/control_primitives_context/__init__.py" id="/voyager/control_primitives_context/__init__.py"><code>&UnderBar;&UnderBar;init&UnderBar;&UnderBar;&period;py</code></a> <em>Loads control primitives from "voyager" package.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/control_primitives_context/craftItem.js" id="/voyager/control_primitives_context/craftItem.js"><code>craftItem&period;js</code></a> <em>Crafts items by recipe, needs crafting table.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/control_primitives_context/exploreUntil.js" id="/voyager/control_primitives_context/exploreUntil.js"><code>exploreUntil&period;js</code></a> <em>Explore iron and pigs using exploreUntil.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/control_primitives_context/killMob.js" id="/voyager/control_primitives_context/killMob.js"><code>killMob&period;js</code></a> <em>Kill mob, collect item.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/control_primitives_context/mineBlock.js" id="/voyager/control_primitives_context/mineBlock.js"><code>mineBlock&period;js</code></a> <em>Mines specified block within range, ignores errors.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/control_primitives_context/mineflayer.js" id="/voyager/control_primitives_context/mineflayer.js"><code>mineflayer&period;js</code></a> <em>Control Mineflayer bot's actions and equipment for effective gameplay.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/control_primitives_context/placeItem.js" id="/voyager/control_primitives_context/placeItem.js"><code>placeItem&period;js</code></a> <em>Place item near player using pathfinder</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/control_primitives_context/smeltItem.js" id="/voyager/control_primitives_context/smeltItem.js"><code>smeltItem&period;js</code></a> <em>Smelts items using fuel in a furnace, waits 12 seconds per smelt.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/control_primitives_context/useChest.js" id="/voyager/control_primitives_context/useChest.js"><code>useChest&period;js</code></a> <em>Interacts with chests for item deposition.</em></li>
+</ul>
+</li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/voyager/env/"><code>env</code></strong> <em>Manage Minecraft instance environment and processes.</em></span><ul>
+<li><a class="file_link" href="index.html?q=/voyager/env/__init__.py" id="/voyager/env/__init__.py"><code>&UnderBar;&UnderBar;init&UnderBar;&UnderBar;&period;py</code></a> <em>VoyagerEnv config file</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/env/bridge.py" id="/voyager/env/bridge.py"><code>bridge&period;py</code></a> <em>VoyagerEnv: Azure Minecraft server, pause/unpause, reset, render.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/env/minecraft_launcher.py" id="/voyager/env/minecraft_launcher.py"><code>minecraft&UnderBar;launcher&period;py</code></a> <em>Create MinecraftInstance, handle login, config options.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/env/process_monitor.py" id="/voyager/env/process_monitor.py"><code>process&UnderBar;monitor&period;py</code></a> <em>Process monitor for subprocess management.</em></li>
+</ul>
+</li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/voyager/prompts/"><code>prompts</code></strong> <em>Minecraft biome-driven prompts and evaluation.</em></span><ul>
+<li><a class="file_link" href="index.html?q=/voyager/prompts/__init__.py" id="/voyager/prompts/__init__.py"><code>&UnderBar;&UnderBar;init&UnderBar;&UnderBar;&period;py</code></a> <em>Voyager prompts loader. Imports, defines, returns prompt text.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/prompts/action_response_format.txt" id="/voyager/prompts/action_response_format.txt"><code>action&UnderBar;response&UnderBar;format&period;txt</code></a> <em>Action-based response format for bot main function. Asynchronous with helper functions.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/prompts/action_template.txt" id="/voyager/prompts/action_template.txt"><code>action&UnderBar;template&period;txt</code></a> <em>Reusable Mineflayer Assistant API for chat, exploration, event listeners, fair gameplay.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/prompts/critic.txt" id="/voyager/prompts/critic.txt"><code>critic&period;txt</code></a> <em>Minecraft task evaluator and inventory manager.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/prompts/curriculum.txt" id="/voyager/prompts/curriculum.txt"><code>curriculum&period;txt</code></a> <em>Minecraft assistant suggests tasks based on player progress.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/prompts/curriculum_qa_step1_ask_questions.txt" id="/voyager/prompts/curriculum_qa_step1_ask_questions.txt"><code>curriculum&UnderBar;qa&UnderBar;step1&UnderBar;ask&UnderBar;questions&period;txt</code></a> <em>Generate Minecraft prompts based on biome and time, following a specific format for response.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/prompts/curriculum_qa_step2_answer_questions.txt" id="/voyager/prompts/curriculum_qa_step2_answer_questions.txt"><code>curriculum&UnderBar;qa&UnderBar;step2&UnderBar;answer&UnderBar;questions&period;txt</code></a> <em>Minecraft Q&amp;A Helper Assistant Setup</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/prompts/curriculum_task_decomposition.txt" id="/voyager/prompts/curriculum_task_decomposition.txt"><code>curriculum&UnderBar;task&UnderBar;decomposition&period;txt</code></a> <em>Decompose Minecraft task based on inventory.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/prompts/skill.txt" id="/voyager/prompts/skill.txt"><code>skill&period;txt</code></a> <em>Mine cobblestones with a wooden pickaxe.</em></li>
+</ul>
+</li>
+<li><span hierarchy="2" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/voyager/utils/"><code>utils</code></strong> <em>Voyager utilities and file system ops, JSON events.</em></span><ul>
+<li><a class="file_link" href="index.html?q=/voyager/utils/__init__.py" id="/voyager/utils/__init__.py"><code>&UnderBar;&UnderBar;init&UnderBar;&UnderBar;&period;py</code></a> <em>Utility functions and classes for Voyager module.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/utils/file_utils.py" id="/voyager/utils/file_utils.py"><code>file&UnderBar;utils&period;py</code></a> <em>Utility functions for file system operations and management.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/utils/json_utils.py" id="/voyager/utils/json_utils.py"><code>json&UnderBar;utils&period;py</code></a> <em>JSON handling utilities with error correction and validation.</em></li>
+<li><a class="file_link" href="index.html?q=/voyager/utils/record_utils.py" id="/voyager/utils/record_utils.py"><code>record&UnderBar;utils&period;py</code></a> <em>EventRecorder: Records, updates, and sorts event timestamps.</em></li>
+</ul>
+</li>
+<li><a class="file_link" href="index.html?q=/voyager/voyager.py" id="/voyager/voyager.py"><code>voyager&period;py</code></a> <em>Voyager: AI communication, environment setup, rollout control.</em></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+    </article>
+    <script type="text/javascript">
+        function getQueryParams() {
+            var search = window.location.search.substring(1); // Remove leading '?'
+            var queryParams = {};
+            search.split('&').forEach(function (pair) {
+                var parts = pair.split('=');
+                var key = decodeURIComponent(parts[0]);
+                var value = decodeURIComponent(parts[1]);
+                queryParams[key] = value;
+            });
+            return queryParams;
+        }
+
+        const queryParams = getQueryParams(window.location.search);
+        const show_full = queryParams.full == "true";
+        //const is_random = queryParams.random == 'true';
+        function feelingLucky() {
+            var elements = document.getElementsByClassName("file_link");
+            var randomIndex = Math.floor(Math.random() * elements.length);
+            window.location = elements[randomIndex].href;
+        }
+        //if (is_random) {feelingLucky();}
+        document.getElementById("feeling-lucky").onclick = feelingLucky;
+        if (!show_full) {
+            const spans = document.querySelectorAll('span');
+            for (let span of spans) {
+                if (span.getAttribute("hierarchy") == '0') { continue }
+                toggleVisibility(span);
+            }
+        } else {
+            const expand_elem = document.getElementById('expand-tree');
+            expand_elem.setAttribute("href", "tree.html");
+            expand_elem.setAttribute("title", "Undo expand");
+            expand_elem.innerHTML = '<i class="bi bi-caret-up-square"></i>'
+        }
+
+    </script>
+</body>
+
+</html>

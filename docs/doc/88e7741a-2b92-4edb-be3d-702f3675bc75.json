@@ -1,0 +1,10 @@
+{
+    "summary": "Crafts specified item by following the recipe, requires a crafting table nearby.",
+    "details": [
+        {
+            "comment": "Crafts specified item by following the recipe, requires a crafting table nearby.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/control_primitives_context/craftItem.js\":0-13",
+            "content": "// Craft 8 oak_planks from 2 oak_log (do the recipe 2 times): craftItem(bot, \"oak_planks\", 2);\n// You must place a crafting table before calling this function\nasync function craftItem(bot, name, count = 1) {\n    const item = mcData.itemsByName[name];\n    const craftingTable = bot.findBlock({\n        matching: mcData.blocksByName.crafting_table.id,\n        maxDistance: 32,\n    });\n    await bot.pathfinder.goto(\n        new GoalLookAtBlock(craftingTable.position, bot.world)\n    );\n    const recipe = bot.recipesFor(item.id, null, 1, craftingTable)[0];\n    await bot.craft(recipe, count, craftingTable);\n}"
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "summary": "This function smelts a specified item using another item as fuel in a furnace. It finds the corresponding blocks for the items and furnace, then performs actions to smelt the items. The loop repeats for the specified count of items, waiting 12 seconds between each smelt. Finally, it closes the furnace after completion.",
+    "details": [
+        {
+            "comment": "This function smelts a specified item using another item as fuel in a furnace. It finds the corresponding blocks for the items and furnace, then performs actions to smelt the items. The loop repeats for the specified count of items, waiting 12 seconds between each smelt. Finally, it closes the furnace after completion.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/control_primitives_context/smeltItem.js\":0-21",
+            "content": "// Smelt 1 raw_iron into 1 iron_ingot using 1 oak_planks as fuel: smeltItem(bot, \"raw_iron\", \"oak_planks\");\n// You must place a furnace before calling this function\nasync function smeltItem(bot, itemName, fuelName, count = 1) {\n    const item = mcData.itemsByName[itemName];\n    const fuel = mcData.itemsByName[fuelName];\n    const furnaceBlock = bot.findBlock({\n        matching: mcData.blocksByName.furnace.id,\n        maxDistance: 32,\n    });\n    await bot.pathfinder.goto(\n        new GoalLookAtBlock(furnaceBlock.position, bot.world)\n    );\n    const furnace = await bot.openFurnace(furnaceBlock);\n    for (let i = 0; i < count; i++) {\n        await furnace.putFuel(fuel.id, null, 1);\n        await furnace.putInput(item.id, null, 1);\n        // Wait 12 seconds for the furnace to smelt the item\n        await bot.waitForTicks(12 * 20);\n        await furnace.takeOutput();\n    }\n    await furnace.close();\n}"
+        }
+    ]
+}

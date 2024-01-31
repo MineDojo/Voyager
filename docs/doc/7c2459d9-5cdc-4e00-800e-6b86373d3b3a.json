@@ -1,0 +1,10 @@
+{
+    "summary": "This function mines a specified block (e.g., stone) by finding and collecting the blocks within a 32-distance range, up to the count specified. It ignores \"No Path\" errors during collection.",
+    "details": [
+        {
+            "comment": "This function mines a specified block (e.g., stone) by finding and collecting the blocks within a 32-distance range, up to the count specified. It ignores \"No Path\" errors during collection.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/control_primitives_context/mineBlock.js\":0-14",
+            "content": "// Mine 3 cobblestone: mineBlock(bot, \"stone\", 3);\nasync function mineBlock(bot, name, count = 1) {\n    const blocks = bot.findBlocks({\n        matching: (block) => {\n            return block.name === name;\n        },\n        maxDistance: 32,\n        count: count,\n    });\n    const targets = [];\n    for (let i = 0; i < Math.min(blocks.length, count); i++) {\n        targets.push(bot.blockAt(blocks[i]));\n    }\n    await bot.collectBlock.collect(targets, { ignoreNoPath: true });\n}"
+        }
+    ]
+}

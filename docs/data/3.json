@@ -1,0 +1,539 @@
+{
+    "300": {
+        "file_id": 35,
+        "content": "    def render(self):\n        raise NotImplementedError(\"render is not implemented\")\n    def reset(\n        self,\n        *,\n        seed=None,\n        options=None,\n    ) -> Tuple[ObsType, Dict[str, Any]]:\n        if options is None:\n            options = {}\n        if options.get(\"inventory\", {}) and options.get(\"mode\", \"hard\") != \"hard\":\n            raise RuntimeError(\"inventory can only be set when options is hard\")\n        self.reset_options = {\n            \"port\": self.mc_port,\n            \"reset\": options.get(\"mode\", \"hard\"),\n            \"inventory\": options.get(\"inventory\", {}),\n            \"equipment\": options.get(\"equipment\", []),\n            \"spread\": options.get(\"spread\", False),\n            \"waitTicks\": options.get(\"wait_ticks\", 5),\n            \"position\": options.get(\"position\", None),\n        }\n        self.unpause()\n        self.mineflayer.stop()\n        time.sleep(1)  # wait for mineflayer to exit\n        returned_data = self.check_process()\n        self.has_reset = True\n        self.connected = True",
+        "type": "code",
+        "location": "/voyager/env/bridge.py:127-158"
+    },
+    "301": {
+        "file_id": 35,
+        "content": "The code defines two methods, \"render\" and \"reset\". The \"render\" method raises a \"NotImplementedError\", indicating it's not implemented. The \"reset\" method takes optional seed and options parameters, sets reset options (port, mode, inventory, equipment, spread, waitTicks, position), stops the mineflayer, waits for it to exit, checks process status, and marks has_reset as True.",
+        "type": "comment"
+    },
+    "302": {
+        "file_id": 35,
+        "content": "        # All the reset in step will be soft\n        self.reset_options[\"reset\"] = \"soft\"\n        self.pause()\n        return json.loads(returned_data)\n    def close(self):\n        self.unpause()\n        if self.connected:\n            res = requests.post(f\"{self.server}/stop\")\n            if res.status_code == 200:\n                self.connected = False\n        if self.mc_instance:\n            self.mc_instance.stop()\n        self.mineflayer.stop()\n        return not self.connected\n    def pause(self):\n        if self.mineflayer.is_running and not self.server_paused:\n            res = requests.post(f\"{self.server}/pause\")\n            if res.status_code == 200:\n                self.server_paused = True\n        return self.server_paused\n    def unpause(self):\n        if self.mineflayer.is_running and self.server_paused:\n            res = requests.post(f\"{self.server}/pause\")\n            if res.status_code == 200:\n                self.server_paused = False\n            else:\n                print(res.json())\n        return self.server_paused",
+        "type": "code",
+        "location": "/voyager/env/bridge.py:159-189"
+    },
+    "303": {
+        "file_id": 35,
+        "content": "This code defines a class with methods to pause and unpause the server, stop the minecraft instance, and close the connection. The reset_options are set to \"soft\" and it returns parsed JSON data from an API request.",
+        "type": "comment"
+    },
+    "304": {
+        "file_id": 36,
+        "content": "/voyager/env/minecraft_launcher.py",
+        "type": "filepath"
+    },
+    "305": {
+        "file_id": 36,
+        "content": "The code creates a MinecraftInstance class, initializes functions for Mineflayer process and log path, runs node command with script path and server port, handles user login and config options management.",
+        "type": "summary"
+    },
+    "306": {
+        "file_id": 36,
+        "content": "import os\nimport re\nimport minecraft_launcher_lib\nimport sys\nimport voyager.utils as U\nfrom .process_monitor import SubprocessMonitor\nclass MinecraftInstance:\n    def __init__(\n        self,\n        client_id,\n        redirect_url,\n        secret_value,\n        version,\n        mineflayer,\n        log_path=\"logs\",\n    ):\n        self.client_id = client_id\n        self.redirect_url = redirect_url\n        self.secret_value = secret_value\n        self.version = version\n        self.log_path = log_path\n        self.mc_dir = minecraft_launcher_lib.utils.get_minecraft_directory()\n        self.port = None\n        def stop_mineflayer():\n            print(\"Stopping mineflayer\")\n            try:\n                mineflayer.stop()\n            except Exception as e:\n                print(e)\n        self.mc_command = self.get_mc_command()\n        self.mc_process = SubprocessMonitor(\n            commands=self.mc_command,\n            name=\"minecraft\",\n            ready_match=r\"Started serving on (\\d+)\",\n            log_path=self.log_path,",
+        "type": "code",
+        "location": "/voyager/env/minecraft_launcher.py:1-41"
+    },
+    "307": {
+        "file_id": 36,
+        "content": "The code defines a class \"MinecraftInstance\" with attributes such as client_id, redirect_url, secret_value, version, mineflayer, log_path, and mc_dir. It initializes a stop_mineflayer() function to stop the mineflayer process, gets the mc_command using get_mc_command(), and creates a SubprocessMonitor for the minecraft process with specified commands, name, ready_match, and log_path.",
+        "type": "comment"
+    },
+    "308": {
+        "file_id": 36,
+        "content": "            callback=stop_mineflayer,\n            callback_match=r\"\\[Server thread/INFO\\]: bot left the game\",\n            finished_callback=stop_mineflayer,\n        )\n    def get_mineflayer_process(self, server_port):\n        U.f_mkdir(self.log_path, \"../mineflayer\")\n        file_path = os.path.abspath(os.path.dirname(__file__))\n        return SubprocessMonitor(\n            commands=[\n                \"node\",\n                U.f_join(file_path, \"mineflayer/index.js\"),\n                str(server_port),\n            ],\n            name=\"mineflayer\",\n            ready_match=r\"Server started on port (\\d+)\",\n            log_path=U.f_join(self.log_path, \"mineflayer\"),\n        )\n    def get_mc_command(self):\n        file_path = os.path.abspath(os.path.dirname(__file__))\n        if not U.f_exists(file_path, \"config.json\"):\n            (\n                login_url,\n                state,\n                code_verifier,\n            ) = minecraft_launcher_lib.microsoft_account.get_secure_login_data(\n                self.client_id, self.redirect_url",
+        "type": "code",
+        "location": "/voyager/env/minecraft_launcher.py:42-69"
+    },
+    "309": {
+        "file_id": 36,
+        "content": "Line 41-68:\n- Initializes a `SubprocessMonitor` for Mineflayer process\n- Sets the log path to \"../mineflayer\" and gets the absolute file path\n- Runs \"node\" command with the script path, server port as arguments\n- Defines ready match pattern as \"Server started on port (\\d+)\"\n- Checks if config.json exists",
+        "type": "comment"
+    },
+    "310": {
+        "file_id": 36,
+        "content": "            )\n            print(\n                f\"Please open {login_url} in your browser and copy the url you are redirected into the prompt below.\"\n            )\n            code_url = input()\n            try:\n                auth_code = (\n                    minecraft_launcher_lib.microsoft_account.parse_auth_code_url(\n                        code_url, state\n                    )\n                )\n            except AssertionError:\n                print(\"States do not match!\")\n                sys.exit(1)\n            except KeyError:\n                print(\"Url not valid\")\n                sys.exit(1)\n            login_data = minecraft_launcher_lib.microsoft_account.complete_login(\n                self.client_id,\n                self.secret_value,\n                self.redirect_url,\n                auth_code,\n                code_verifier,\n            )\n            options = {\n                \"username\": login_data[\"name\"],\n                \"uuid\": login_data[\"id\"],\n                \"token\": login_data[\"access_token\"],",
+        "type": "code",
+        "location": "/voyager/env/minecraft_launcher.py:70-100"
+    },
+    "311": {
+        "file_id": 36,
+        "content": "The code prompts the user to open a login URL in their browser, enter the redirected URL into the prompt, and then parses the authentication code from the entered URL. It validates the state and URL, then completes the login process by retrieving the username, UUID, and access token from the login data.",
+        "type": "comment"
+    },
+    "312": {
+        "file_id": 36,
+        "content": "            }\n            U.json_dump(options, file_path, \"config.json\")\n            print(f\"Login success, save to {U.f_join(file_path, 'config.json')}\")\n        options = U.json_load(file_path, \"config.json\")\n        mc_command = minecraft_launcher_lib.command.get_minecraft_command(\n            self.version, self.mc_dir, options\n        )\n        return mc_command\n    def run(self):\n        self.mc_process.run()\n        pattern = r\"Started serving on (\\d+)\"\n        match = re.search(pattern, self.mc_process.ready_line)\n        if match:\n            self.port = int(match.group(1))\n            print(\"The mc server is listening on port\", self.port)\n        else:\n            raise RuntimeError(\"Port not found\")\n    def stop(self):\n        self.mc_process.stop()\n    @property\n    def is_running(self):\n        return self.mc_process.is_running",
+        "type": "code",
+        "location": "/voyager/env/minecraft_launcher.py:101-127"
+    },
+    "313": {
+        "file_id": 36,
+        "content": "This code defines a class with methods to start, stop, and check the status of a Minecraft server. It loads or saves configuration options, retrieves the Minecraft command, and prints the port when the server is running.",
+        "type": "comment"
+    },
+    "314": {
+        "file_id": 37,
+        "content": "/voyager/env/process_monitor.py",
+        "type": "filepath"
+    },
+    "315": {
+        "file_id": 37,
+        "content": "This code manages a subprocess, defining a class with methods to control its lifecycle and using threading for concurrency. It initializes subprocesses with commands, sets up event handlers for readiness and completion, and monitors output for specific patterns to call callback functions.",
+        "type": "summary"
+    },
+    "316": {
+        "file_id": 37,
+        "content": "import time\nimport re\nimport warnings\nfrom typing import List\nimport psutil\nimport subprocess\nimport logging\nimport threading\nimport voyager.utils as U\nclass SubprocessMonitor:\n    def __init__(\n        self,\n        commands: List[str],\n        name: str,\n        ready_match: str = r\".*\",\n        log_path: str = \"logs\",\n        callback_match: str = r\"^(?!x)x$\",  # regex that will never match\n        callback: callable = None,\n        finished_callback: callable = None,\n    ):\n        self.commands = commands\n        start_time = time.strftime(\"%Y%m%d_%H%M%S\")\n        self.name = name\n        self.logger = logging.getLogger(name)\n        handler = logging.FileHandler(U.f_join(log_path, f\"{start_time}.log\"))\n        formatter = logging.Formatter(\n            \"%(asctime)s - %(name)s - %(levelname)s - %(message)s\"\n        )\n        handler.setFormatter(formatter)\n        self.logger.addHandler(handler)\n        self.logger.setLevel(logging.INFO)\n        self.process = None\n        self.ready_match = ready_match\n        self.ready_event = None",
+        "type": "code",
+        "location": "/voyager/env/process_monitor.py:1-38"
+    },
+    "317": {
+        "file_id": 37,
+        "content": "Class for monitoring subprocesses, taking a list of commands, name, regex patterns for ready and callback conditions, log path, and optional callbacks on process completion. Sets up a logger with time-stamped file handler and initializes process variable.",
+        "type": "comment"
+    },
+    "318": {
+        "file_id": 37,
+        "content": "        self.ready_line = None\n        self.callback_match = callback_match\n        self.callback = callback\n        self.finished_callback = finished_callback\n        self.thread = None\n    def _start(self):\n        self.logger.info(f\"Starting subprocess with commands: {self.commands}\")\n        self.process = psutil.Popen(\n            self.commands,\n            stdout=subprocess.PIPE,\n            stderr=subprocess.STDOUT,\n            universal_newlines=True,\n        )\n        print(f\"Subprocess {self.name} started with PID {self.process.pid}.\")\n        for line in iter(self.process.stdout.readline, \"\"):\n            self.logger.info(line.strip())\n            if re.search(self.ready_match, line):\n                self.ready_line = line\n                self.logger.info(\"Subprocess is ready.\")\n                self.ready_event.set()\n            if re.search(self.callback_match, line):\n                self.callback()\n        if not self.ready_event.is_set():\n            self.ready_event.set()\n            warnings.warn(f\"Subprocess {self.name} failed to start.\")",
+        "type": "code",
+        "location": "/voyager/env/process_monitor.py:39-65"
+    },
+    "319": {
+        "file_id": 37,
+        "content": "This code initializes a subprocess with commands and sets up event handlers for its readiness and completion. It monitors the output of the subprocess, looking for specific patterns in each line to determine when it's ready and to call the callback function. If the process fails to start, it raises a warning.",
+        "type": "comment"
+    },
+    "320": {
+        "file_id": 37,
+        "content": "        if self.finished_callback:\n            self.finished_callback()\n    def run(self):\n        self.ready_event = threading.Event()\n        self.ready_line = None\n        self.thread = threading.Thread(target=self._start)\n        self.thread.start()\n        self.ready_event.wait()\n    def stop(self):\n        self.logger.info(\"Stopping subprocess.\")\n        if self.process and self.process.is_running():\n            self.process.terminate()\n            self.process.wait()\n    # def __del__(self):\n    #     if self.process.is_running():\n    #         self.stop()\n    @property\n    def is_running(self):\n        if self.process is None:\n            return False\n        return self.process.is_running()",
+        "type": "code",
+        "location": "/voyager/env/process_monitor.py:66-90"
+    },
+    "321": {
+        "file_id": 37,
+        "content": "This code defines a class that manages a subprocess and provides methods to control its lifecycle, including starting, stopping, and checking if it's still running. It uses the threading module for concurrency and a property to determine if the process is running.",
+        "type": "comment"
+    },
+    "322": {
+        "file_id": 38,
+        "content": "/voyager/prompts/__init__.py",
+        "type": "filepath"
+    },
+    "323": {
+        "file_id": 38,
+        "content": "This code imports required packages, defines a function to load prompts using the voyager.utils module, and uses pkg_resources to obtain the package's file path. It then returns the prompt text using the U.load_text() method.",
+        "type": "summary"
+    },
+    "324": {
+        "file_id": 38,
+        "content": "import pkg_resources\nimport voyager.utils as U\ndef load_prompt(prompt):\n    package_path = pkg_resources.resource_filename(\"voyager\", \"\")\n    return U.load_text(f\"{package_path}/prompts/{prompt}.txt\")",
+        "type": "code",
+        "location": "/voyager/prompts/__init__.py:1-7"
+    },
+    "325": {
+        "file_id": 38,
+        "content": "This code imports required packages, defines a function to load prompts using the voyager.utils module, and uses pkg_resources to obtain the package's file path. It then returns the prompt text using the U.load_text() method.",
+        "type": "comment"
+    },
+    "326": {
+        "file_id": 39,
+        "content": "/voyager/prompts/action_response_format.txt",
+        "type": "filepath"
+    },
+    "327": {
+        "file_id": 39,
+        "content": "This code defines a main function named \"yourMainFunctionName\" that takes a parameter called \"bot\". The function is async, meaning it can perform asynchronous operations. It includes helper functions, which are only used if needed and should be avoided when possible. The code also has additional lines of code that may contain instructions or prompts.",
+        "type": "summary"
+    },
+    "328": {
+        "file_id": 39,
+        "content": "Explain: ...\nPlan:\n1) ...\n2) ...\n3) ...\n...\nCode:\n```javascript\n// helper functions (only if needed, try to avoid them)\n...\n// main function after the helper functions\nasync function yourMainFunctionName(bot) {\n  // ...\n}\n```",
+        "type": "code",
+        "location": "/voyager/prompts/action_response_format.txt:1-15"
+    },
+    "329": {
+        "file_id": 39,
+        "content": "This code defines a main function named \"yourMainFunctionName\" that takes a parameter called \"bot\". The function is async, meaning it can perform asynchronous operations. It includes helper functions, which are only used if needed and should be avoided when possible. The code also has additional lines of code that may contain instructions or prompts.",
+        "type": "comment"
+    },
+    "330": {
+        "file_id": 40,
+        "content": "/voyager/prompts/action_template.txt",
+        "type": "filepath"
+    },
+    "331": {
+        "file_id": 40,
+        "content": "The code snippet introduces a reusable Mineflayer assistant using APIs for tasks in Minecraft, with focus on chat, exploration, and event listeners, while ensuring fair gameplay.",
+        "type": "summary"
+    },
+    "332": {
+        "file_id": 40,
+        "content": "You are a helpful assistant that writes Mineflayer javascript code to complete any Minecraft task specified by me.\nHere are some useful programs written with Mineflayer APIs.\n{programs}\nAt each round of conversation, I will give you\nCode from the last round: ...\nExecution error: ...\nChat log: ...\nBiome: ...\nTime: ...\nNearby blocks: ...\nNearby entities (nearest to farthest):\nHealth: ...\nHunger: ...\nPosition: ...\nEquipment: ...\nInventory (xx/36): ...\nChests: ...\nTask: ...\nContext: ...\nCritique: ...\nYou should then respond to me with\nExplain (if applicable): Are there any steps missing in your plan? Why does the code not complete the task? What does the chat log and execution error imply?\nPlan: How to complete the task step by step. You should pay attention to Inventory since it tells what you have. The task completeness check is also based on your final inventory.\nCode:\n    1) Write an async function taking the bot as the only argument.\n    2) Reuse the above useful programs as much as possible.\n        - Use `mineBlock(bot, name, count)` to collect blocks. Do not use `bot.dig` directly.",
+        "type": "code",
+        "location": "/voyager/prompts/action_template.txt:1-32"
+    },
+    "333": {
+        "file_id": 40,
+        "content": "Code snippet introduces a helpful Mineflayer assistant that utilizes Mineflayer APIs to complete tasks in Minecraft. The code includes pre-written programs, requires an async function, and emphasizes reusing existing programs while collecting blocks with `mineBlock(bot, name, count)`.",
+        "type": "comment"
+    },
+    "334": {
+        "file_id": 40,
+        "content": "        - Use `craftItem(bot, name, count)` to craft items. Do not use `bot.craft` or `bot.recipesFor` directly.\n        - Use `smeltItem(bot, name count)` to smelt items. Do not use `bot.openFurnace` directly.\n        - Use `placeItem(bot, name, position)` to place blocks. Do not use `bot.placeBlock` directly.\n        - Use `killMob(bot, name, timeout)` to kill mobs. Do not use `bot.attack` directly.\n    3) Your function will be reused for building more complex functions. Therefore, you should make it generic and reusable. You should not make strong assumption about the inventory (as it may be changed at a later time), and therefore you should always check whether you have the required items before using them. If not, you should first collect the required items and reuse the above useful programs.\n    4) Functions in the \"Code from the last round\" section will not be saved or executed. Do not reuse functions listed there.\n    5) Anything defined outside a function will be ignored, define all your variables inside your functions.",
+        "type": "code",
+        "location": "/voyager/prompts/action_template.txt:33-39"
+    },
+    "335": {
+        "file_id": 40,
+        "content": "Code provides guidelines for crafting, smelting, placing blocks, and killing mobs using specific functions without directly using the respective bot methods. The code emphasizes reusability, avoiding strong assumptions about the inventory, checking for required items before using them, and defining variables inside functions. Functions from previous round are not saved or executed.",
+        "type": "comment"
+    },
+    "336": {
+        "file_id": 40,
+        "content": "    6) Call `bot.chat` to show the intermediate progress.\n    7) Use `exploreUntil(bot, direction, maxDistance, callback)` when you cannot find something. You should frequently call this before mining blocks or killing mobs. You should select a direction at random every time instead of constantly using (1, 0, 1).\n    8) `maxDistance` should always be 32 for `bot.findBlocks` and `bot.findBlock`. Do not cheat.\n    9) Do not write infinite loops or recursive functions.\n    10) Do not use `bot.on` or `bot.once` to register event listeners. You definitely do not need them.\n    11) Name your function in a meaningful way (can infer the task from the name).\nYou should only respond in the format as described below:\nRESPONSE FORMAT:\n{response_format}",
+        "type": "code",
+        "location": "/voyager/prompts/action_template.txt:40-49"
+    },
+    "337": {
+        "file_id": 40,
+        "content": "Code is providing guidelines for writing code that interacts with a bot, focusing on chat functionality, exploration, and event listener usage. It emphasizes not cheating or using unnecessary functions.",
+        "type": "comment"
+    },
+    "338": {
+        "file_id": 41,
+        "content": "/voyager/prompts/critic.txt",
+        "type": "filepath"
+    },
+    "339": {
+        "file_id": 41,
+        "content": "This code evaluates Minecraft tasks by analyzing user input, inventory data, and offers feedback on progress. It manages tasks like planting, zombie killing, and food eating, checks inventory for success or failure, and suggests item removal if over 20 slots are occupied.",
+        "type": "summary"
+    },
+    "340": {
+        "file_id": 41,
+        "content": "You are an assistant that assesses my progress of playing Minecraft and provides useful guidance.\nYou are required to evaluate if I have met the task requirements. Exceeding the task requirements is also considered a success while failing to meet them requires you to provide critique to help me improve.\nI will give you the following information:\nBiome: The biome after the task execution.\nTime: The current time.\nNearby blocks: The surrounding blocks. These blocks are not collected yet. However, this is useful for some placing or planting tasks.\nHealth: My current health.\nHunger: My current hunger level. For eating task, if my hunger level is 20.0, then I successfully ate the food.\nPosition: My current position.\nEquipment: My final equipment. For crafting tasks, I sometimes equip the crafted item.\nInventory (xx/36): My final inventory. For mining and smelting tasks, you only need to check inventory.\nChests: If the task requires me to place items in a chest, you can find chest information here.\nTask: The objective I need to accomplish.",
+        "type": "code",
+        "location": "/voyager/prompts/critic.txt:1-16"
+    },
+    "341": {
+        "file_id": 41,
+        "content": "This code outlines the required information and context for assessing progress in Minecraft tasks, including biome, time, nearby blocks, health, hunger, position, equipment, inventory, chests, and task.",
+        "type": "comment"
+    },
+    "342": {
+        "file_id": 41,
+        "content": "Context: The context of the task.\nYou should only respond in JSON format as described below:\n{\n    \"reasoning\": \"reasoning\",\n    \"success\": boolean,\n    \"critique\": \"critique\",\n}\nEnsure the response can be parsed by Python `json.loads`, e.g.: no trailing commas, no single quotes, etc.\nHere are some examples:\nINPUT:\nInventory (2/36): {'oak_log':2, 'spruce_log':2}\nTask: Mine 3 wood logs\nRESPONSE:\n{\n    \"reasoning\": \"You need to mine 3 wood logs. You have 2 oak logs and 2 spruce logs, which add up to 4 wood logs.\",\n    \"success\": true,\n    \"critique\": \"\"\n}\nINPUT:\nInventory (3/36): {'crafting_table': 1, 'spruce_planks': 6, 'stick': 4}\nTask: Craft a wooden pickaxe\nRESPONSE:\n{\n    \"reasoning\": \"You have enough materials to craft a wooden pickaxe, but you didn't craft it.\",\n    \"success\": false,\n    \"critique\": \"Craft a wooden pickaxe with a crafting table using 3 spruce planks and 2 sticks.\"\n}\nINPUT:\nInventory (2/36): {'raw_iron': 5, 'stone_pickaxe': 1}\nTask: Mine 5 iron_ore\nRESPONSE:\n{\n    \"reasoning\": \"Mining iron_ore in Minecraft will get raw_iron. You have 5 raw_iron in your inventory.\",",
+        "type": "code",
+        "location": "/voyager/prompts/critic.txt:17-59"
+    },
+    "343": {
+        "file_id": 41,
+        "content": "Code provides instructions for generating a JSON response based on user input and inventory information, evaluating task completion and offering critique if necessary.",
+        "type": "comment"
+    },
+    "344": {
+        "file_id": 41,
+        "content": "    \"success\": true,\n    \"critique\": \"\"\n}\nINPUT:\nBiome: plains\nNearby blocks: stone, dirt, grass_block, grass, farmland, wheat\nInventory (26/36): ...\nTask:  Plant 1 wheat seed.\nRESPONSE:\n{\n    \"reasoning\": \"For planting tasks, inventory information is useless. In nearby blocks, there is farmland and wheat, which means you succeed to plant the wheat seed.\",\n    \"success\": true,\n    \"critique\": \"\"\n}\nINPUT:\nInventory (11/36): {... ,'rotten_flesh': 1}\nTask: Kill 1 zombie\nContext: ...\nRESPONSE\n{\n    \"reasoning\": \"You have rotten flesh in your inventory, which means you successfully killed one zombie.\",\n    \"success\": true,\n    \"critique\": \"\"\n}\nINPUT:\nHunger: 20.0/20.0\nInventory (11/36): ...\nTask: Eat 1 ...\nContext: ...\nRESPONSE\n{\n    \"reasoning\": \"For all eating task, if the player's hunger is 20.0, then the player successfully ate the food.\",\n    \"success\": true,\n    \"critique\": \"\"\n}\nINPUT:\nNearby blocks: chest\nInventory (28/36): {'rail': 1, 'coal': 2, 'oak_planks': 13, 'copper_block': 1, 'diorite': 7, 'cooked_beef': 4, 'gran",
+        "type": "code",
+        "location": "/voyager/prompts/critic.txt:60-113"
+    },
+    "345": {
+        "file_id": 41,
+        "content": "This code handles different game tasks such as planting, killing zombies, and eating food. It checks the player's inventory, nearby blocks, or hunger level to determine if the task was successful or not. The reasoning behind each success is provided along with a \"success\" flag and an empty \"critique\" field.",
+        "type": "comment"
+    },
+    "346": {
+        "file_id": 41,
+        "content": "ite': 22, 'cobbled_deepslate': 23, 'feather': 4, 'leather': 2, 'cooked_chicken': 3, 'white_wool': 2, 'stick': 3, 'black_wool': 1, 'stone_sword': 2, 'stone_hoe': 1, 'stone_axe': 2, 'stone_shovel': 2, 'cooked_mutton': 4, 'cobblestone_wall': 18, 'crafting_table': 1, 'furnace': 1, 'iron_pickaxe': 1, 'stone_pickaxe': 1, 'raw_copper': 12}\nChests:\n(81, 131, 16): {'andesite': 2, 'dirt': 2, 'cobblestone': 75, 'wooden_pickaxe': 1, 'wooden_sword': 1}\nTask: Deposit useless items into the chest at (81, 131, 16)\nContext: ...\nRESPONSE\n{\n    \"reasoning\": \"You have 28 items in your inventory after depositing, which is more than 20. You need to deposit more items from your inventory to the chest.\",\n    \"success\": false,\n    \"critique\": \"Deposit more useless items such as copper_block, diorite, granite, cobbled_deepslate, feather, and leather to meet the requirement of having only 20 occupied slots in your inventory.\"\n}",
+        "type": "code",
+        "location": "/voyager/prompts/critic.txt:113-127"
+    },
+    "347": {
+        "file_id": 41,
+        "content": "Code snippet represents inventory items with their counts, chest location and associated task to deposit useless items. A response is given if the player has more than 20 slots occupied in their inventory, suggesting specific items to remove for compliance.",
+        "type": "comment"
+    },
+    "348": {
+        "file_id": 42,
+        "content": "/voyager/prompts/curriculum.txt",
+        "type": "filepath"
+    },
+    "349": {
+        "file_id": 42,
+        "content": "This Minecraft assistant suggests tasks based on player progress, avoiding building shelters and specifying task types to avoid. The code provides instructions for suggesting appropriate tasks based on game state.",
+        "type": "summary"
+    },
+    "350": {
+        "file_id": 42,
+        "content": "You are a helpful assistant that tells me the next immediate task to do in Minecraft. My ultimate goal is to discover as many diverse things as possible, accomplish as many diverse tasks as possible and become the best Minecraft player in the world.\nI will give you the following information:\nQuestion 1: ...\nAnswer: ...\nQuestion 2: ...\nAnswer: ...\nQuestion 3: ...\nAnswer: ...\n...\nBiome: ...\nTime: ...\nNearby blocks: ...\nOther blocks that are recently seen: ...\nNearby entities (nearest to farthest): ...\nHealth: Higher than 15 means I'm healthy.\nHunger: Higher than 15 means I'm not hungry.\nPosition: ...\nEquipment: If I have better armor in my inventory, you should ask me to equip it.\nInventory (xx/36): ...\nChests: You can ask me to deposit or take items from these chests. There also might be some unknown chest, you should ask me to open and check items inside the unknown chest.\nCompleted tasks so far: ...\nFailed tasks that are too hard: ...\nYou must follow the following criteria:\n1) You should act as a mentor and guide me to the next task based on my current learning progress.",
+        "type": "code",
+        "location": "/voyager/prompts/curriculum.txt:1-26"
+    },
+    "351": {
+        "file_id": 42,
+        "content": "This code describes a Minecraft assistant that provides the next task based on the player's learning progress, considering their position, health, hunger, equipment, inventory, and completed/failed tasks.",
+        "type": "comment"
+    },
+    "352": {
+        "file_id": 42,
+        "content": "2) Please be very specific about what resources I need to collect, what I need to craft, or what mobs I need to kill.\n3) The next task should follow a concise format, such as \"Mine [quantity] [block]\", \"Craft [quantity] [item]\", \"Smelt [quantity] [item]\", \"Kill [quantity] [mob]\", \"Cook [quantity] [food]\", \"Equip [item]\" etc. It should be a single phrase. Do not propose multiple tasks at the same time. Do not mention anything else.\n4) The next task should not be too hard since I may not have the necessary resources or have learned enough skills to complete it yet.\n5) The next task should be novel and interesting. I should look for rare resources, upgrade my equipment and tools using better materials, and discover new things. I should not be doing the same thing over and over again.\n6) I may sometimes need to repeat some tasks if I need to collect more resources to complete more difficult tasks. Only repeat tasks if necessary.\n7) Do not ask me to build or dig shelter even if it's at night. I want to explore the world and discover new things. I don't want to stay in one place.",
+        "type": "code",
+        "location": "/voyager/prompts/curriculum.txt:27-32"
+    },
+    "353": {
+        "file_id": 42,
+        "content": "This code provides guidelines for the format of tasks, specifying to be concise, single-phrased, and not too difficult or repetitive. It encourages exploring, resource collection, and equipment upgrades while avoiding building shelters.",
+        "type": "comment"
+    },
+    "354": {
+        "file_id": 42,
+        "content": "8) Tasks that require information beyond the player's status to verify should be avoided. For instance, \"Placing 4 torches\" and \"Dig a 2x1x2 hole\" are not ideal since they require visual confirmation from the screen. All the placing, building, planting, and trading tasks should be avoided. Do not propose task starting with these keywords.\nYou should only respond in the format as described below:\nRESPONSE FORMAT:\nReasoning: Based on the information I listed above, do reasoning about what the next task should be.\nTask: The next task.\nHere's an example response:\nReasoning: The inventory is empty now, chop down a tree to get some wood.\nTask: Obtain a wood log.",
+        "type": "code",
+        "location": "/voyager/prompts/curriculum.txt:33-42"
+    },
+    "355": {
+        "file_id": 42,
+        "content": "The code provides instructions to avoid certain task types, mentions example of bad tasks, and specifies a response format for suggesting appropriate tasks based on the current game state.",
+        "type": "comment"
+    },
+    "356": {
+        "file_id": 43,
+        "content": "/voyager/prompts/curriculum_qa_step1_ask_questions.txt",
+        "type": "filepath"
+    },
+    "357": {
+        "file_id": 43,
+        "content": "This code generates Minecraft-related prompts based on biome and time, requiring users to follow a specific response format for answering.",
+        "type": "summary"
+    },
+    "358": {
+        "file_id": 43,
+        "content": "You are a helpful assistant that asks questions to help me decide the next immediate task to do in Minecraft. My ultimate goal is to discover as many things as possible, accomplish as many tasks as possible and become the best Minecraft player in the world.\nI will give you the following information:\nBiome: ...\nTime: ...\nNearby blocks: ...\nOther blocks that are recently seen: ...\nNearby entities (nearest to farthest): ...\nHealth: ...\nHunger: ...\nPosition: ...\nEquipment: ...\nInventory (xx/36): ...\nChests: ...\nCompleted tasks so far: ...\nFailed tasks that are too hard: ...\nYou must follow the following criteria:\n1) You should ask at least 5 questions (but no more than 10 questions) to help me decide the next immediate task to do. Each question should be followed by the concept that the question is about.\n2) Your question should be specific to a concept in Minecraft.\n  Bad example (the question is too general):\n    Question: What is the best way to play Minecraft?\n    Concept: unknown\n  Bad example (axe is still general, you should specify the type of axe such as wooden axe):",
+        "type": "code",
+        "location": "/voyager/prompts/curriculum_qa_step1_ask_questions.txt:1-24"
+    },
+    "359": {
+        "file_id": 43,
+        "content": "Code snippet outlines a text file named \"curriculum_qa_step1_ask_questions.txt\" where an AI will provide questions related to Minecraft based on given information like biome, time, nearby blocks, and other relevant factors. The AI should ask at least 5 but not more than 10 specific Minecraft-related questions, adhering to criteria specified in the file.",
+        "type": "comment"
+    },
+    "360": {
+        "file_id": 43,
+        "content": "    What are the benefits of using an axe to gather resources?\n    Concept: axe\n  Good example:\n    Question: How to make a wooden pickaxe?\n    Concept: wooden pickaxe\n3) Your questions should be self-contained and not require any context.\n  Bad example (the question requires the context of my current biome):\n    Question: What are the blocks that I can find in my current biome?\n    Concept: unknown\n  Bad example (the question requires the context of my current inventory):\n    Question: What are the resources you need the most currently?\n    Concept: unknown\n  Bad example (the question requires the context of my current inventory):\n    Question: Do you have any gold or emerald resources?\n    Concept: gold\n  Bad example (the question requires the context of my nearby entities):\n    Question: Can you see any animals nearby that you can kill for food?\n    Concept: food\n  Bad example (the question requires the context of my nearby blocks):\n    Question: Is there any water source nearby?\n    Concept: water\n  Good example:",
+        "type": "code",
+        "location": "/voyager/prompts/curriculum_qa_step1_ask_questions.txt:25-46"
+    },
+    "361": {
+        "file_id": 43,
+        "content": "This code is providing examples of good and bad question prompts for the curriculum. Good prompts should be self-contained and not require any context, while bad prompts require additional information such as current biome, inventory, nearby entities or blocks.",
+        "type": "comment"
+    },
+    "362": {
+        "file_id": 43,
+        "content": "    Question: What are the blocks that I can find in the sparse jungle?\n    Concept: sparse jungle\n4) Do not ask questions about building tasks (such as building a shelter) since they are too hard for me to do.\nLet's say your current biome is sparse jungle. You can ask questions like:\nQuestion: What are the items that I can find in the sparse jungle?\nConcept: sparse jungle\nQuestion: What are the mobs that I can find in the sparse jungle?\nConcept: sparse jungle\nLet's say you see a creeper nearby, and you have not defeated a creeper before. You can ask a question like:\nQuestion: How to defeat the creeper?\nConcept: creeper\nLet's say your last completed task is \"Craft a wooden pickaxe\". You can ask a question like:\nQuestion: What are the suggested tasks that I can do after crafting a wooden pickaxe?\nConcept: wooden pickaxe\nHere are some more question and concept examples:\nQuestion: What are the ores that I can find in the sparse jungle?\nConcept: sparse jungle\n(the above concept should not be \"ore\" because ",
+        "type": "code",
+        "location": "/voyager/prompts/curriculum_qa_step1_ask_questions.txt:47-68"
+    },
+    "363": {
+        "file_id": 43,
+        "content": "The code provides prompts for asking questions related to specific concepts and tasks within the game. The user can inquire about items, mobs, tasks, or ores found in different biomes, with examples given for sparse jungle, creepers, wooden pickaxes, and various ores.",
+        "type": "comment"
+    },
+    "364": {
+        "file_id": 43,
+        "content": "I need to look up the page of \"sparse jungle\" to find out what ores I can find in the sparse jungle)\nQuestion: How can you obtain food in the sparse jungle?\nConcept: sparse jungle\n(the above concept should not be \"food\" because I need to look up the page of \"sparse jungle\" to find out what food I can obtain in the sparse jungle)\nQuestion: How can you use the furnace to upgrade your equipment and make useful items?\nConcept: furnace\nQuestion: How to obtain a diamond ore?\nConcept: diamond ore\nQuestion: What are the benefits of using a stone pickaxe over a wooden pickaxe?\nConcept: stone pickaxe\nQuestion: What are the tools that you can craft using wood planks and sticks?\nConcept: wood planks\nYou should only respond in the format as described below:\nRESPONSE FORMAT:\nReasoning: ...\nQuestion 1: ...\nConcept 1: ...\nQuestion 2: ...\nConcept 2: ...\nQuestion 3: ...\nConcept 3: ...\nQuestion 4: ...\nConcept 4: ...\nQuestion 5: ...\nConcept 5: ...\n...",
+        "type": "code",
+        "location": "/voyager/prompts/curriculum_qa_step1_ask_questions.txt:68-94"
+    },
+    "365": {
+        "file_id": 43,
+        "content": "This code is asking for questions related to specific concepts in the game, and requires looking up information for answers. The responses should follow a specific format, including reasoning and the relevant concept being asked about.",
+        "type": "comment"
+    },
+    "366": {
+        "file_id": 44,
+        "content": "/voyager/prompts/curriculum_qa_step2_answer_questions.txt",
+        "type": "filepath"
+    },
+    "367": {
+        "file_id": 44,
+        "content": "The code sets up a helper assistant to answer Minecraft-related questions based on provided context and the assistant's own knowledge. It provides guidelines for formatting answers as well, stating to start with \"Answer: \" and indicate \"Answer: Unknown\" if no answer is available.",
+        "type": "summary"
+    },
+    "368": {
+        "file_id": 44,
+        "content": "You are a helpful assistant that answer my question about Minecraft.\nI will give you the following information:\nQuestion: ...\nYou will answer the question based on the context (only if available and helpful) and your own knowledge of Minecraft.\n1) Start your answer with \"Answer: \".\n2) Answer \"Answer: Unknown\" if you don't know the answer.",
+        "type": "code",
+        "location": "/voyager/prompts/curriculum_qa_step2_answer_questions.txt:1-8"
+    },
+    "369": {
+        "file_id": 44,
+        "content": "The code sets up a helper assistant to answer Minecraft-related questions based on provided context and the assistant's own knowledge. It provides guidelines for formatting answers as well, stating to start with \"Answer: \" and indicate \"Answer: Unknown\" if no answer is available.",
+        "type": "comment"
+    },
+    "370": {
+        "file_id": 45,
+        "content": "/voyager/prompts/curriculum_task_decomposition.txt",
+        "type": "filepath"
+    },
+    "371": {
+        "file_id": 45,
+        "content": "This code is an AI-generated assistant tasked with decomposing a specified Minecraft task into subgoals based on the user's current inventory. It should return a Python list of these subgoals, each in a specific format, including necessary tools at different levels. The response must be in JSON format to ensure proper parsing by Python's `json.loads`.",
+        "type": "summary"
+    },
+    "372": {
+        "file_id": 45,
+        "content": "You are a helpful assistant that generates a curriculum of subgoals to complete any Minecraft task specified by me.\nI'll give you a final task and my current inventory, you need to decompose the task into a list of subgoals based on my inventory.\nYou must follow the following criteria:\n1) Return a Python list of subgoals that can be completed in order to complete the specified task.\n2) Each subgoal should follow a concise format, such as \"Mine [quantity] [block]\", \"Craft [quantity] [item]\", \"Smelt [quantity] [item]\", \"Kill [quantity] [mob]\", \"Cook [quantity] [food]\", \"Equip [item]\".\n3) Include each level of necessary tools as a subgoal, such as wooden, stone, iron, diamond, etc.\nYou should only respond in JSON format as described below:\n[\"subgoal1\", \"subgoal2\", \"subgoal3\", ...]\nEnsure the response can be parsed by Python `json.loads`, e.g.: no trailing commas, no single quotes, etc.",
+        "type": "code",
+        "location": "/voyager/prompts/curriculum_task_decomposition.txt:1-12"
+    },
+    "373": {
+        "file_id": 45,
+        "content": "This code is an AI-generated assistant tasked with decomposing a specified Minecraft task into subgoals based on the user's current inventory. It should return a Python list of these subgoals, each in a specific format, including necessary tools at different levels. The response must be in JSON format to ensure proper parsing by Python's `json.loads`.",
+        "type": "comment"
+    },
+    "374": {
+        "file_id": 46,
+        "content": "/voyager/prompts/skill.txt",
+        "type": "filepath"
+    },
+    "375": {
+        "file_id": 46,
+        "content": "The function `mineCobblestone` ensures a wooden pickaxe is available, equips it, and explores to find stone blocks, mining 8 cobblestones each time until the maximum count is reached or no more blocks are found.",
+        "type": "summary"
+    },
+    "376": {
+        "file_id": 46,
+        "content": "You are a helpful assistant that writes a description of the given function written in Mineflayer javascript code.\n1) Do not mention the function name.\n2) Do not mention anything about `bot.chat` or helper functions.\n3) There might be some helper functions before the main function, but you only need to describe the main function.\n4) Try to summarize the function in no more than 6 sentences.\n5) Your response should be a single line of text.\nFor example, if the function is:\nasync function mineCobblestone(bot) {\n  // Check if the wooden pickaxe is in the inventory, if not, craft one\n  let woodenPickaxe = bot.inventory.findInventoryItem(mcData.itemsByName[\"wooden_pickaxe\"].id);\n  if (!woodenPickaxe) {\n    bot.chat(\"Crafting a wooden pickaxe.\");\n    await craftWoodenPickaxe(bot);\n    woodenPickaxe = bot.inventory.findInventoryItem(mcData.itemsByName[\"wooden_pickaxe\"].id);\n  }\n  // Equip the wooden pickaxe if it exists\n  if (woodenPickaxe) {\n    await bot.equip(woodenPickaxe, \"hand\");\n    // Explore until we find a stone block",
+        "type": "code",
+        "location": "/voyager/prompts/skill.txt:1-24"
+    },
+    "377": {
+        "file_id": 46,
+        "content": "Function: Explore and collect cobblestone using wooden pickaxe\n- Check if wooden pickaxe is in inventory, craft one if not.\n- Equips wooden pickaxe if found, then explores until stone block is found.\n- Collects stone block when found and places it in the inventory.\n- Repeats process until a set number of cobblestones are collected.\n- Stops if maximum cobblestone count reached or if no more stone blocks are found.",
+        "type": "comment"
+    },
+    "378": {
+        "file_id": 46,
+        "content": "    await exploreUntil(bot, new Vec3(1, -1, 1), 60, () => {\n      const stone = bot.findBlock({\n        matching: mcData.blocksByName[\"stone\"].id,\n        maxDistance: 32\n      });\n      if (stone) {\n        return true;\n      }\n    });\n    // Mine 8 cobblestone blocks using the wooden pickaxe\n    bot.chat(\"Found a stone block. Mining 8 cobblestone blocks.\");\n    await mineBlock(bot, \"stone\", 8);\n    bot.chat(\"Successfully mined 8 cobblestone blocks.\");\n    // Save the event of mining 8 cobblestone\n    bot.save(\"cobblestone_mined\");\n  } else {\n    bot.chat(\"Failed to craft a wooden pickaxe. Cannot mine cobblestone.\");\n  }\n}\nThe main function is `mineCobblestone`.\nThen you would write:\nThe function is about mining 8 cobblestones using a wooden pickaxe. First check if a wooden pickaxe is in the inventory. If not, craft one. If the wooden pickaxe is available, equip the wooden pickaxe in the hand. Next, explore the environment until finding a stone block. Once a stone block is found, mine a total of 8 cobblestone blocks using the wooden pickaxe.",
+        "type": "code",
+        "location": "/voyager/prompts/skill.txt:25-51"
+    },
+    "379": {
+        "file_id": 46,
+        "content": "The function `mineCobblestone` checks for the availability of a wooden pickaxe in the inventory. If not, it crafts one. Afterward, equips the wooden pickaxe in the hand. It then explores until finding a stone block and mines 8 cobblestone blocks from that block. Upon successful completion, the bot informs about the mining event and saves it. If the wooden pickaxe is not available initially, it fails to mine cobblestones.",
+        "type": "comment"
+    },
+    "380": {
+        "file_id": 47,
+        "content": "/voyager/utils/__init__.py",
+        "type": "filepath"
+    },
+    "381": {
+        "file_id": 47,
+        "content": "This code imports various utility functions and classes from submodules 'file_utils', 'json_utils', and 'record_utils'. These utilities are likely to be used throughout the Voyager module for handling file operations, JSON manipulation, and event recording.",
+        "type": "summary"
+    },
+    "382": {
+        "file_id": 47,
+        "content": "from .file_utils import *\nfrom .json_utils import *\nfrom .record_utils import EventRecorder",
+        "type": "code",
+        "location": "/voyager/utils/__init__.py:1-3"
+    },
+    "383": {
+        "file_id": 47,
+        "content": "This code imports various utility functions and classes from submodules 'file_utils', 'json_utils', and 'record_utils'. These utilities are likely to be used throughout the Voyager module for handling file operations, JSON manipulation, and event recording.",
+        "type": "comment"
+    },
+    "384": {
+        "file_id": 48,
+        "content": "/voyager/utils/file_utils.py",
+        "type": "filepath"
+    },
+    "385": {
+        "file_id": 48,
+        "content": "This code offers utility functions for file system operations, including path manipulation and directory traversal, file/directory handling (f_remove, f_copy), wildcard support, error handling, verbose option, file paths & directories management, checksums, tarball creation with compression, utility file handling, NFS-safe lock implementation, and options to load/dump text or pickle data by lines.",
+        "type": "summary"
+    },
+    "386": {
+        "file_id": 48,
+        "content": "\"\"\"\nFile system utils.\n\"\"\"\nimport collections\nimport os\nimport pickle\nimport sys\nimport errno\nimport shutil\nimport glob\n# import pwd\nimport codecs\nimport hashlib\nimport tarfile\nimport fnmatch\nimport tempfile\nfrom datetime import datetime\nfrom socket import gethostname\nimport logging\nf_ext = os.path.splitext\nf_size = os.path.getsize\nis_file = os.path.isfile\nis_dir = os.path.isdir\nget_dir = os.path.dirname\ndef host_name():\n    \"Get host name, alias with ``socket.gethostname()``\"\n    return gethostname()\ndef host_id():\n    \"\"\"\n    Returns: first part of hostname up to '.'\n    \"\"\"\n    return host_name().split(\".\")[0]\ndef utf_open(fname, mode):\n    \"\"\"\n    Wrapper for codecs.open\n    \"\"\"\n    return codecs.open(fname, mode=mode, encoding=\"utf-8\")\ndef is_sequence(obj):\n    \"\"\"\n    Returns:\n      True if the sequence is a collections.Sequence and not a string.\n    \"\"\"\n    return isinstance(obj, collections.abc.Sequence) and not isinstance(obj, str)\ndef pack_varargs(args):\n    \"\"\"\n    Pack *args or a single list arg as list\n    def f(*args):",
+        "type": "code",
+        "location": "/voyager/utils/file_utils.py:1-65"
+    },
+    "387": {
+        "file_id": 48,
+        "content": "This code file contains various utility functions for working with the file system, such as getting hostname and host ID, opening files in UTF-8 format, checking if an object is a sequence, and packing variable arguments into a list. These functions can be used across different modules within the project for file operations.",
+        "type": "comment"
+    },
+    "388": {
+        "file_id": 48,
+        "content": "        arg_list = pack_varargs(args)\n        # arg_list is now packed as a list\n    \"\"\"\n    assert isinstance(args, tuple), \"please input the tuple `args` as in *args\"\n    if len(args) == 1 and is_sequence(args[0]):\n        return args[0]\n    else:\n        return args\ndef f_not_empty(*fpaths):\n    \"\"\"\n    Returns:\n        True if and only if the file exists and file size > 0\n          if fpath is a dir, if and only if dir exists and has at least 1 file\n    \"\"\"\n    fpath = f_join(*fpaths)\n    if not os.path.exists(fpath):\n        return False\n    if os.path.isdir(fpath):\n        return len(os.listdir(fpath)) > 0\n    else:\n        return os.path.getsize(fpath) > 0\ndef f_expand(fpath):\n    return os.path.expandvars(os.path.expanduser(fpath))\ndef f_exists(*fpaths):\n    return os.path.exists(f_join(*fpaths))\ndef f_join(*fpaths):\n    \"\"\"\n    join file paths and expand special symbols like `~` for home dir\n    \"\"\"\n    fpaths = pack_varargs(fpaths)\n    fpath = f_expand(os.path.join(*fpaths))\n    if isinstance(fpath, str):\n        fpath = fpath.strip()",
+        "type": "code",
+        "location": "/voyager/utils/file_utils.py:66-107"
+    },
+    "389": {
+        "file_id": 48,
+        "content": "The code defines a series of utility functions for file manipulation. It includes functions like `f_not_empty` which checks if the given file exists and has a non-zero size, `f_expand` to expand special symbols in file paths, `f_exists` to check if a file path exists, and `f_join` to join file paths while expanding special symbols. The code also uses `pack_varargs` for packing arguments into a list format.",
+        "type": "comment"
+    },
+    "390": {
+        "file_id": 48,
+        "content": "    return fpath\ndef f_listdir(\n    *fpaths,\n    filter_ext=None,\n    filter=None,\n    sort=True,\n    full_path=False,\n    nonexist_ok=True,\n    recursive=False,\n):\n    \"\"\"\n    Args:\n        full_path: True to return full paths to the dir contents\n        filter: function that takes in file name and returns True to include\n        nonexist_ok: True to return [] if the dir is non-existent, False to raise\n        sort: sort the file names by alphabetical\n        recursive: True to use os.walk to recursively list files. Note that `filter`\n            will be applied to the relative path string to the root dir.\n            e.g. filter will take \"a/data1.txt\" and \"a/b/data3.txt\" as input, instead of\n            just the base file names \"data1.txt\" and \"data3.txt\".\n            if False, will simply call os.listdir()\n    \"\"\"\n    assert not (filter_ext and filter), \"filter_ext and filter are mutually exclusive\"\n    dir_path = f_join(*fpaths)\n    if not os.path.exists(dir_path) and nonexist_ok:\n        return []\n    if recursive:",
+        "type": "code",
+        "location": "/voyager/utils/file_utils.py:108-136"
+    },
+    "391": {
+        "file_id": 48,
+        "content": "This function, f_listdir, takes in one or more file paths as arguments and returns a list of files in the specified directories. It can filter files based on their extension or through a user-defined function, sort the file names alphabetically, return full paths to the dir contents, handle non-existent directories gracefully, and optionally use os.walk for recursive directory traversal. However, filter_ext and filter cannot be used together.",
+        "type": "comment"
+    },
+    "392": {
+        "file_id": 48,
+        "content": "        files = [\n            os.path.join(os.path.relpath(root, dir_path), file)\n            for root, _, files in os.walk(dir_path)\n            for file in files\n        ]\n    else:\n        files = os.listdir(dir_path)\n    if filter is not None:\n        files = [f for f in files if filter(f)]\n    elif filter_ext is not None:\n        files = [f for f in files if f.endswith(filter_ext)]\n    if sort:\n        files.sort()\n    if full_path:\n        return [os.path.join(dir_path, f) for f in files]\n    else:\n        return files\ndef f_mkdir(*fpaths):\n    \"\"\"\n    Recursively creates all the subdirs\n    If exist, do nothing.\n    \"\"\"\n    fpath = f_join(*fpaths)\n    os.makedirs(fpath, exist_ok=True)\n    return fpath\ndef f_mkdir_in_path(*fpaths):\n    \"\"\"\n    fpath is a file,\n    recursively creates all the parent dirs that lead to the file\n    If exist, do nothing.\n    \"\"\"\n    os.makedirs(get_dir(f_join(*fpaths)), exist_ok=True)\ndef last_part_in_path(fpath):\n    \"\"\"\n    https://stackoverflow.com/questions/3925096/how-to-get-only-the-last-part-of-a-path-in-python",
+        "type": "code",
+        "location": "/voyager/utils/file_utils.py:137-177"
+    },
+    "393": {
+        "file_id": 48,
+        "content": "The code defines three functions: \"f_list\", \"f_mkdir\", and \"last_part_in_path\". \n\"f_list\" takes a root directory and optional filter or sort parameters, and returns a list of files in the directory. It can also return absolute paths if the 'full_path' parameter is set to True. \n\"f_mkdir\" recursively creates all subdirectories leading up to a specified file path, creating them only if they do not already exist. \n\"last_part_in_path\" returns the last part of a given file path by splitting it using '/'.",
+        "type": "comment"
+    },
+    "394": {
+        "file_id": 48,
+        "content": "    \"\"\"\n    return os.path.basename(os.path.normpath(f_expand(fpath)))\ndef is_abs_path(*fpath):\n    return os.path.isabs(f_join(*fpath))\ndef is_relative_path(*fpath):\n    return not is_abs_path(f_join(*fpath))\ndef f_time(*fpath):\n    \"File modification time\"\n    return str(os.path.getctime(f_join(*fpath)))\ndef f_append_before_ext(fpath, suffix):\n    \"\"\"\n    Append a suffix to file name and retain its extension\n    \"\"\"\n    name, ext = f_ext(fpath)\n    return name + suffix + ext\ndef f_add_ext(fpath, ext):\n    \"\"\"\n    Append an extension if not already there\n    Args:\n      ext: will add a preceding `.` if doesn't exist\n    \"\"\"\n    if not ext.startswith(\".\"):\n        ext = \".\" + ext\n    if fpath.endswith(ext):\n        return fpath\n    else:\n        return fpath + ext\ndef f_has_ext(fpath, ext):\n    \"Test if file path is a text file\"\n    _, actual_ext = f_ext(fpath)\n    return actual_ext == \".\" + ext.lstrip(\".\")\ndef f_glob(*fpath):\n    return glob.glob(f_join(*fpath), recursive=True)\ndef f_remove(*fpath, verbose=False, dry_run=False):",
+        "type": "code",
+        "location": "/voyager/utils/file_utils.py:178-227"
+    },
+    "395": {
+        "file_id": 48,
+        "content": "The code defines various file utility functions. It checks if a path is absolute or relative, retrieves file modification time, appends suffix to file name retaining its extension, adds an extension if not already present, tests if the file has a specific extension, and globally searches for files recursively.",
+        "type": "comment"
+    },
+    "396": {
+        "file_id": 48,
+        "content": "    \"\"\"\n    If exist, remove. Supports both dir and file. Supports glob wildcard.\n    \"\"\"\n    assert isinstance(verbose, bool)\n    fpath = f_join(fpath)\n    if dry_run:\n        print(\"Dry run, delete:\", fpath)\n        return\n    for f in glob.glob(fpath):\n        try:\n            shutil.rmtree(f)\n        except OSError as e:\n            if e.errno == errno.ENOTDIR:\n                try:\n                    os.remove(f)\n                except:  # final resort safeguard\n                    pass\n    if verbose:\n        print(f'Deleted \"{fpath}\"')\ndef f_copy(fsrc, fdst, ignore=None, include=None, exists_ok=True, verbose=False):\n    \"\"\"\n    Supports both dir and file. Supports glob wildcard.\n    \"\"\"\n    fsrc, fdst = f_expand(fsrc), f_expand(fdst)\n    for f in glob.glob(fsrc):\n        try:\n            f_copytree(f, fdst, ignore=ignore, include=include, exist_ok=exists_ok)\n        except OSError as e:\n            if e.errno == errno.ENOTDIR:\n                shutil.copy(f, fdst)\n            else:\n                raise\n    if verbose:",
+        "type": "code",
+        "location": "/voyager/utils/file_utils.py:228-262"
+    },
+    "397": {
+        "file_id": 48,
+        "content": "The code defines two functions: `f_remove` and `f_copy`. `f_remove` removes a file or directory specified by the given path, supporting wildcards. It prints a dry-run message if in that mode, and handles different OSError scenarios to remove either directories or files. `f_copy` copies files or directories from one location to another, supporting wildcards and ignoring/including certain files as specified by `ignore` and `include`. If any OSError occurs while copying a directory, it attempts to copy the file instead. If verbose is True, it prints success messages for each deletion or copy action.",
+        "type": "comment"
+    },
+    "398": {
+        "file_id": 48,
+        "content": "        print(f'Copied \"{fsrc}\" to \"{fdst}\"')\ndef _f_copytree(\n    src,\n    dst,\n    symlinks=False,\n    ignore=None,\n    exist_ok=True,\n    copy_function=shutil.copy2,\n    ignore_dangling_symlinks=False,\n):\n    \"\"\"Copied from python standard lib shutil.copytree\n    except that we allow exist_ok\n    Use f_copytree as entry\n    \"\"\"\n    names = os.listdir(src)\n    if ignore is not None:\n        ignored_names = ignore(src, names)\n    else:\n        ignored_names = set()\n    os.makedirs(dst, exist_ok=exist_ok)\n    errors = []\n    for name in names:\n        if name in ignored_names:\n            continue\n        srcname = os.path.join(src, name)\n        dstname = os.path.join(dst, name)\n        try:\n            if os.path.islink(srcname):\n                linkto = os.readlink(srcname)\n                if symlinks:\n                    # We can't just leave it to `copy_function` because legacy\n                    # code with a custom `copy_function` may rely on copytree\n                    # doing the right thing.\n                    os.symlink(linkto, dstname)",
+        "type": "code",
+        "location": "/voyager/utils/file_utils.py:263-299"
+    },
+    "399": {
+        "file_id": 48,
+        "content": "This code defines a function called `_f_copytree` that copies files and directories from one location to another, allowing for existing destination files and directories if the `exist_ok` parameter is set to True. It also includes functionality to handle symbolic links, ignoring certain names specified by an optional `ignore` function, and using the `os`, `shutil`, and `path` modules.",
+        "type": "comment"
+    }
+}

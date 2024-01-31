@@ -1,0 +1,10 @@
+{
+    "summary": "This code imports required packages, defines a function to load prompts using the voyager.utils module, and uses pkg_resources to obtain the package's file path. It then returns the prompt text using the U.load_text() method.",
+    "details": [
+        {
+            "comment": "This code imports required packages, defines a function to load prompts using the voyager.utils module, and uses pkg_resources to obtain the package's file path. It then returns the prompt text using the U.load_text() method.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/prompts/__init__.py\":0-6",
+            "content": "import pkg_resources\nimport voyager.utils as U\ndef load_prompt(prompt):\n    package_path = pkg_resources.resource_filename(\"voyager\", \"\")\n    return U.load_text(f\"{package_path}/prompts/{prompt}.txt\")"
+        }
+    ]
+}

@@ -1,0 +1,15 @@
+{
+    "summary": "\"craftItem\" is an asynchronous function that crafts items using a crafting table, validating inputs and catching errors with feedback before throwing an error after 10 tries.",
+    "details": [
+        {
+            "comment": "This code defines an asynchronous function named \"craftItem\" that crafts a specified item by finding and using a crafting table. It checks if the input name is a string and count is a number before executing, ensuring valid parameters. If valid, it finds the nearest crafting table and attempts to craft the item using the bot's \"craft\" function.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/control_primitives/craftItem.js\":0-29",
+            "content": "async function craftItem(bot, name, count = 1) {\n    // return if name is not string\n    if (typeof name !== \"string\") {\n        throw new Error(\"name for craftItem must be a string\");\n    }\n    // return if count is not number\n    if (typeof count !== \"number\") {\n        throw new Error(\"count for craftItem must be a number\");\n    }\n    const itemByName = mcData.itemsByName[name];\n    if (!itemByName) {\n        throw new Error(`No item named ${name}`);\n    }\n    const craftingTable = bot.findBlock({\n        matching: mcData.blocksByName.crafting_table.id,\n        maxDistance: 32,\n    });\n    if (!craftingTable) {\n        bot.chat(\"Craft without a crafting table\");\n    } else {\n        await bot.pathfinder.goto(\n            new GoalLookAtBlock(craftingTable.position, bot.world)\n        );\n    }\n    const recipe = bot.recipesFor(itemByName.id, null, 1, craftingTable)[0];\n    if (recipe) {\n        bot.chat(`I can make ${name}`);\n        try {\n            await bot.craft(recipe, count, craftingTable);\n            bot.chat(`I did the recipe for ${name} ${count} times`);"
+        },
+        {
+            "comment": "Code block catches errors in crafting recipes and provides feedback for failed attempts, limiting the maximum number of tries to 10 before throwing an error.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/control_primitives/craftItem.js\":30-42",
+            "content": "        } catch (err) {\n            bot.chat(`I cannot do the recipe for ${name} ${count} times`);\n        }\n    } else {\n        failedCraftFeedback(bot, name, itemByName, craftingTable);\n        _craftItemFailCount++;\n        if (_craftItemFailCount > 10) {\n            throw new Error(\n                \"craftItem failed too many times, check chat log to see what happened\"\n            );\n        }\n    }\n}"
+        }
+    ]
+}

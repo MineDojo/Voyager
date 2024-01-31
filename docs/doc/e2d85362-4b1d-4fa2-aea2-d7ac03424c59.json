@@ -1,0 +1,10 @@
+{
+    "summary": "This code imports different agents from their respective modules (action, critic, curriculum) and SkillManager for Voyager's agent functionality.",
+    "details": [
+        {
+            "comment": "This code imports different agents from their respective modules (action, critic, curriculum) and SkillManager for Voyager's agent functionality.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/agents/__init__.py\":0-3",
+            "content": "from .action import ActionAgent\nfrom .critic import CriticAgent\nfrom .curriculum import CurriculumAgent\nfrom .skill import SkillManager"
+        }
+    ]
+}

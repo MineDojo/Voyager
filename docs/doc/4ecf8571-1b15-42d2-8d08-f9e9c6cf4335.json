@@ -1,0 +1,15 @@
+{
+    "summary": "This code uses the exploreUntil function to search for iron ore underground and pigs on the surface, with exploration stopping after 60 seconds or upon meeting a callback condition. It is within a Voyager control function and may define/manipulate exploration-related primitives.",
+    "details": [
+        {
+            "comment": "This code uses the exploreUntil function to find an iron ore underground and a pig on the surface. It uses Vec3 direction vectors for searching, with exploration stopping after 60 seconds or if the callback condition is met early. The exploreUntil function takes parameters such as bot, direction, maxTime, and callback for exploration control.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/control_primitives_context/exploreUntil.js\":0-28",
+            "content": "/*\nExplore until find an iron_ore, use Vec3(0, -1, 0) because iron ores are usually underground\nawait exploreUntil(bot, new Vec3(0, -1, 0), 60, () => {\n    const iron_ore = bot.findBlock({\n        matching: mcData.blocksByName[\"iron_ore\"].id,\n        maxDistance: 32,\n    });\n    return iron_ore;\n});\nExplore until find a pig, use Vec3(1, 0, 1) because pigs are usually on the surface\nlet pig = await exploreUntil(bot, new Vec3(1, 0, 1), 60, () => {\n    const pig = bot.nearestEntity((entity) => {\n        return (\n            entity.name === \"pig\" &&\n            entity.position.distanceTo(bot.entity.position) < 32\n        );\n    });\n    return pig;\n});\n*/\nasync function exploreUntil(bot, direction, maxTime = 60, callback) {\n    /*\n    Implementation of this function is omitted.\n    direction: Vec3, can only contain value of -1, 0 or 1\n    maxTime: number, the max time for exploration\n    callback: function, early stop condition, will be called each second, exploration will stop if return value is not null\n    Return: null if explore timeout, otherwise return the return value of callback"
+        },
+        {
+            "comment": "This code block appears to be within a function that controls the exploration of the Voyager. The code ends with a closing brace, which may indicate that this section is defining or manipulating some control primitives in the context of exploration.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/control_primitives_context/exploreUntil.js\":29-30",
+            "content": "    */\n}"
+        }
+    ]
+}

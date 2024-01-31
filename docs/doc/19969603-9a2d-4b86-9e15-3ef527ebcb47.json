@@ -1,0 +1,15 @@
+{
+    "summary": "This function checks inputs and retrieves the nearest entity with given name, throwing an error if not found. It handles mob killing and item collection in a game using auto-attack or regular attack based on equipped weapon, waiting for the mob to be removed before collecting items. If successful, progress is saved as \"${mobName}_killed\".",
+    "details": [
+        {
+            "comment": "This function takes a bot, mob name and timeout as inputs. It checks if both the mobName is a string and timeout is a number. If not, it throws an error. Then, it retrieves the nearest entity with the given mobName, ensuring it's within a certain distance. If no entity is found, it sends a chat message and increments the fail count; if the fail count exceeds 10, it throws an error.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/control_primitives/killMob.js\":0-31",
+            "content": "async function killMob(bot, mobName, timeout = 300) {\n    // return if mobName is not string\n    if (typeof mobName !== \"string\") {\n        throw new Error(`mobName for killMob must be a string`);\n    }\n    // return if timeout is not number\n    if (typeof timeout !== \"number\") {\n        throw new Error(`timeout for killMob must be a number`);\n    }\n    const weaponsForShooting = [\n        \"bow\",\n        \"crossbow\",\n        \"snowball\",\n        \"ender_pearl\",\n        \"egg\",\n        \"splash_potion\",\n        \"trident\",\n    ];\n    const mainHandItem = bot.inventory.slots[bot.getEquipmentDestSlot(\"hand\")];\n    const entity = bot.nearestEntity(\n        (entity) =>\n            entity.name === mobName &&\n            // kill mob distance should be slightly bigger than explore distance\n            entity.position.distanceTo(bot.entity.position) < 48\n    );\n    if (!entity) {\n        bot.chat(`No ${mobName} nearby, please explore first`);\n        _killMobFailCount++;\n        if (_killMobFailCount > 10) {\n            throw new Error("
+        },
+        {
+            "comment": "This code handles the killing of a mob and subsequent item collection in a game. It uses auto-attack or regular attack based on the weapon equipped, then waits for the mob to be removed before collecting any dropped items. If successful, it saves the progress as \"${mobName}_killed\".",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/control_primitives/killMob.js\":32-50",
+            "content": "                `killMob failed too many times, make sure you explore before calling killMob`\n            );\n        }\n        return;\n    }\n    let droppedItem;\n    if (mainHandItem && weaponsForShooting.includes(mainHandItem.name)) {\n        bot.hawkEye.autoAttack(entity, mainHandItem.name);\n        droppedItem = await waitForMobShot(bot, entity, timeout);\n    } else {\n        await bot.pvp.attack(entity);\n        droppedItem = await waitForMobRemoved(bot, entity, timeout);\n    }\n    if (droppedItem) {\n        await bot.collectBlock.collect(droppedItem, { ignoreNoPath: true });\n    }\n    bot.save(`${mobName}_killed`);\n}"
+        }
+    ]
+}

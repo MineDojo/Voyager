@@ -1,0 +1,15 @@
+{
+    "summary": "The givePlacedItemBack function, using parameters bot, name, and position, disables doTileDrops, calls givePlacedItemBackSingle for each pair of name and position, enables doTileDrops again. The givePlacedItemBackSingle gives item to the bot and updates history with block positions within a certain radius. This code destroys blocks, updates history, waits 20 ticks, and returns.",
+    "details": [
+        {
+            "comment": "Function givePlacedItemBack takes in a bot, name, and position as parameters. It disables doTileDrops, iterates through each pair of name and position, calls givePlacedItemBackSingle for each pair, then enables doTileDrops again. The givePlacedItemBackSingle function gives the item to the bot and checks if any blocks with the same name are within a certain radius, adding their positions to history if not already included.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/control_primitives/givePlacedItemBack.js\":0-23",
+            "content": "async function givePlacedItemBack(bot, name, position) {\n    await bot.chat(\"/gamerule doTileDrops false\");\n    // iterate name and position\n    const history = [];\n    for (let i = 0; i < name.length; i++) {\n        await givePlacedItemBackSingle(bot, name[i], position[i]);\n    }\n    await bot.chat(\"/gamerule doTileDrops true\");\n    async function givePlacedItemBackSingle(bot, name, position) {\n        bot.chat(`/give bot ${name} 1`);\n        const x = Math.floor(position.x);\n        const y = Math.floor(position.y);\n        const z = Math.floor(position.z);\n        // loop through 125 blocks around the block\n        const size = 3;\n        for (let dx = -size; dx <= size; dx++) {\n            for (let dy = -size; dy <= size; dy++) {\n                for (let dz = -size; dz <= size; dz++) {\n                    const block = bot.blockAt(new Vec3(x + dx, y + dy, z + dz));\n                    if (\n                        block?.name === name &&\n                        !history.includes(block.position)\n                    ) {"
+        },
+        {
+            "comment": "This code sets a block at a specific location to air and destroys it if the condition is met, updates the history with the block's position, waits for 20 ticks, and returns.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/control_primitives/givePlacedItemBack.js\":24-37",
+            "content": "                        await bot.chat(\n                            `/setblock ${x + dx} ${y + dy} ${\n                                z + dz\n                            } air destroy`\n                        );\n                        history.push(block.position);\n                        await bot.waitForTicks(20);\n                        return;\n                    }\n                }\n            }\n        }\n    }\n}"
+        }
+    ]
+}

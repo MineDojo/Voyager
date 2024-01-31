@@ -1,0 +1,15 @@
+{
+    "summary": "The function places an item near the player, finds the inventory item by name, searches for a reference block to place it on, determines position and facing direction, uses pathfinder to go there, and finally places the item. The code snippet equips an item in the bot's hand and then places a block relative to a reference block.",
+    "details": [
+        {
+            "comment": "This function places an item near the player. It first finds the inventory item by name, then searches for a reference block to place it on. After finding a suitable position and facing direction, the bot goes to that position using the pathfinder, and finally places the item.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/control_primitives_context/placeItem.js\":0-24",
+            "content": "// Place a crafting_table near the player, Vec3(1, 0, 0) is just an example, you shouldn't always use that: placeItem(bot, \"crafting_table\", bot.entity.position.offset(1, 0, 0));\nasync function placeItem(bot, name, position) {\n    const item = bot.inventory.findInventoryItem(mcData.itemsByName[name].id);\n    // find a reference block\n    const faceVectors = [\n        new Vec3(0, 1, 0),\n        new Vec3(0, -1, 0),\n        new Vec3(1, 0, 0),\n        new Vec3(-1, 0, 0),\n        new Vec3(0, 0, 1),\n        new Vec3(0, 0, -1),\n    ];\n    let referenceBlock = null;\n    let faceVector = null;\n    for (const vector of faceVectors) {\n        const block = bot.blockAt(position.minus(vector));\n        if (block?.name !== \"air\") {\n            referenceBlock = block;\n            faceVector = vector;\n            break;\n        }\n    }\n    // You must first go to the block position you want to place\n    await bot.pathfinder.goto(new GoalPlaceBlock(position, bot.world, {}));\n    // You must equip the item right before calling placeBlock"
+        },
+        {
+            "comment": "The code snippet equips an item in the bot's hand and then places a block relative to a reference block.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/control_primitives_context/placeItem.js\":25-27",
+            "content": "    await bot.equip(item, \"hand\");\n    await bot.placeBlock(referenceBlock, faceVector);\n}"
+        }
+    ]
+}

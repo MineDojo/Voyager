@@ -1,0 +1,10 @@
+{
+    "summary": "This function \"shoot\" allows a bot to shoot a valid weapon at a target entity. It checks if the weapon is valid, if it exists in the bot's inventory, and if the target is nearby. If all conditions are met, it auto-attacks using a bow and handles auto_shot_stopped event.",
+    "details": [
+        {
+            "comment": "This function \"shoot\" allows a bot to shoot a valid weapon at a target entity. It checks if the weapon is valid, if it exists in the bot's inventory, and if the target is nearby. If all conditions are met, it auto-attacks using a bow and handles auto_shot_stopped event.",
+            "location": "\"/media/root/Prima/works/Voyager/docs/src/voyager/control_primitives/shoot.js\":0-33",
+            "content": "// shoot 1 pig with a bow: shoot(bot, \"bow\", \"pig\");\nasync function shoot(bot, weapon, target) {\n    const validWeapons = [\n        \"bow\",\n        \"crossbow\",\n        \"snowball\",\n        \"ender_pearl\",\n        \"egg\",\n        \"splash_potion\",\n        \"trident\",\n    ];\n    if (!validWeapons.includes(weapon)) {\n        bot.chat(`${weapon} is not a valid weapon for shooting`);\n        return;\n    }\n    const weaponItem = mcData.itemsByName[weapon];\n    if (!bot.inventory.findInventoryItem(weaponItem.id, null)) {\n        bot.chat(`No ${weapon} in inventory for shooting`);\n        return;\n    }\n    const targetEntity = bot.nearestEntity(\n        (entity) =>\n            entity.name === target\n    );\n    if (!targetEntity) {\n        bot.chat(`No ${target} nearby`);\n        return;\n    }\n    bot.hawkEye.autoAttack(targetEntity, \"bow\");\n    bot.on('auto_shot_stopped', (target) => {\n    })\n}"
+        }
+    ]
+}
